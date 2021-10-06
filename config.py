@@ -17,8 +17,7 @@ DEFALT_CONFIG = {
     'cli-tools': {
         'trim': {
             'trim_pass_threads': True,
-            # TODO: Put an actual command here
-            'path_to_trim': 'trim',
+            'path_to_trim': 'cutadapt',
             'trim_type': '',
             'trim_params': []
         },
