@@ -1,0 +1,19 @@
+[general]
+threads = 8
+output_directory = "./output"
+
+[cli-tools]
+[cli-tools.trim]
+trim_pass_threads = true
+trim_type = ""
+path_to_trim = ""
+trim_parms = []
+
+[cli-tools.fastqc]
+fastqc_pass_threads = true
+path_to_fastqc = "/Applications/FastQC.app/Contents/MacOS/fastqc"
+fastqc_params = []
+
+[cli-tools.unitas]
+path_to_unitas = ""
+unitas_params = []
