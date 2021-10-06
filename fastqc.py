@@ -3,7 +3,7 @@ import zipfile
 import glob
 import csv
 
-from os import mkdir, path
+from os import mkdir
 from subprocess import run
 from io import StringIO
 from math import inf

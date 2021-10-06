@@ -6,6 +6,7 @@ from subprocess import run
 
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
+from genome_align import align_to_genome, bin_rna_size
 
 from config import get_config_key
 
@@ -24,6 +25,8 @@ if __name__ == '__main__':
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')
+    parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
+    parser_sort.add_argument('genome', help='Genome to align against')
 
     parser_classify = subparsers.add_parser('classify', help='Classify RNAs and run differntial expression')
     
@@ -46,4 +49,6 @@ if __name__ == '__main__':
         cut_rna_below_cutoff(small_rna_path, args.cutoff)
 
 
-    
+    if args.command == 'sort':
+        new_fastq = align_to_genome(args.genome, args.small_rna)
+        bin_rna_size(new_fastq)
