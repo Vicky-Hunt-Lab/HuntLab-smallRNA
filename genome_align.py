@@ -8,7 +8,7 @@ from Bio import SeqIO
 
 from config import get_config_key
 
-def align_to_genome(genome, small_rnas):
+def align_to_genome(genome, small_rnas, quiet=False):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
@@ -20,6 +20,9 @@ def align_to_genome(genome, small_rnas):
     VIEW_BAM = os.path.join(BOWTIE2_DIR, 'view_rnas.bam')
     SORTED_BAM = os.path.join(BOWTIE2_DIR, 'sorted_rnas.bam')
     RESULT_FASTQ = os.path.join(BOWTIE2_DIR, 'filtered_result.fastq')
+
+    genome_path = os.path.join(CWD, genome)
+    small_rna_path = os.path.join(CWD, small_rnas)
  
     os.mkdir(INDEX_DIR)
     os.mkdir(BOWTIE2_DIR)
@@ -27,7 +30,7 @@ def align_to_genome(genome, small_rnas):
 
     bowtie_build_command = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
-        genome,
+        genome_path,
         'genome_index'
     ]
 
@@ -38,8 +41,8 @@ def align_to_genome(genome, small_rnas):
     bowtie_align_command = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
         '-x', 'genome_index',
-        '-M', '10',
-        '-U', small_rnas,
+        '-k', '1',
+        '-U', small_rna_path,
         '-S', ALIGNMENT_SAM
     ]
 
@@ -73,11 +76,24 @@ def align_to_genome(genome, small_rnas):
 
     bamToFastq_command = bamToFastq_command + get_config_key('cli-tools', 'bedtools', 'bedtools_bamToFastq_params')
 
-    run(bowtie_build_command)
-    run(bowtie_align_command)
-    run(samtools_view_command)
-    run(samtools_sort_command)
-    run(bamToFastq_command)
+    print('====> Running step 1/4, Building bowtie index')
+    result = run(bowtie_build_command, capture_output=quiet)
+    result.check_returncode()
+
+    print('====> Running step 2/4, Aligning RNA to genome')
+    result = run(bowtie_align_command, capture_output=quiet)
+    result.check_returncode()
+
+    print('====> Running step 3/4, Sorting alignments')
+    result = run(samtools_view_command, capture_output=quiet)
+    result.check_returncode()
+
+    result = run(samtools_sort_command, capture_output=quiet)
+    result.check_returncode()
+
+    print('====> Running step 4/4, Converting aligned RNA to FASTQ')
+    result = run(bamToFastq_command, capture_output=quiet)
+    result.check_returncode()
 
     os.chdir(CWD)
 
@@ -91,11 +107,13 @@ def bin_rna_size(rna_file):
     BINS_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'binned_rna')
     os.mkdir(BINS_DIRECTORY)
 
+    print('====> Sorting RNA into arrays by length')
     files = defaultdict(lambda: [])
     rnas = SeqIO.parse(rna_file, 'fastq')
     for rna_seq in rnas:
         files[len(rna_seq)].append(rna_seq)
 
+    print('====> Writing RNA to new files')
     for key in files.keys():
         filename = os.path.join(BINS_DIRECTORY, 'length' + str(key) + '.fastq')
         SeqIO.write(files[key], filename, 'fastq')
