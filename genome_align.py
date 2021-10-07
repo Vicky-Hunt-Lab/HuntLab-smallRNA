@@ -53,10 +53,17 @@ def bin_rna_size(rna_file):
     print('====> Sorting RNA into arrays by length')
     files = defaultdict(lambda: [])
     rnas = SeqIO.parse(rna_file, 'fastq')
-    for rna_seq in rnas:
-        files[len(rna_seq)].append(rna_seq)
 
-    print('====> Writing RNA to new files')
-    for key in files.keys():
-        filename = os.path.join(BINS_DIRECTORY, 'length' + str(key) + '.fastq')
-        SeqIO.write(files[key], filename, 'fastq')
+    last_length = 0
+    current_rnas = []
+    for rna_seq in sorted(rnas, key=lambda x: len(x)):
+        if len(rna_seq) != last_length:
+            if len(current_rnas) > 0:
+                filename = os.path.join(BINS_DIRECTORY, 'length' + str(len(rna_seq)) + '.fastq')
+                with open(filename, 'a') as f:
+                    SeqIO.write(current_rnas, f, 'fastq')
+
+            last_length = len(rna_seq)
+            current_rnas = []
+
+        current_rnas.append(rna_seq)
