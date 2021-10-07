@@ -3,21 +3,21 @@ import zipfile
 import glob
 import csv
 
-from os import mkdir
 from subprocess import run
 from io import StringIO
 from math import inf
 
 from Bio import SeqIO
 
-from config import get_config_key
+from config import get_config_key, mkdir_if_not_exists
 
 def run_fastqc(path_to_fastq, quiet=False):
     '''
     Call fastqc and trim off any bases with a lower quatile below 20
     '''
     outdir = os.path.join(get_config_key('general', 'output_directory'), 'fastqc')
-    mkdir(outdir)
+    mkdir_if_not_exists(outdir)
+
     command = [
         get_config_key('cli-tools', 'fastqc', 'path_to_fastqc'), 
         '--outdir', outdir, 

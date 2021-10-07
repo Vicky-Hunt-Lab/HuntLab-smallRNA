@@ -1,5 +1,7 @@
 import toml
 
+import os
+
 from multiprocessing import cpu_count
 
 try:
@@ -51,3 +53,7 @@ def get_config_key(*keys):
             last_item = last_item[key]
 
     return last_item
+
+def mkdir_if_not_exists(path):
+    if not os.path.exists(path):
+        os.mkdir(path)

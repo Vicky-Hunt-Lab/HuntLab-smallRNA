@@ -2,6 +2,8 @@
 threads = 8
 output_directory = "./output"
 
+[command]
+
 [cli-tools]
 [cli-tools.trim]
 trim_pass_threads = true

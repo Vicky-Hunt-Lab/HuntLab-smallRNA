@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from Bio import SeqIO
 
-from config import get_config_key
+from config import get_config_key, mkdir_if_not_exists
 
 def align_to_genome(genome, small_rnas, quiet=False):
     '''
@@ -16,7 +16,7 @@ def align_to_genome(genome, small_rnas, quiet=False):
     RESULT_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.fastq')
     INDEX_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'bbmap_index')
 
-    os.mkdir(INDEX_DIRECTORY)
+    mkdir_if_not_exists(INDEX_DIRECTORY)
 
     bbmap_build_index = [
         get_config_key('cli-tools', 'bbmap', 'path_to_bbmap'),
@@ -48,7 +48,7 @@ def bin_rna_size(rna_file):
     '''
 
     BINS_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'binned_rna')
-    os.mkdir(BINS_DIRECTORY)
+    mkdir_if_not_exists(BINS_DIRECTORY)
 
     print('====> Sorting RNA into arrays by length')
     files = defaultdict(lambda: [])
