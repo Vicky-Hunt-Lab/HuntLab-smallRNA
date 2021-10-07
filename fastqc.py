@@ -74,7 +74,10 @@ def cut_rna_below_cutoff(fastq_path, cutoff):
             if cutoff_base == int(line[0]) + 1:
                 cutoff_base = int(line[0])
         elif cutoff_base == inf:
-            cutoff_base = None
+            if float(line[3]) < cutoff:
+                cutoff_base = int(line[0])
+            else:
+                cutoff_base = None
 
     # cut sequences from 3' end
     cut_func = lambda x: x[:cutoff_base]

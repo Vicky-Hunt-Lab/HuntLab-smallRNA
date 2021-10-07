@@ -6,7 +6,6 @@ output_directory = "./output"
 [cli-tools.trim]
 trim_pass_threads = true
 trim_type = ""
-path_to_trim = ""
 trim_parms = []
 
 [cli-tools.fastqc]

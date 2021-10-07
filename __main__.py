@@ -44,7 +44,7 @@ if __name__ == '__main__':
     parser_process.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
     parser_process.add_argument('-g', '--front', help='Sequence of the adapter to remove from the 5\' end')
     parser_process.add_argument('-b', '--anywhere', help='Sequence of the adapters to remove from both ends')
-    parser_process.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20)
+    parser_process.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')

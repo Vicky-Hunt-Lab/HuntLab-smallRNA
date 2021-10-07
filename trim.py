@@ -29,7 +29,8 @@ def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters):
 
     command = command + get_config_key('cli-tools', 'trim', 'trim_params')
 
-    print('====> Removing adpters from ')
+    print('====> Removing adpters from ends')
+    print(command)
     with open(outfile, 'w') as f:
         result = run(command, stdout=f)
 

@@ -23,6 +23,13 @@ output_directory = "/path/to/output"
 # Number of threads to pass to any program that allows for multiprocessing
 threads = 8
 
+# This section contains subsitues for optional command line arguments
+[command]
+adapter = "ACGTTTTTT"
+front = "TTTTTACG"
+anywhere = ""
+cutoff = 25
+
 # Section containing configeration for each of the exteranl programs called while in use
 [cli-tools]
 

@@ -26,20 +26,10 @@ DEFALT_CONFIG = {
             'path_to_fastqc': 'fastqc',
             'fastqc_params': []
         },
-        'bowtie2': {
-            'path_to_bowtie2': 'bowtie2',
-            'path_to_bowtie2_build': 'bowtie2-build',
-            'bowtie2_params': [],
-            'bowtie2_build_params': []
-        },
-        'samtools': {
-            'path_to_samtools': 'samtools',
-            'samtools_view_params': [],
-            'samtools_sort_params': []
-        },
-        'bedtools': {
-            'path_to_bedtools': 'bedtools',
-            'bedtools_bamToFastq_params': []
+        'bbmap': {
+            'path_to_bbmap': 'bbmap.sh',
+            'bbmap_align_params': [],
+            'bbmap_index_params': []
         },
         'unitas': {
             'path_to_unitas': 'unitas',
