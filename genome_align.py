@@ -42,7 +42,7 @@ def align_to_genome(genome, small_rnas, quiet=False):
 
     return RESULT_FASTQ
 
-def bin_rna_size(rna_file):
+def bin_rna_size(rna_file, min_length, max_length):
     '''
     Bin the RNAs in the RNA file into new files by length
     '''
@@ -58,8 +58,8 @@ def bin_rna_size(rna_file):
     current_rnas = []
     for rna_seq in sorted(rnas, key=lambda x: len(x)):
         if len(rna_seq) != last_length:
-            if len(current_rnas) > 0:
-                filename = os.path.join(BINS_DIRECTORY, 'length' + str(len(rna_seq)) + '.fastq')
+            if len(current_rnas) > 0 and last_length >= min_length and last_length <= max_length:
+                filename = os.path.join(BINS_DIRECTORY, 'length' + str(last_length) + '.fastq')
                 with open(filename, 'a') as f:
                     SeqIO.write(current_rnas, f, 'fastq')
 

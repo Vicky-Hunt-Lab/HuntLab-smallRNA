@@ -25,10 +25,10 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
 
     print('==> Completed command Process')
 
-def sort_command(genome, small_rna, quiet):
+def sort_command(genome, small_rna, min_length, max_length, quiet):
     print('==> Starting command Sort')
     new_fastq = align_to_genome(genome, small_rna, quiet=quiet)
-    bin_rna_size(new_fastq)
+    bin_rna_size(new_fastq, min_length, max_length)
 
     print('==> Completed command Sort')
 
@@ -56,6 +56,8 @@ if __name__ == '__main__':
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')
+    parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int)
+    parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int)
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_sort.add_argument('genome', help='Genome to align against')
 
@@ -104,6 +106,8 @@ if __name__ == '__main__':
         sort_command(
             get_command_args('genome'),
             get_command_args('small_rna'),
+            get_command_args('min_length'),
+            get_command_args('max_length'),
             get_command_args('quiet')
         )
 
