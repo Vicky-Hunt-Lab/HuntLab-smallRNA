@@ -1,13 +1,11 @@
+from posixpath import pardir
 import toml
 
 import os
 
 from multiprocessing import cpu_count
 
-try:
-    CONFIG = toml.load('config.toml')
-except:
-    CONFIG = {}
+CONFIG = {}
 
 # TODO: thread passing to programs
 
@@ -39,6 +37,10 @@ DEFALT_CONFIG = {
         }
     }
 }
+
+def load_config(path_to_config):
+    global CONFIG
+    CONFIG = toml.load(path_to_config)
 
 def get_config_key(*keys):
     try:

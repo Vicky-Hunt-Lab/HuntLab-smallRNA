@@ -1,3 +1,4 @@
+from os import pardir
 import os.path
 import glob
 import shutil
@@ -7,7 +8,7 @@ from fastqc import run_fastqc, cut_rna_below_cutoff
 from genome_align import align_to_genome, bin_rna_size
 from unitas import run_unitas_annotation, merge_summary
 
-from config import get_config_key, mkdir_if_not_exists
+from config import get_config_key, mkdir_if_not_exists, load_config
 
 from argparse import ArgumentParser
 
@@ -38,6 +39,7 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
     print('==> Completed command Sort')
 
 def unitas_command(small_rna_path, species_name, ref_seqs, ref_seqs2, quiet):
+    print('==> Starting command Unitas')
     UNITAS_OUTPUT = os.path.join(get_config_key('general', 'output_directory'), 'unitas')
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
@@ -46,10 +48,12 @@ def unitas_command(small_rna_path, species_name, ref_seqs, ref_seqs2, quiet):
         run_unitas_annotation(small_rna, species_name, ref_seqs, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
 
     merge_summary()
+    print('==> Completed command Unitas')
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='stuff')
     parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='store_true')
+    parser.add_argument('-p', '--path-to-config', help='Path to the TOML format config file to use', default='config.toml')
 
     subparsers = parser.add_subparsers(dest='command')
 
@@ -87,6 +91,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    load_config(args.path_to_config)
+
     def get_command_args(name):
         arguments = vars(args)
 
@@ -98,6 +104,7 @@ if __name__ == '__main__':
             except KeyError:
                 return None
 
+    print(get_config_key('general', 'output_directory'))
     mkdir_if_not_exists(get_config_key('general', 'output_directory'))
 
     if args.command == 'process':
