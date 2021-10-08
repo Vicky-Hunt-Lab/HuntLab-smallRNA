@@ -42,6 +42,25 @@ def load_config(path_to_config):
     global CONFIG
     CONFIG = toml.load(path_to_config)
 
+    result = validate_toml(CONFIG, DEFALT_CONFIG)
+
+    if result is not None:
+        raise Exception(result)
+
+def validate_toml(in_dict, compare):
+    for key in compare:
+        if key in in_dict:
+            if type(in_dict[key]) != type(compare[key]):
+                print('Error in config file!')
+
+                return key + ' should be ' + str(type(compare[key])) + ' but found ' + str(type(in_dict[key]))
+
+            if type(in_dict[key]) == dict:
+                result = validate_toml(in_dict[key], compare[key])
+
+                if result is not None:
+                    return result
+
 def get_config_key(*keys):
     try:
         last_item = CONFIG

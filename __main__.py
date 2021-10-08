@@ -1,4 +1,3 @@
-from os import pardir
 import os.path
 import glob
 import shutil
@@ -53,7 +52,7 @@ def unitas_command(small_rna_path, species_name, ref_seqs, ref_seqs2, quiet):
 if __name__ == '__main__':
     parser = ArgumentParser(description='stuff')
     parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='store_true')
-    parser.add_argument('-p', '--path-to-config', help='Path to the TOML format config file to use', default='config.toml')
+    parser.add_argument('-C', '--path-to-config', help='Path to the TOML format config file to use', default='config.toml')
 
     subparsers = parser.add_subparsers(dest='command')
 
