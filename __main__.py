@@ -1,5 +1,6 @@
 import os.path
 import glob
+import shutil
 
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
@@ -20,8 +21,12 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     else:
         print('==> No adapter sequence provided, skipping trim step')
 
-    run_fastqc(small_rna_path, quiet=quiet)
-    cut_rna_below_cutoff(small_rna_path, cutoff)
+    if cutoff > 0:
+        run_fastqc(small_rna_path, quiet=quiet)
+        cut_rna_below_cutoff(small_rna_path, cutoff)
+    else:
+        # create the cut_sequences.fastq, even if fastqc wasn't run
+        shutil.copy2(small_rna_path, os.path.join(get_config_key('general', 'output_directory'), 'cut_sequences.fastq'))
 
     print('==> Completed command Process')
 
@@ -67,13 +72,16 @@ if __name__ == '__main__':
     parser_unitas.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
 
-    parser_multi = subparsers.add_parser('multi', help='Run multiple of the previous steps piping the output of one into the other')
-    
     parser_all = subparsers.add_parser('all', help='Run all of the commands one after the other')
     parser_all.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
     parser_all.add_argument('-g', '--front', help='Sequence of the adapter to remove from the 5\' end')
     parser_all.add_argument('-b', '--anywhere', help='Sequence of the adapters to remove from both ends')
     parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20)
+    parser_all.add_argument('-l', '--min-length', help='Minimum length to bin', type=int)
+    parser_all.add_argument('-x', '--max-length', help='Maximum length to bin', type=int)
+    parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
+    parser_all.add_argument('-u', '--subsiquent-refseq', help='Refseqs to use in a second run', nargs='*')
+    parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_all.add_argument('genome', help='Genome to align against')
 
@@ -133,5 +141,15 @@ if __name__ == '__main__':
         sort_command(
             get_command_args('genome'),
             os.path.join(get_config_key('general', 'output_directory'), 'cut_sequences.fastq'),
+            get_command_args('min_length'),
+            get_command_args('max_length'),
+            get_command_args('quiet')
+        )
+
+        unitas_command(
+            os.path.join(get_config_key('general', 'output_directory'), 'binned_rna'),
+            get_command_args('species'),
+            get_command_args('refseq'),
+            get_command_args('subsiquent_refseq'),
             get_command_args('quiet')
         )
