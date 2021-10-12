@@ -1,4 +1,3 @@
-from posixpath import pardir
 import toml
 
 import os
@@ -39,6 +38,9 @@ DEFALT_CONFIG = {
 }
 
 def load_config(path_to_config):
+    '''
+    Load the config file into the global CONFIG varible and validate the result
+    '''
     global CONFIG
     CONFIG = toml.load(path_to_config)
 
@@ -48,6 +50,10 @@ def load_config(path_to_config):
         raise Exception(result)
 
 def validate_toml(in_dict, compare):
+    '''
+    Check the type in a TOML dict (in_dict) match the types of another dict,
+    validates the types in a loaded config file
+    '''
     for key in compare:
         if key in in_dict:
             if type(in_dict[key]) != type(compare[key]):
@@ -62,6 +68,10 @@ def validate_toml(in_dict, compare):
                     return result
 
 def get_config_key(*keys):
+    '''
+    Retrieve a config key from the config file if it exists or the
+    default config if it doesn't
+    '''
     try:
         last_item = CONFIG
         
@@ -76,5 +86,9 @@ def get_config_key(*keys):
     return last_item
 
 def mkdir_if_not_exists(path):
+    '''
+    Shorthand to make directories only if they don't exist already
+    without crashing
+    '''
     if not os.path.exists(path):
         os.mkdir(path)

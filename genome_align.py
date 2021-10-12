@@ -1,5 +1,6 @@
 import os
 import os.path
+import csv
 
 from subprocess import run
 from collections import defaultdict
@@ -51,19 +52,23 @@ def bin_rna_size(rna_file, min_length, max_length):
     mkdir_if_not_exists(BINS_DIRECTORY)
 
     print('====> Sorting RNA into arrays by length')
-    files = defaultdict(lambda: [])
-    rnas = SeqIO.parse(rna_file, 'fastq')
+    rnas = sorted(SeqIO.parse(rna_file, 'fastq'), key=lambda x: len(x))
 
     last_length = 0
     current_rnas = []
-    for rna_seq in sorted(rnas, key=lambda x: len(x)):
-        if len(rna_seq) != last_length:
-            if len(current_rnas) > 0 and last_length >= min_length and last_length <= max_length:
-                filename = os.path.join(BINS_DIRECTORY, 'length' + str(last_length) + '.fastq')
-                with open(filename, 'a') as f:
-                    SeqIO.write(current_rnas, f, 'fastq')
+    with open(os.path.join(get_config_key('general', 'output_directory'), 'rna_length_report.csv'), 'w') as table_file:
+        writer = csv.writer(table_file)
+        writer.writerow(['RNA Length', 'Frequency'])
 
-            last_length = len(rna_seq)
-            current_rnas = []
+        for rna_seq in rnas:
+            if len(rna_seq) != last_length:
+                if len(current_rnas) > 0 and last_length >= min_length and last_length <= max_length:
+                    filename = os.path.join(BINS_DIRECTORY, 'length' + str(last_length) + '.fastq')
+                    with open(filename, 'a') as f:
+                        SeqIO.write(current_rnas, f, 'fastq')
 
-        current_rnas.append(rna_seq)
+                last_length = len(rna_seq)
+                writer.writerow([last_length, len(current_rnas)])
+                current_rnas = []
+
+            current_rnas.append(rna_seq)

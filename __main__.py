@@ -2,6 +2,8 @@ import os.path
 import glob
 import shutil
 
+from math import inf
+
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
 from genome_align import align_to_genome, bin_rna_size
@@ -12,6 +14,9 @@ from config import get_config_key, mkdir_if_not_exists, load_config
 from argparse import ArgumentParser
 
 def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
+    '''
+    Code to run when the user chooses the process command
+    '''
     print('==> Starting command Process')
     small_rna_path = small_rna
 
@@ -31,26 +36,32 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     print('==> Completed command Process')
 
 def sort_command(genome, small_rna, min_length, max_length, quiet):
+    '''
+    Code to run when the user chooses the sort command
+    '''
     print('==> Starting command Sort')
     new_fastq = align_to_genome(genome, small_rna, quiet=quiet)
     bin_rna_size(new_fastq, min_length, max_length)
 
     print('==> Completed command Sort')
 
-def unitas_command(small_rna_path, species_name, ref_seqs, ref_seqs2, quiet):
+def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
+    '''
+    Code to run when the user chooses the unitas command
+    '''
     print('==> Starting command Unitas')
     UNITAS_OUTPUT = os.path.join(get_config_key('general', 'output_directory'), 'unitas')
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
 
     for small_rna in glob.glob(os.path.join(small_rna_path, '*.fastq')):
-        run_unitas_annotation(small_rna, species_name, ref_seqs, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
+        run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
 
     merge_summary()
     print('==> Completed command Unitas')
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description='stuff')
+    parser = ArgumentParser(description='Pipeline to process small RNAs')
     parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='store_true')
     parser.add_argument('-C', '--path-to-config', help='Path to the TOML format config file to use', default='config.toml')
 
@@ -64,14 +75,13 @@ if __name__ == '__main__':
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')
-    parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int)
-    parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int)
+    parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
+    parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_sort.add_argument('genome', help='Genome to align against')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
     parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
-    parser_unitas.add_argument('-u', '--subsiquent-refseq', help='Refseqs to use in a second run', nargs='*')
     parser_unitas.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
 
@@ -83,7 +93,6 @@ if __name__ == '__main__':
     parser_all.add_argument('-l', '--min-length', help='Minimum length to bin', type=int)
     parser_all.add_argument('-x', '--max-length', help='Maximum length to bin', type=int)
     parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
-    parser_all.add_argument('-u', '--subsiquent-refseq', help='Refseqs to use in a second run', nargs='*')
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_all.add_argument('genome', help='Genome to align against')
@@ -108,7 +117,7 @@ if __name__ == '__main__':
 
     if args.command == 'process':
         process_command(
-            get_command_args('small_rna'), 
+            get_command_args('small_rna'),
             get_command_args('adapter'),
             get_command_args('front'),
             get_command_args('anywhere'),
@@ -130,7 +139,6 @@ if __name__ == '__main__':
             get_command_args('path_to_rnas'),
             get_command_args('species'),
             get_command_args('refseq'),
-            get_command_args('subsiquent_refseq'),
             get_command_args('quiet')
         )
 
@@ -156,6 +164,5 @@ if __name__ == '__main__':
             os.path.join(get_config_key('general', 'output_directory'), 'binned_rna'),
             get_command_args('species'),
             get_command_args('refseq'),
-            get_command_args('subsiquent_refseq'),
             get_command_args('quiet')
         )

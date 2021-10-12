@@ -9,7 +9,7 @@ from collections import defaultdict
 
 from config import get_config_key
 
-def run_unitas_annotation(small_rna, species_name, ref_files, ref_files2, quiet=False, unitas_output='.'):
+def run_unitas_annotation(small_rna, species_name, ref_files, quiet=False, unitas_output='.'):
     '''
     Run Unitas on the small RNAs, given a file and species name
     '''
