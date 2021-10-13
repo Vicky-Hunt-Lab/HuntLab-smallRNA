@@ -1,3 +1,4 @@
+from os import EX_CANTCREAT, path
 import os.path
 import glob
 import shutil
@@ -8,6 +9,7 @@ from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
 from genome_align import align_to_genome, bin_rna_size
 from unitas import run_unitas_annotation, merge_summary
+from targetid import revcomp_input_file, find_targets, build_summery_files
 
 from config import get_config_key, mkdir_if_not_exists, load_config
 
@@ -60,6 +62,21 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     merge_summary()
     print('==> Completed command Unitas')
 
+def targetid_command(small_rna, targets, min_seq_length, quiet):
+    '''
+    Code to run when the user chooses the targetid command
+    '''
+    print('==> Starting TargetID command')
+
+    if targets is None:
+        raise Exception('You need to supply at least one target file with -t')
+
+    revcomp_file = revcomp_input_file(small_rna)
+    sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, quiet=quiet)
+    build_summery_files(sam_files)
+
+    print('==> Ending TargetID command')
+
 if __name__ == '__main__':
     parser = ArgumentParser(description='Pipeline to process small RNAs')
     parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='store_true')
@@ -84,6 +101,11 @@ if __name__ == '__main__':
     parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
     parser_unitas.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
+
+    parser_targetid = subparsers.add_parser('targetid', help='Align small RNA to a number of genome features to find out what is targeted')
+    parser_targetid.add_argument('-m', '--min-seq-length', help='Minimum sequence length to propably align', default=5)
+    parser_targetid.add_argument('-t', '--target-files', help='Files containing genome features that could be targeted', nargs='+')
+    parser_targetid.add_argument('small_rna', help='Path to the FASTQ containing the small RNA to find targets of')
 
     parser_all = subparsers.add_parser('all', help='Run all of the commands one after the other')
     parser_all.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
@@ -139,6 +161,14 @@ if __name__ == '__main__':
             get_command_args('path_to_rnas'),
             get_command_args('species'),
             get_command_args('refseq'),
+            get_command_args('quiet')
+        )
+
+    if args.command == 'targetid':
+        targetid_command(
+            get_command_args('small_rna'),
+            get_command_args('target_files'),
+            get_command_args('min_seq_length'),
             get_command_args('quiet')
         )
 

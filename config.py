@@ -33,6 +33,17 @@ DEFALT_CONFIG = {
         'unitas': {
             'path_to_unitas': 'unitas',
             'unitas_params': []
+        },
+        'bowtie2': {
+            'path_to_bowtie2': 'bowtie2',
+            'bowtie2_params': [],
+            'path_to_bowtie2_build': 'bowtie2-build',
+            'bowtie2_build_params': []
+        },
+        'samtools': {
+            'path_to_samtools': 'samtools',
+            'samtools_view_params': ['-h', '-F', '256', '-F', '4'],
+            'samtools_fastq_params': []
         }
     }
 }

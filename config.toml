@@ -3,6 +3,13 @@ threads = 8
 output_directory = "./output"
 
 [command]
+target_files = [
+  "/Users/kieran/Documents/BathWorkDocs/RNAPipelineProject/Reference files/miRNA_sratti_hairpin_incNovel.fasta",
+  "/Users/kieran/Documents/BathWorkDocs/RNAPipelineProject/Reference files/rRNA_srattiWB.fasta",
+  "/Users/kieran/Documents/BathWorkDocs/RNAPipelineProject/Reference files/strongyloides_ratti.PRJEB125.WBPS12.CDS_transcripts.fasta",
+  "/Users/kieran/Documents/BathWorkDocs/RNAPipelineProject/Reference files/TE_sequences.fasta",
+  "/Users/kieran/Documents/BathWorkDocs/RNAPipelineProject/Reference files/tRNA_sratti_WB.fasta"
+]
 
 [cli-tools]
 [cli-tools.trim]
