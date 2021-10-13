@@ -1,0 +1,14 @@
+name: huntlab-smallrna
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - toml
+  - pysam
+  - biopython
+  - cutadapt
+  - fastqc
+  - bbmap
+  - unitas
+  - bowtie2
+  - samtools

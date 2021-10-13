@@ -91,6 +91,8 @@ def build_summery_files(sam_files):
     a set of FASTA files
     '''
     
+    print('====> Removing unaligend sequences and building summary')
+    
     with open(os.path.join(get_config_key('general', 'output_directory'), 'rna_target_list.csv'), 'w') as tablefile:
         writer = csv.writer(tablefile)
         writer.writerow(['Query Sequence', 'Target File', 'Target Sequence'])
