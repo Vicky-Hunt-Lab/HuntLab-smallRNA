@@ -25,10 +25,29 @@ threads = 8
 
 # This section contains subsitues for optional command line arguments
 [command]
+# for process command
 adapter = "ACGTTTTTT"
 front = "TTTTTACG"
 anywhere = ""
 cutoff = 25
+
+# for sort command
+min_length = 7
+max_length = 35
+
+# for unitas command
+refseq = [
+    "/path/to/refseq1",
+    "/path/to/refseq2"
+]
+species = "x"
+
+# for targetid command
+target_files = [
+    "/path/to/targetseq1",
+    "/path/to/targetseq2"
+]
+min_seq_length = 9
 
 # Section containing configeration for each of the exteranl programs called while in use
 [cli-tools]
@@ -60,6 +79,6 @@ bowtie2_build_params = []
 
 [cli-tools.samtools]
 path_to_samtools = "samtools"
-samtools_view_params = ["-h", "-F", "256", "-F", "4"],
+samtools_view_params = ["-h", "-F", "256", "-F", "4"]
 samtools_fastq_params = []
 ```
