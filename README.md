@@ -8,11 +8,11 @@ This pipeline is designed to automate commen tasks to do with small RNA analysis
 
 3. "Classify" - Uses unitas to try and classify the small RNA into groups and also runs a differntial expression analysis with edgeR to allow visulising which RNA are upregulated.
 
-4. "TargetID" 
+4. "TargetID" - Align small RNAs aganist a number of potential targets and creates a list of targets for each small RNA
 
 ## Configeration File
 
-This pipeline can be configered with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://github.com/toml-lang/toml) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python)
+This pipeline can be configered with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://toml.io/en/) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python)
 
 ```toml
 # Configeration that doesn't fit anywhere else
@@ -32,33 +32,34 @@ cutoff = 25
 
 # Section containing configeration for each of the exteranl programs called while in use
 [cli-tools]
-
 [cli-tools.trim]
 trim_pass_threads = true
-path_to_trim = "/path/to/cutadapt"
+path_to_trim = "cutadapt"
+trim_type = ""
 trim_params = []
 
 [cli-tools.fastqc]
 fastqc_pass_threads = true
-path_to_fastqc = "/path/to/fastqc"
+path_to_fastqc = "fastqc"
 fastqc_params = []
 
+[cli-tools.bbmap]
+path_to_bbmap = "bbmap.sh"
+bbmap_align_params = []
+bbmap_index_params = []
+
+[cli-tools.unitas]
+path_to_unitas = "unitas"
+unitas_params = []
+
 [cli-tools.bowtie2]
-path_to_bowtie2 = "/path/to/bowtie2"
-path_to_bowtie2_build = "/path/to/bowtie2-build"
+path_to_bowtie2 = "bowtie2"
 bowtie2_params = []
+path_to_bowtie2_build = "bowtie2-build"
 bowtie2_build_params = []
 
 [cli-tools.samtools]
-path_to_samtools = "/path/to/samtools"
-samtools_view_params = []
-samtools_sort_params = []
-
-[cli-tools.bedtools]
-path_to_bedtools = "/path/to/bedtools"
-bedtools_bamToFastq_params = []
-
-[cli-tools.unitas]
-path_to_unitas = "/path/to/unitas"
-unitas_params = []
+path_to_samtools = "samtools"
+samtools_view_params = ["-h", "-F", "256", "-F", "4"],
+samtools_fastq_params = []
 ```
