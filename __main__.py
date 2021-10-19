@@ -6,7 +6,7 @@ from math import inf
 
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
-from genome_align import align_to_genome, bin_rna_size
+from genome_align import align_to_genome, bin_rna_size, graph_length
 from unitas import run_unitas_annotation, merge_summary
 from targetid import revcomp_input_file, find_targets, build_summery_files
 
@@ -42,7 +42,9 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
     '''
     print('==> Starting command Sort')
     new_fastq = align_to_genome(genome, small_rna, quiet=quiet)
-    bin_rna_size(new_fastq, min_length, max_length)
+    table_file = bin_rna_size(new_fastq, min_length, max_length)
+
+    graph_length(table_file)
 
     print('==> Completed command Sort')
 

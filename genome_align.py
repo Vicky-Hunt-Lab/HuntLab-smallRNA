@@ -4,7 +4,10 @@ import csv
 
 from subprocess import run
 
+import numpy as np
+
 from Bio import SeqIO
+from matplotlib import pyplot as plt
 
 from config import get_config_key, mkdir_if_not_exists
 
@@ -53,11 +56,14 @@ def bin_rna_size(rna_file, min_length, max_length):
     print('====> Sorting RNA into arrays by length')
     rnas = sorted(SeqIO.parse(rna_file, 'fastq'), key=lambda x: len(x))
 
+    table_path = os.path.join(get_config_key('general', 'output_directory'), 'rna_length_report.csv')
+
     last_length = 0
     current_rnas = []
-    with open(os.path.join(get_config_key('general', 'output_directory'), 'rna_length_report.csv'), 'w') as table_file:
+    start_base_count = {'A': 0, 'C': 0, 'G': 0, 'T': 0}
+    with open(table_path, 'w') as table_file:
         writer = csv.writer(table_file)
-        writer.writerow(['RNA Length', 'Frequency'])
+        writer.writerow(['RNA Length', 'A', 'C', 'G', 'U', 'All Frequency'])
 
         for rna_seq in rnas:
             if len(rna_seq) != last_length:
@@ -66,8 +72,57 @@ def bin_rna_size(rna_file, min_length, max_length):
                     with open(filename, 'a') as f:
                         SeqIO.write(current_rnas, f, 'fastq')
 
-                last_length = len(rna_seq)
-                writer.writerow([last_length, len(current_rnas)])
+                    last_length = len(rna_seq)
+                    writer.writerow([
+                        last_length, 
+                        start_base_count['A'], start_base_count['C'],
+                        start_base_count['G'], start_base_count['T'],
+                        len(current_rnas)
+                    ])
+
                 current_rnas = []
+                start_base_count = {'A': 0, 'C': 0, 'G': 0, 'T': 0}
 
             current_rnas.append(rna_seq)
+            start_base_count[rna_seq[0]] += 1
+
+    return table_path
+
+def graph_length(path_to_table):
+    '''
+    Create the graph showing the length and starting base of all the RNA
+    '''
+    
+    with open(path_to_table) as f:
+        reader = csv.reader(f)
+        next(reader)
+
+        labels = []
+        bases = {'A': [], 'C': [], 'G': [], 'T': []}
+        
+        for line in reader:
+            labels.append(str(line[0]))
+
+            bases['A'].append(int(line[1]))
+            bases['C'].append(int(line[2]))
+            bases['G'].append(int(line[3]))
+            bases['T'].append(int(line[4]))
+
+        total_rna = sum(bases['A']) + sum(bases['C']) + sum(bases['G']) + sum(bases['T'])
+        for key in bases.keys():
+            bases[key] = np.array(bases[key]) / total_rna * 100
+
+        fig, ax = plt.subplots(figsize=(11.69, 8.27))
+
+        ax.bar(labels, bases['A'], label='A', align='edge', width=0.8)
+        ax.bar(labels, bases['C'], bottom=bases['A'], label='C', align='edge', width=0.8)
+        ax.bar(labels, bases['G'], bottom=bases['A'] + bases['C'], label='G', align='edge', width=0.8)
+        ax.bar(labels, bases['T'], bottom=bases['A'] + bases['C'] + bases['G'], label='U', align='edge', width=0.8)
+
+        ax.set_xticklabels(labels, fontsize=7)
+        ax.set_xlabel('Length of small RNA')
+        ax.set_ylabel('Percentage of small RNA')
+
+        plt.legend()
+
+        plt.savefig(os.path.join(get_config_key('general', 'output_directory'), 'baseplot.png'))
