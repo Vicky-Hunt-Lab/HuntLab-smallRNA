@@ -56,14 +56,8 @@ def merge_summary():
             else:
                 file_table = [['RNA Length ' + length[0], '']]
 
-            te_count = 0
             for line in reader:
                 file_table.append(line)
-                if len(file_table) >= 28 and 'no annotation' not in line[0]:
-                    te_count += float(line[1])
-                    file_table[-1][0] = '   ' + file_table[-1][0]
-
-            file_table = file_table[:27] + [['TEs', te_count]] + file_table[27:]
 
             if len(length) > 0:
                 file_dict[int(length[0])] = file_table

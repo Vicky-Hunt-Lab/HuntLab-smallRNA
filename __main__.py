@@ -1,4 +1,3 @@
-from os import EX_CANTCREAT, path
 import os.path
 import glob
 import shutil
@@ -107,11 +106,11 @@ if __name__ == '__main__':
     parser_targetid.add_argument('-t', '--target-files', help='Files containing genome features that could be targeted', nargs='+')
     parser_targetid.add_argument('small_rna', help='Path to the FASTQ containing the small RNA to find targets of')
 
-    parser_all = subparsers.add_parser('all', help='Run all of the commands one after the other')
+    parser_all = subparsers.add_parser('all', help='Run process, sort and unitas one after the other')
     parser_all.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
     parser_all.add_argument('-g', '--front', help='Sequence of the adapter to remove from the 5\' end')
     parser_all.add_argument('-b', '--anywhere', help='Sequence of the adapters to remove from both ends')
-    parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20)
+    parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
     parser_all.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_all.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
     parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')

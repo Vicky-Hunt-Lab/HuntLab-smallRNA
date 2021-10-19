@@ -3,7 +3,6 @@ import os.path
 import csv
 
 from subprocess import run
-from collections import defaultdict
 
 from Bio import SeqIO
 
