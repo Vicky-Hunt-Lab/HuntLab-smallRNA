@@ -7,6 +7,10 @@ import re
 from subprocess import run
 from collections import defaultdict
 
+import numpy as np
+
+from matplotlib import pyplot as plt
+
 from config import get_config_key
 
 def run_unitas_annotation(small_rna, species_name, ref_files, quiet=False, unitas_output='.'):
@@ -73,7 +77,69 @@ def merge_summary():
         for i, line in enumerate(file_table):
             new_file[i] = new_file[i] + line + ['']
 
-    with open(os.path.join(get_config_key('general', 'output_directory'), 'unitas_summery.csv'), 'w') as f:
+    unitas_table = os.path.join(get_config_key('general', 'output_directory'), 'unitas_summery.csv')
+    with open(unitas_table, 'w') as f:
         writer = csv.writer(f)
 
         writer.writerows(new_file)
+
+    return unitas_table
+
+def graph_unitas_classification_type(path_to_table):
+    '''
+    Craete a graph of small RNA by length against unitas type
+    '''
+    with open(path_to_table) as f:
+        reader = csv.reader(f)
+
+        headers = next(reader)
+        values = defaultdict(lambda: {})
+
+        data_rows = list(reader)
+
+        fig, ax = plt.subplots(figsize=(11.69, 8.27))
+
+        labels = set()
+
+        for i, header in enumerate(headers):
+            if header != '':
+                rna_length = re.findall(r'\d+', header)[0]
+
+                for row in data_rows:
+                    try:
+                        if len(row[i]) > 0 and not row[i][0].isspace():
+                            values[rna_length][row[i]] = float(row[i + 1])
+                    except IndexError:
+                        break
+
+        for length in values:
+            labels = labels | set(values[length].keys())
+
+        offsets = None
+        for l in labels:
+            rna_lengths = list(values.keys())
+            counts = []
+
+            for key in values.keys():
+                try:
+                    counts.append(values[key][l])
+                except KeyError:
+                    counts.append(0)
+
+            ax.bar(rna_lengths, counts, label=l, bottom=offsets)
+
+        if offsets is None:
+            offsets = np.array(counts)
+        else:
+            offsets = offsets + np.array(counts)
+
+    ax.set_xticklabels(rna_lengths, fontsize=7)
+    ax.set_xlabel('Length of small RNA')
+    ax.set_ylabel('')
+
+    plt.legend(title='Unitas Category')
+
+    plt.savefig(os.path.join(get_config_key('general', 'output_directory'), 'unitasGraph.png'))
+
+if __name__ == '__main__':
+    graph_unitas_classification_type('output/unitas_summery.csv')

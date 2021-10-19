@@ -7,7 +7,7 @@ from math import inf
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
 from genome_align import align_to_genome, bin_rna_size, graph_length
-from unitas import run_unitas_annotation, merge_summary
+from unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
 from targetid import revcomp_input_file, find_targets, build_summery_files
 
 from config import get_config_key, mkdir_if_not_exists, load_config
@@ -60,7 +60,8 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     for small_rna in glob.glob(os.path.join(small_rna_path, '*.fastq')):
         run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
 
-    merge_summary()
+    table_path = merge_summary()
+    graph_unitas_classification_type(table_path)
     print('==> Completed command Unitas')
 
 def targetid_command(small_rna, targets, min_seq_length, quiet):

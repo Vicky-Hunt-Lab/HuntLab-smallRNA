@@ -123,6 +123,6 @@ def graph_length(path_to_table):
         ax.set_xlabel('Length of small RNA')
         ax.set_ylabel('Percentage of small RNA')
 
-        plt.legend()
+        plt.legend(title='First Nucliotide')
 
         plt.savefig(os.path.join(get_config_key('general', 'output_directory'), 'baseplot.png'))
