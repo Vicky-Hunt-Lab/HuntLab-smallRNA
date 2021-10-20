@@ -7,6 +7,7 @@ from math import inf
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
 from genome_align import align_to_genome, bin_rna_size, graph_length
+from create_noncoding import extract_noncoding
 from unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
 from targetid import revcomp_input_file, find_targets, build_summery_files
 
@@ -47,6 +48,19 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
     graph_length(table_file)
 
     print('==> Completed command Sort')
+
+def extractnc_command(genome, gff):
+    '''
+    Code to run when the user chooses to extrat the noncoding mRNA reigon
+    '''
+    print('==> Started extractNC command')
+
+    extract_noncoding(
+        genome, gff, 
+        output=os.path.join(get_config_key('general', 'output_directory'), 'noncoding.fasta')
+    )
+
+    print('==> Completed extractNC command')
 
 def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     '''
@@ -98,6 +112,10 @@ if __name__ == '__main__':
     parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_sort.add_argument('genome', help='Genome to align against')
+
+    parser_extractnc = subparsers.add_parser('extarctnc', help='Extarct the noncoding reigon from a fasta with a GFF file')
+    parser_extractnc.add_argument('genome', help='FASTA containing the genome to extract from')
+    parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
     parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
@@ -156,6 +174,12 @@ if __name__ == '__main__':
             get_command_args('min_length'),
             get_command_args('max_length'),
             get_command_args('quiet')
+        )
+
+    if args.command == 'extractnc':
+        extractnc_command(
+            get_command_args('genome'),
+            get_command_args('gff_file')
         )
 
     if args.command == 'unitas':
