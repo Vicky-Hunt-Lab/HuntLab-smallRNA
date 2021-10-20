@@ -115,23 +115,30 @@ def graph_unitas_classification_type(path_to_table):
         for length in values:
             labels = labels | set(values[length].keys())
 
-        offsets = None
-        for l in labels:
+        with open(os.path.join(get_config_key('general', 'output_directory'), 'unitas_graph_data.csv'), 'w') as f:
+            writer = csv.writer(f)
+
             rna_lengths = list(values.keys())
-            counts = []
+            writer.writerow(['RNA Length'] + rna_lengths)
+        
+            offsets = None
+            for l in labels:
+                counts = []
 
-            for key in values.keys():
-                try:
-                    counts.append(values[key][l])
-                except KeyError:
-                    counts.append(0)
+                for key in values.keys():
+                    try:
+                        counts.append(values[key][l])
+                    except KeyError:
+                        counts.append(0)
 
-            ax.bar(rna_lengths, counts, label=l, bottom=offsets)
+                ax.bar(rna_lengths, counts, label=l, bottom=offsets)
 
-        if offsets is None:
-            offsets = np.array(counts)
-        else:
-            offsets = offsets + np.array(counts)
+                writer.writerow([l] + counts)
+
+            if offsets is None:
+                offsets = np.array(counts)
+            else:
+                offsets = offsets + np.array(counts)
 
     ax.set_xticklabels(rna_lengths, fontsize=7)
     ax.set_xlabel('Length of small RNA')

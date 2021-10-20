@@ -112,7 +112,7 @@ def extract_noncoding(genome, gff_path, output='result.fasta'):
     for key in coordinates.keys():
         coordinates[key].sort()
 
-    SeqIO.write(extract_fragments(genome_data, coordinates), 'result.fasta', 'fasta')
+    SeqIO.write(extract_fragments(genome_data, coordinates), output, 'fasta')
 
 if __name__ == '__main__':
     extract_noncoding(argv[1], argv[2])

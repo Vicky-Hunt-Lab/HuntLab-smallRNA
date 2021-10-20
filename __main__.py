@@ -53,14 +53,14 @@ def extractnc_command(genome, gff):
     '''
     Code to run when the user chooses to extrat the noncoding mRNA reigon
     '''
-    print('==> Started extractNC command')
+    print('==> Starting command extractNC')
 
     extract_noncoding(
         genome, gff, 
         output=os.path.join(get_config_key('general', 'output_directory'), 'noncoding.fasta')
     )
 
-    print('==> Completed extractNC command')
+    print('==> Completed command extractNC')
 
 def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     '''

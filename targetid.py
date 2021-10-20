@@ -93,9 +93,9 @@ def build_summery_files(sam_files):
     
     print('====> Removing unaligend sequences and building summary')
     
-    with open(os.path.join(get_config_key('general', 'output_directory'), 'rna_target_list.csv'), 'w') as tablefile:
-        writer = csv.writer(tablefile)
-        writer.writerow(['Query Sequence', 'Target File', 'Target Sequence'])
+    with open(os.path.join(get_config_key('general', 'output_directory'), 'rna_target_list.tsv'), 'w') as tablefile:
+        writer = csv.writer(tablefile, delimiter='\t')
+        writer.writerow(['Query Sequence', 'Target File', 'Target Sequence', 'Start Coordinate', 'End Coordinate', 'Strand'])
 
         for filename in sam_files:
             samfile = pysam.AlignmentFile(filename, 'r')
@@ -117,8 +117,15 @@ def build_summery_files(sam_files):
                 if not read.is_unmapped:
                     query_name = read.query_name
                     r_name = fileheader.get_reference_name(read.reference_id)
+                    start = read.reference_start
+                    end = read.reference_end
 
-                    writer.writerow([query_name, os.path.abspath(filename), r_name])
+                    if read.is_reverse:
+                        strand = 'antisense'
+                    else:
+                        strand = 'sense'
+
+                    writer.writerow([query_name, os.path.abspath(filename), r_name, start, end, strand])
 
             bam_to_fastq_command = [
                 get_config_key('cli-tools', 'samtools', 'path_to_samtools'),

@@ -83,6 +83,8 @@ def bin_rna_size(rna_file, min_length, max_length):
                 current_rnas = []
                 start_base_count = {'A': 0, 'C': 0, 'G': 0, 'T': 0}
 
+                last_length = len(rna_seq)
+
             current_rnas.append(rna_seq)
             start_base_count[rna_seq[0]] += 1
 
@@ -111,6 +113,15 @@ def graph_length(path_to_table):
         total_rna = sum(bases['A']) + sum(bases['C']) + sum(bases['G']) + sum(bases['T'])
         for key in bases.keys():
             bases[key] = np.array(bases[key]) / total_rna * 100
+
+        with open(os.path.join(get_config_key('general', 'output_directory'), 'baseplot_data.csv'), 'w') as f:
+            writer = csv.writer(f)
+
+            writer.writerow(['RNA Length'] + labels)
+            writer.writerow(['A'] + list(bases['A']))
+            writer.writerow(['T'] + list(bases['T']))
+            writer.writerow(['C'] + list(bases['C']))
+            writer.writerow(['G'] + list(bases['G']))
 
         fig, ax = plt.subplots(figsize=(11.69, 8.27))
 
