@@ -16,21 +16,22 @@ def extract_fragments(sequences, coordinates):
     Pull out fragments from a set of sequences basied on a 
     dictionary of coordinates
     '''
+    # TODO: check this
     for seq in sequences:
         if seq.id + '+' in coordinates.keys():
             for i, j in get_pairs(coordinates[seq.id + '+']):
-                fragement = seq[i:j + 1]
+                fragement = seq[i:j - 1]
                 fragement.id = 'noncoding|' + fragement.id
 
-                if len(fragement) > 1:
+                if len(fragement) > 0:
                     yield fragement
 
         if seq.id + '-' in coordinates.keys():
             for i, j in get_pairs(coordinates[seq.id + '-']):
-                fragement = seq[i:j + 1].reverse_complement()
+                fragement = seq[i:j - 1].reverse_complement()
                 fragement.id = 'noncoding|' + fragement.id
 
-                if len(fragement) > 1:
+                if len(fragement) > 0:
                     yield fragement
 
 def validate_gff(mRNAs, coding_reigon):
@@ -100,7 +101,7 @@ def extract_noncoding(genome, gff_path, output='result.fasta'):
     for key in mRNAs.keys():
         for item in mRNAs[key]:
             coordinates[key].append(item[0])
-            coordinates[key].append(item[1])
+            coordinates[key].append(item[1] + 1)
 
     for key in coding_reigon.keys():
         for item in coding_reigon[key]:

@@ -3,6 +3,7 @@ import glob
 import shutil
 
 from math import inf
+from argparse import ArgumentParser
 
 from trim import run_trim
 from fastqc import run_fastqc, cut_rna_below_cutoff
@@ -12,8 +13,6 @@ from unitas import run_unitas_annotation, merge_summary, graph_unitas_classifica
 from targetid import revcomp_input_file, find_targets, build_summery_files
 
 from config import get_config_key, mkdir_if_not_exists, load_config
-
-from argparse import ArgumentParser
 
 def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     '''
@@ -113,7 +112,7 @@ if __name__ == '__main__':
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_sort.add_argument('genome', help='Genome to align against')
 
-    parser_extractnc = subparsers.add_parser('extarctnc', help='Extarct the noncoding reigon from a fasta with a GFF file')
+    parser_extractnc = subparsers.add_parser('extractnc', help='Extarct the noncoding reigon from a fasta with a GFF file')
     parser_extractnc.add_argument('genome', help='FASTA containing the genome to extract from')
     parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
 

@@ -72,7 +72,6 @@ def bin_rna_size(rna_file, min_length, max_length):
                     with open(filename, 'a') as f:
                         SeqIO.write(current_rnas, f, 'fastq')
 
-                    last_length = len(rna_seq)
                     writer.writerow([
                         last_length, 
                         start_base_count['A'], start_base_count['C'],
@@ -86,7 +85,10 @@ def bin_rna_size(rna_file, min_length, max_length):
                 last_length = len(rna_seq)
 
             current_rnas.append(rna_seq)
-            start_base_count[rna_seq[0]] += 1
+            try:
+                start_base_count[rna_seq[0]] += 1
+            except KeyError:
+                print(f'Warning : An RNA started with ambiguous nt {rna_seq[0]}')
 
     return table_path
 

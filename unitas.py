@@ -41,8 +41,6 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=False, unita
 
     os.chdir(CWD)
 
-    # TODO: second pass of unitas - how best to do that?
-
 def merge_summary():
     '''
     Merge together the summery files into one CSV
