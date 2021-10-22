@@ -11,9 +11,9 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-from config import get_config_key
+from config import do_log, get_config_key
 
-def run_unitas_annotation(small_rna, species_name, ref_files, quiet=False, unitas_output='.'):
+def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_output='.'):
     '''
     Run Unitas on the small RNAs, given a file and species name
     '''
@@ -34,8 +34,8 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=False, unita
 
     unitas_command = unitas_command + get_config_key('cli-tools', 'unitas', 'unitas_params')
 
-    print('==> Running first unitas pass')
-    result = run(unitas_command, capture_output=quiet)
+    do_log(quiet, '==> Running first unitas pass')
+    result = run(unitas_command, capture_output=(quiet != 0))
 
     result.check_returncode()
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os.path
 import glob
 import shutil
@@ -12,60 +14,61 @@ from create_noncoding import extract_noncoding
 from unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
 from targetid import revcomp_input_file, find_targets, build_summery_files
 
-from config import get_config_key, mkdir_if_not_exists, load_config
+from config import get_config_key, mkdir_if_not_exists, load_config, do_log
 
 def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     '''
     Code to run when the user chooses the process command
     '''
-    print('==> Starting command Process')
+    do_log(quiet, '==> Starting command Process')
     small_rna_path = small_rna
 
     if adapter is not None or front is not None or anywhere is not None:
         run_trim(small_rna_path, adapter, front, anywhere)
         small_rna_path = os.path.join(get_config_key('general', 'output_directory'), 'trimmed_rna.fastq')
     else:
-        print('==> No adapter sequence provided, skipping trim step')
+        do_log(quiet, '==> No adapter sequence provided, skipping trim step')
 
     if cutoff > 0:
         run_fastqc(small_rna_path, quiet=quiet)
-        cut_rna_below_cutoff(small_rna_path, cutoff)
+        cut_rna_below_cutoff(small_rna_path, cutoff, quiet=quiet)
     else:
         # create the cut_sequences.fastq, even if fastqc wasn't run
         shutil.copy2(small_rna_path, os.path.join(get_config_key('general', 'output_directory'), 'cut_sequences.fastq'))
 
-    print('==> Completed command Process')
+    do_log(quiet, '==> Completed command Process')
 
 def sort_command(genome, small_rna, min_length, max_length, quiet):
     '''
     Code to run when the user chooses the sort command
     '''
-    print('==> Starting command Sort')
+    do_log(quiet, '==> Starting command Sort')
     new_fastq = align_to_genome(genome, small_rna, quiet=quiet)
-    table_file = bin_rna_size(new_fastq, min_length, max_length)
+    table_file = bin_rna_size(new_fastq, min_length, max_length, quiet=quiet)
 
     graph_length(table_file)
 
-    print('==> Completed command Sort')
+    do_log(quiet, '==> Completed command Sort')
 
-def extractnc_command(genome, gff):
+def extractnc_command(genome, gff, quiet):
     '''
     Code to run when the user chooses to extrat the noncoding mRNA reigon
     '''
-    print('==> Starting command extractNC')
+    do_log(quiet, '==> Starting command extractNC')
 
     extract_noncoding(
         genome, gff, 
+        quiet=quiet,
         output=os.path.join(get_config_key('general', 'output_directory'), 'noncoding.fasta')
     )
 
-    print('==> Completed command extractNC')
+    do_log(quiet, '==> Completed command extractNC')
 
 def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     '''
     Code to run when the user chooses the unitas command
     '''
-    print('==> Starting command Unitas')
+    do_log(quiet, '==> Starting command Unitas')
     UNITAS_OUTPUT = os.path.join(get_config_key('general', 'output_directory'), 'unitas')
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
@@ -75,26 +78,26 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
 
     table_path = merge_summary()
     graph_unitas_classification_type(table_path)
-    print('==> Completed command Unitas')
+    do_log(quiet, '==> Completed command Unitas')
 
 def targetid_command(small_rna, targets, min_seq_length, quiet):
     '''
     Code to run when the user chooses the targetid command
     '''
-    print('==> Starting TargetID command')
+    do_log(quiet, '==> Starting TargetID command')
 
     if targets is None:
         raise Exception('You need to supply at least one target file with -t')
 
-    revcomp_file = revcomp_input_file(small_rna)
+    revcomp_file = revcomp_input_file(small_rna, quiet=quiet)
     sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, quiet=quiet)
-    build_summery_files(sam_files)
+    build_summery_files(sam_files, quiet=quiet)
 
-    print('==> Ending TargetID command')
+    do_log(quiet, '==> Ending TargetID command')
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Pipeline to process small RNAs')
-    parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='store_true')
+    parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='count', default=0)
     parser.add_argument('-C', '--path-to-config', help='Path to the TOML format config file to use', default='config.toml')
 
     subparsers = parser.add_subparsers(dest='command')
@@ -153,7 +156,6 @@ if __name__ == '__main__':
             except KeyError:
                 return None
 
-    print(get_config_key('general', 'output_directory'))
     mkdir_if_not_exists(get_config_key('general', 'output_directory'))
 
     if args.command == 'process':
@@ -178,7 +180,8 @@ if __name__ == '__main__':
     if args.command == 'extractnc':
         extractnc_command(
             get_command_args('genome'),
-            get_command_args('gff_file')
+            get_command_args('gff_file'),
+            get_command_args('quiet')
         )
 
     if args.command == 'unitas':

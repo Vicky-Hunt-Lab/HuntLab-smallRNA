@@ -9,9 +9,9 @@ from math import inf
 
 from Bio import SeqIO
 
-from config import get_config_key, mkdir_if_not_exists
+from config import get_config_key, mkdir_if_not_exists, do_log
 
-def run_fastqc(path_to_fastq, quiet=False):
+def run_fastqc(path_to_fastq, quiet=0):
     '''
     Call fastqc and trim off any bases with a lower quatile below 20
     '''
@@ -26,13 +26,13 @@ def run_fastqc(path_to_fastq, quiet=False):
 
     command = command + get_config_key('cli-tools', 'fastqc', 'fastqc_params')
 
-    print('====> Running FastQC')
-    result = run(command, capture_output=(quiet))
+    do_log(quiet, '====> Running FastQC')
+    result = run(command, capture_output=(quiet != 0))
     result.check_returncode()
 
     return result.returncode == 0
 
-def cut_rna_below_cutoff(fastq_path, cutoff):
+def cut_rna_below_cutoff(fastq_path, cutoff, quiet=0):
     '''
     Read the fastqc result and automatically trim off any base that is below the threshold
     '''
@@ -42,7 +42,7 @@ def cut_rna_below_cutoff(fastq_path, cutoff):
 
     # TODO: produce better error messages
 
-    print('====> Extracting results from FastQC Output')
+    do_log(quiet, '====> Extracting results from FastQC Output')
 
     # Unzip file produced by fastqc
     path_to_zip = os.path.join(get_config_key('general', 'output_directory'), 'fastqc')

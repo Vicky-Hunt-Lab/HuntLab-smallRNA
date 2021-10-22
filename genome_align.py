@@ -9,9 +9,9 @@ import numpy as np
 from Bio import SeqIO
 from matplotlib import pyplot as plt
 
-from config import get_config_key, mkdir_if_not_exists
+from config import get_config_key, mkdir_if_not_exists, do_log
 
-def align_to_genome(genome, small_rnas, quiet=False):
+def align_to_genome(genome, small_rnas, quiet=0):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
@@ -38,14 +38,14 @@ def align_to_genome(genome, small_rnas, quiet=False):
 
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bbmap', 'bbmap_align_params')
 
-    print('====> Building BBMap Index')
-    run(bbmap_build_index, capture_output=quiet)
-    print('====> Aligning reads to the genome')
-    run(bbmap_align_reads, capture_output=quiet)
+    do_log(quiet, '====> Building BBMap Index')
+    run(bbmap_build_index, capture_output=(quiet != 0))
+    do_log(quiet, '====> Aligning reads to the genome')
+    run(bbmap_align_reads, capture_output=(quiet != 0))
 
     return RESULT_FASTQ
 
-def bin_rna_size(rna_file, min_length, max_length):
+def bin_rna_size(rna_file, min_length, max_length, quiet=0):
     '''
     Bin the RNAs in the RNA file into new files by length
     '''
@@ -53,7 +53,7 @@ def bin_rna_size(rna_file, min_length, max_length):
     BINS_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'binned_rna')
     mkdir_if_not_exists(BINS_DIRECTORY)
 
-    print('====> Sorting RNA into arrays by length')
+    do_log(quiet, '====> Sorting RNA into arrays by length')
     rnas = sorted(SeqIO.parse(rna_file, 'fastq'), key=lambda x: len(x))
 
     table_path = os.path.join(get_config_key('general', 'output_directory'), 'rna_length_report.csv')
@@ -88,7 +88,7 @@ def bin_rna_size(rna_file, min_length, max_length):
             try:
                 start_base_count[rna_seq[0]] += 1
             except KeyError:
-                print(f'Warning : An RNA started with ambiguous nt {rna_seq[0]}')
+                do_log(quiet, f'Warning : An RNA started with ambiguous nt {rna_seq[0]}')
 
     return table_path
 

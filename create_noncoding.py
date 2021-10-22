@@ -4,6 +4,8 @@ from gffutils.iterators import DataIterator
 from sys import argv
 from collections import defaultdict
 
+from config import do_log
+
 def get_pairs(array):
     '''
     Return pairs of values from an array
@@ -13,10 +15,9 @@ def get_pairs(array):
 
 def extract_fragments(sequences, coordinates):
     '''
-    Pull out fragments from a set of sequences basied on a 
+    Pull out fragments from a set of sequences based on a 
     dictionary of coordinates
     '''
-    # TODO: check this
     for seq in sequences:
         if seq.id + '+' in coordinates.keys():
             for i, j in get_pairs(coordinates[seq.id + '+']):
@@ -55,7 +56,6 @@ def merge_cds(coding_reigon):
     '''
     Sometime CDS overlap, this just merges them into the longest reigon
     '''
-    
     for key in coding_reigon.keys():
         new_cds = []
 
@@ -72,14 +72,14 @@ def merge_cds(coding_reigon):
 
         coding_reigon[key] = new_cds
 
-def extract_noncoding(genome, gff_path, output='result.fasta'):
+def extract_noncoding(genome, gff_path, quiet=0, output='result.fasta'):
     '''
     Extract the noncoding reigon from the genome, basied on a GFF file
     '''
     gff_iter = DataIterator(gff_path)
     genome_data = SeqIO.parse(genome, 'fasta')
 
-    print('====> Calculating coordinates')
+    do_log(quiet, '====> Calculating coordinates')
 
     coordinates = defaultdict(lambda: [])
     mRNAs = defaultdict(lambda: [])
@@ -92,7 +92,7 @@ def extract_noncoding(genome, gff_path, output='result.fasta'):
         if item[2] == 'CDS':
             coding_reigon[item[0] + item[6]].append([int(item[3]), int(item[4])])
 
-    print('====> Merging and validating coordinates')
+    do_log(quiet, '====> Merging and validating coordinates')
 
     merge_cds(coding_reigon)
     merge_cds(mRNAs)
@@ -108,7 +108,7 @@ def extract_noncoding(genome, gff_path, output='result.fasta'):
             coordinates[key].append(item[0])
             coordinates[key].append(item[1])
 
-    print('====> Extarcting fragments')
+    do_log(quiet, '====> Extarcting fragments')
     
     for key in coordinates.keys():
         coordinates[key].sort()

@@ -103,3 +103,10 @@ def mkdir_if_not_exists(path):
     '''
     if not os.path.exists(path):
         os.mkdir(path)
+
+def do_log(quiet, *print_args, **print_kwds):
+    '''
+    Function that prints if quiet isn't set
+    '''
+    if quiet < 2:
+        print(*print_args, **print_kwds)

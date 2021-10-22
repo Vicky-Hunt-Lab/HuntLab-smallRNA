@@ -8,14 +8,14 @@ import pysam
 
 from Bio import SeqIO
 
-from config import get_config_key, mkdir_if_not_exists
+from config import get_config_key, mkdir_if_not_exists, do_log
 
-def revcomp_input_file(smallRNA):
+def revcomp_input_file(smallRNA, quiet=0):
     '''
     Create a file containing the reverse complement of a file of small RNA
     '''
 
-    print('====> Reverse complimenting RNA...')
+    do_log(quiet, '====> Reverse complimenting RNA...')
     PATH_TO_REVCOMP = os.path.join(get_config_key('general', 'output_directory'), 'revcomp_rna.fastq')
 
     def do_revcomp(seq):
@@ -31,7 +31,7 @@ def revcomp_input_file(smallRNA):
     return PATH_TO_REVCOMP
 
 
-def find_targets(smallRNA, possible_target_list, min_seq_length=2, quiet=False):
+def find_targets(smallRNA, possible_target_list, min_seq_length=2, quiet=0):
     '''
     Align the small RNA against the lists of possible targets with bowtie2 and
     analyse the output
@@ -48,7 +48,7 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, quiet=False):
     os.chdir(INDEX_DIR)
 
     for target in possible_target_list:
-        print(f'====> Builing index for {target}')
+        do_log(quiet, f'====> Builing index for {target}')
         INDEX_NAME = os.path.basename(target) + '_index'
 
         bowtie2_build_command = [
@@ -59,9 +59,9 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, quiet=False):
 
         bowtie2_build_command = bowtie2_build_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
 
-        run(bowtie2_build_command, capture_output=quiet)
+        run(bowtie2_build_command, capture_output=(quiet != 0))
 
-        print(f'====> Aligning small RNA against {target}')
+        do_log(quiet, f'====> Aligning small RNA against {target}')
 
         sam_files.append(os.path.join(SAM_DIR, INDEX_NAME + '.sam'))
         bowtie2_align_command = [
@@ -79,19 +79,19 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, quiet=False):
 
         bowtie2_align_command = bowtie2_align_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
-        run(bowtie2_align_command, capture_output=quiet)
+        run(bowtie2_align_command, capture_output=(quiet != 0))
 
     os.chdir(CWD)
 
     return sam_files
 
-def build_summery_files(sam_files):
+def build_summery_files(sam_files, quiet=0):
     '''
     Takes the alignment SAM and extracts the sequences into a summary file and
     a set of FASTA files
     '''
     
-    print('====> Removing unaligend sequences and building summary')
+    do_log(quiet, '====> Removing unaligend sequences and building summary')
     
     with open(os.path.join(get_config_key('general', 'output_directory'), 'rna_target_list.tsv'), 'w') as tablefile:
         writer = csv.writer(tablefile, delimiter='\t')

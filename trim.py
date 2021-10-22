@@ -2,9 +2,9 @@ import os.path
 
 from subprocess import run
 
-from config import get_config_key
+from config import do_log, get_config_key
 
-def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters):
+def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters, quiet=0):
     '''
     Call cutadapt to remove adapters
     '''
@@ -29,8 +29,8 @@ def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters):
 
     command = command + get_config_key('cli-tools', 'trim', 'trim_params')
 
-    print('====> Removing adpters from ends')
-    print(command)
+    do_log(quiet, '====> Removing adpters from ends')
+    do_log(quiet, command)
     with open(outfile, 'w') as f:
         result = run(command, stdout=f)
 
