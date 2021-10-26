@@ -15,3 +15,7 @@ dependencies:
   - unitas
   - bowtie2
   - samtools
+  - pip
+  - pip:
+    - .
+

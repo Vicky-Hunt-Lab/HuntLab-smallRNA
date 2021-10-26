@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+from distutils.core import setup
 
 setup(
     name='HuntLab-smallRNA',
     version='1.0.0',
-    packages=[find_packages(include=['hlsmallrna', 'hlsmallrna.*'])],
+    description='Small RNA scripts developed for use in the Hunt Lab',
+    author='Kieran Reynolds',
+    packages=['hlsmallrna'],
     scripts=['bin/label_for_unitas'],
     entry_points = {
         'console_scripts': [

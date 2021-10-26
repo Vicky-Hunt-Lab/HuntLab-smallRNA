@@ -95,7 +95,7 @@ def targetid_command(small_rna, targets, min_seq_length, quiet):
 
     do_log(quiet, '==> Ending TargetID command')
 
-if __name__ == '__main__':
+def main():
     parser = ArgumentParser(description='Pipeline to process small RNAs')
     parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='count', default=0)
     parser.add_argument('-C', '--path-to-config', help='Path to the TOML format config file to use', default='config.toml')
@@ -224,3 +224,6 @@ if __name__ == '__main__':
             get_command_args('refseq'),
             get_command_args('quiet')
         )
+
+if __name__ == '__main__':
+    main()
