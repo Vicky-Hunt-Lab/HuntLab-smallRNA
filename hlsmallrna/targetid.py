@@ -8,7 +8,7 @@ import pysam
 
 from Bio import SeqIO
 
-from config import get_config_key, mkdir_if_not_exists, do_log
+from .config import get_config_key, mkdir_if_not_exists, do_log
 
 def revcomp_input_file(smallRNA, quiet=0):
     '''

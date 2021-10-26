@@ -9,7 +9,7 @@ import numpy as np
 from Bio import SeqIO
 from matplotlib import pyplot as plt
 
-from config import get_config_key, mkdir_if_not_exists, do_log
+from .config import get_config_key, mkdir_if_not_exists, do_log
 
 def align_to_genome(genome, small_rnas, quiet=0):
     '''

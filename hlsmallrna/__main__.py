@@ -7,14 +7,14 @@ import shutil
 from math import inf
 from argparse import ArgumentParser
 
-from trim import run_trim
-from fastqc import run_fastqc, cut_rna_below_cutoff
-from genome_align import align_to_genome, bin_rna_size, graph_length
-from create_noncoding import extract_noncoding
-from unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
-from targetid import revcomp_input_file, find_targets, build_summery_files
+from .trim import run_trim
+from .fastqc import run_fastqc, cut_rna_below_cutoff
+from .genome_align import align_to_genome, bin_rna_size, graph_length
+from .create_noncoding import extract_noncoding
+from .unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
+from .targetid import revcomp_input_file, find_targets, build_summery_files
 
-from config import get_config_key, mkdir_if_not_exists, load_config, do_log
+from .config import get_config_key, mkdir_if_not_exists, load_config, do_log
 
 def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     '''

@@ -11,7 +11,7 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-from config import do_log, get_config_key
+from .config import do_log, get_config_key
 
 def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_output='.'):
     '''

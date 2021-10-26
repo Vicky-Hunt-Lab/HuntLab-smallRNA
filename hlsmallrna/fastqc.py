@@ -9,7 +9,7 @@ from math import inf
 
 from Bio import SeqIO
 
-from config import get_config_key, mkdir_if_not_exists, do_log
+from .config import get_config_key, mkdir_if_not_exists, do_log
 
 def run_fastqc(path_to_fastq, quiet=0):
     '''

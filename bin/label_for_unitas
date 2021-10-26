@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+
+from Bio import SeqIO
+
+def prepend_label_to_id(label, seqs):
+    for seq in seqs:
+        seq.id = label + '|' + seq.id
+
+        yield seq
+
+if __name__ == '__main__':
+    parser = ArgumentParser(description='Program to automatically prepend unitas labels to all the sequences in a FASTA file')
+
+    parser.add_argument('-o', '--output', help='File to output to, defaults to labelled.fasta', default='labeled.fasta')
+
+    parser.add_argument('label', help='Label to prepend to the sequences in a fasta file')
+    parser.add_argument('file_path', help='Path to the fasta file to label')
+
+    args = parser.parse_args()
+
+    data = SeqIO.parse(args.file_path, 'fasta')
+    labelled_data = prepend_label_to_id(args.label, data)
+
+    SeqIO.write(labelled_data, args.output, 'fasta')

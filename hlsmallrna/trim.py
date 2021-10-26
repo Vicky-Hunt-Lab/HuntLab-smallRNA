@@ -2,7 +2,7 @@ import os.path
 
 from subprocess import run
 
-from config import do_log, get_config_key
+from .config import do_log, get_config_key
 
 def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters, quiet=0):
     '''

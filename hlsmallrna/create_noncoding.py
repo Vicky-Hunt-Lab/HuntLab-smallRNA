@@ -4,7 +4,7 @@ from gffutils.iterators import DataIterator
 from sys import argv
 from collections import defaultdict
 
-from config import do_log
+from .config import do_log
 
 def get_pairs(array):
     '''
