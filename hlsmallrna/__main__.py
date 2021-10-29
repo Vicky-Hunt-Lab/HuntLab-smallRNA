@@ -80,7 +80,7 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     graph_unitas_classification_type(table_path)
     do_log(quiet, '==> Completed command Unitas')
 
-def targetid_command(small_rna, targets, min_seq_length, quiet):
+def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, quiet):
     '''
     Code to run when the user chooses the targetid command
     '''
@@ -90,7 +90,7 @@ def targetid_command(small_rna, targets, min_seq_length, quiet):
         raise Exception('You need to supply at least one target file with -t')
 
     revcomp_file = revcomp_input_file(small_rna, quiet=quiet)
-    sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, quiet=quiet)
+    sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
     build_summery_files(sam_files, quiet=quiet)
 
     do_log(quiet, '==> Ending TargetID command')
@@ -125,8 +125,9 @@ def main():
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
 
     parser_targetid = subparsers.add_parser('targetid', help='Align small RNA to a number of genome features to find out what is targeted')
-    parser_targetid.add_argument('-m', '--min-seq-length', help='Minimum sequence length to propably align', default=5)
+    parser_targetid.add_argument('-m', '--min-seq-length', help='Minimum sequence length to properly align', default=5)
     parser_targetid.add_argument('-t', '--target-files', help='Files containing genome features that could be targeted', nargs='+')
+    parser_targetid.add_argument('--num-mismatches', help='Number of mismatches to allow in the alignment, defaults to 0', default=0, type=int)
     parser_targetid.add_argument('small_rna', help='Path to the FASTQ containing the small RNA to find targets of')
 
     parser_all = subparsers.add_parser('all', help='Run process, sort and unitas one after the other')
@@ -197,6 +198,7 @@ def main():
             get_command_args('small_rna'),
             get_command_args('target_files'),
             get_command_args('min_seq_length'),
+            get_command_args('num_mismatches'),
             get_command_args('quiet')
         )
 
