@@ -59,6 +59,12 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
 
         bowtie2_build_command = bowtie2_build_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
 
+        if get_config_key('cli-tools', 'bowtie2', 'bowtie2_pass_threads'):
+            threads = get_config_key('general', 'threads')
+
+            bowtie2_build_command.append('--threads')
+            bowtie2_build_command.append(str(threads))
+
         run(bowtie2_build_command, capture_output=(quiet != 0))
 
         do_log(quiet, f'====> Aligning small RNA against {target}')
@@ -98,13 +104,19 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
 
         bowtie2_align_command = bowtie2_align_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
+        if get_config_key('cli-tools', 'bowtie2', 'bowtie2_pass_threads'):
+            threads = get_config_key('general', 'threads')
+
+            bowtie2_align_command.append('--threads')
+            bowtie2_align_command.append(str(threads))
+
         run(bowtie2_align_command, capture_output=(quiet != 0))
 
     os.chdir(CWD)
 
     return sam_files
 
-def build_summery_files(sam_files, quiet=0):
+def build_summary_files(sam_files, quiet=0):
     '''
     Takes the alignment SAM and extracts the sequences into a summary file and
     a set of FASTA files

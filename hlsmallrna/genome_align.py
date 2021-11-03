@@ -38,6 +38,12 @@ def align_to_genome(genome, small_rnas, quiet=0):
 
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bbmap', 'bbmap_align_params')
 
+    if get_config_key('cli-tools', 'bbmap', 'bbmap_pass_threads'):
+        threads = get_config_key('general', 'threads')
+
+        bbmap_build_index.append('threads=' + str(threads))
+        bbmap_align_reads.append('threads=' + str(threads))
+
     do_log(quiet, '====> Building BBMap Index')
     run(bbmap_build_index, capture_output=(quiet != 0))
     do_log(quiet, '====> Aligning reads to the genome')

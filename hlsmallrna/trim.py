@@ -27,6 +27,12 @@ def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters, quiet=0):
         command.append('-b')
         command.append(both_adapters)
 
+    if get_config_key('cli-tools', 'trim', 'trim_pass_threads'):
+        threads = get_config_key('general', 'threads')
+
+        command.append('-j')
+        command.append(str(threads))
+
     command = command + get_config_key('cli-tools', 'trim', 'trim_params')
 
     do_log(quiet, '====> Removing adpters from ends')

@@ -26,6 +26,12 @@ def run_fastqc(path_to_fastq, quiet=0):
 
     command = command + get_config_key('cli-tools', 'fastqc', 'fastqc_params')
 
+    if get_config_key('cli-tools', 'fastqc', 'fastqc_pass_threads'):
+        threads = get_config_key('general', 'threads')
+
+        command.append('-t')
+        command.append(str(threads))
+
     do_log(quiet, '====> Running FastQC')
     result = run(command, capture_output=(quiet != 0))
     result.check_returncode()

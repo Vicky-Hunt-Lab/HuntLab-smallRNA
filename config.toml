@@ -1,3 +1,4 @@
+# Configeration file I have been using for testing
 [general]
 threads = 8
 output_directory = "./output"

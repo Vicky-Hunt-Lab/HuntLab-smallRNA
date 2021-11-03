@@ -12,7 +12,7 @@ from .fastqc import run_fastqc, cut_rna_below_cutoff
 from .genome_align import align_to_genome, bin_rna_size, graph_length
 from .create_noncoding import extract_noncoding
 from .unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
-from .targetid import revcomp_input_file, find_targets, build_summery_files
+from .targetid import revcomp_input_file, find_targets, build_summary_files
 
 from .config import get_config_key, mkdir_if_not_exists, load_config, do_log
 
@@ -52,7 +52,7 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
 
 def extractnc_command(genome, gff, quiet):
     '''
-    Code to run when the user chooses to extrat the noncoding mRNA reigon
+    Code to run when the user chooses to extract the noncoding mRNA reigon
     '''
     do_log(quiet, '==> Starting command extractNC')
 
@@ -91,7 +91,7 @@ def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, qui
 
     revcomp_file = revcomp_input_file(small_rna, quiet=quiet)
     sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
-    build_summery_files(sam_files, quiet=quiet)
+    build_summary_files(sam_files, quiet=quiet)
 
     do_log(quiet, '==> Ending TargetID command')
 

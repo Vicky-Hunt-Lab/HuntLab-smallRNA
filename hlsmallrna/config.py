@@ -26,15 +26,18 @@ DEFALT_CONFIG = {
             'fastqc_params': []
         },
         'bbmap': {
+            'bbmap_pass_threads': True,
             'path_to_bbmap': 'bbmap.sh',
             'bbmap_align_params': [],
             'bbmap_index_params': []
         },
         'unitas': {
+            'unitas_pass_threads': True,
             'path_to_unitas': 'unitas',
             'unitas_params': []
         },
         'bowtie2': {
+            'bowtie2_pass_threads': True,
             'path_to_bowtie2': 'bowtie2',
             'bowtie2_params': [],
             'path_to_bowtie2_build': 'bowtie2-build',

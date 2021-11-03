@@ -34,6 +34,12 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_ou
 
     unitas_command = unitas_command + get_config_key('cli-tools', 'unitas', 'unitas_params')
 
+    if get_config_key('cli-tools', 'unitas', 'unitas_pass_threads'):
+        threads = get_config_key('general', 'threads')
+
+        unitas_command.append('-threads')
+        unitas_command.append(str(threads))
+
     do_log(quiet, '==> Running first unitas pass')
     result = run(unitas_command, capture_output=(quiet != 0))
 
