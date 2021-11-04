@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import csv
+import enum
+from os import chroot, path
 import re
 
 from argparse import ArgumentParser
@@ -168,6 +170,67 @@ def process_feature_gffutils(path_to_gff, output, feature, scaffold_index=None):
         writer.writerow(['Chrom', 'Name', 'Start', 'End'])
         writer.writerows(antisene_targets)
 
+def process_fa_out(path_to_fa_out, output, feature, scaffold_index=None):
+    '''
+    Custom function to parse RepeatMasker .fa.out files
+    '''
+
+    sense_targets = []
+    antisense_targets = []
+
+    with open(path_to_fa_out) as f:
+        for i, line in enumerate(f):
+            if i < 3:
+                continue
+
+            line = line.split()
+            name = line[10]
+
+            if scaffold_index is None:
+                if line[8].lower() == 'c':
+                    antisense_targets.append([
+                        line[4], line[10],
+                        line[5], line[6]
+                    ])
+                else:
+                    sense_targets.append([
+                        line[4], line[10],
+                        line[5], line[6]
+                    ])
+            else:
+                chrom = line[4]
+                start = int(line[5])
+                end = int(line[6])
+
+                if chrom in scaffold_index:
+                    start += scaffold_index[chrom][1]
+                    end += scaffold_index[chrom][1]
+
+                    chrom = scaffold_index[chrom][0]
+
+                    if line[8].lower() == 'c':
+                        antisense_targets.append([
+                            chrom, line[10],
+                            start, end
+                        ])
+                    else:
+                        sense_targets.append([
+                            chrom, line[10],
+                            start, end
+                        ])
+
+    with open('sense_' + output, 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+
+        writer.writerow(['Chrom', 'Name', 'Start', 'End'])
+        writer.writerows(sense_targets)
+
+    with open('antisense_' + output, 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+
+        writer.writerow(['Chrom', 'Name', 'Start', 'End'])
+        writer.writerows(antisense_targets)
+
 if __name__ == '__main__':
     parser = ArgumentParser(description='Convert common bioinformatics file formats into coordinate file to plot')
 
@@ -249,3 +312,5 @@ if __name__ == '__main__':
             process_feature_pysam(args.input_file, filetype, args.output, scaffold_index=scaffold_index)
         elif filetype == 'gff':
             process_feature_gffutils(args.input_file, args.output, args.feature, scaffold_index=scaffold_index)
+        elif filetype == 'fa_out':
+            process_fa_out(args.input_file, args.output, args.feature, scaffold_index=scaffold_index)
