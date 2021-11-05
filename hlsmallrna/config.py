@@ -56,12 +56,16 @@ def load_config(path_to_config):
     Load the config file into the global CONFIG varible and validate the result
     '''
     global CONFIG
-    CONFIG = toml.load(path_to_config)
+    
+    try:
+        CONFIG = toml.load(path_to_config)
 
-    result = validate_toml(CONFIG, DEFALT_CONFIG)
+        result = validate_toml(CONFIG, DEFALT_CONFIG)
 
-    if result is not None:
-        raise Exception(result)
+        if result is not None:
+            raise Exception(result)
+    except FileNotFoundError:
+        pass
 
 def validate_toml(in_dict, compare):
     '''
