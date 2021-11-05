@@ -1,14 +1,18 @@
 # Small RNA Pipeline for the Hunt Lab
 
-This pipeline is designed to automate commen tasks to do with small RNA analysis in the lab. It currently enables four different tasks:
+This pipeline is designed to automate commen tasks to do with small RNA analysis in the lab. It currently enables six different tasks:
 
 1. "Process" - Takes the small RNA, removes specified adapter sequences (with cutadapt) and performs a quality check with FastQC. Automatically trims the 3' end to remove bases that fail to pass a minimun threashold.
 
 2. "Sort" - Aligns the small RNA against a specified genome, removes ones that fail to align and splits them into files baised on their length
 
-3. "Classify" - Uses unitas to try and classify the small RNA into groups and also runs a differntial expression analysis with edgeR to allow visulising which RNA are upregulated.
+3. "ExtractNC" - Extract the non-coding reigon to use with unitas. Needs a FASTA file containing a genome and a GFF conataining feature labels
 
-4. "TargetID" - Align small RNAs aganist a number of potential targets and creates a list of targets for each small RNA
+4. "Classify" - Uses unitas to try and classify the small RNA into groups and also runs a differntial expression analysis with edgeR to allow visulising which RNA are upregulated.
+
+5. "TargetID" - Align small RNAs aganist a number of potential targets and creates a list of targets for each small RNA
+
+6. "All" - run steps 1, 2 and 4 one after the other - piping the output of one into the next
 
 ## Configeration File
 
@@ -48,6 +52,7 @@ target_files = [
     "/path/to/targetseq2"
 ]
 min_seq_length = 9
+num_mismatches = 0
 
 # Section containing configeration for each of the exteranl programs called while in use
 [cli-tools]
@@ -63,15 +68,18 @@ path_to_fastqc = "fastqc"
 fastqc_params = []
 
 [cli-tools.bbmap]
+bbmap_pass_threads = true
 path_to_bbmap = "bbmap.sh"
 bbmap_align_params = []
 bbmap_index_params = []
 
 [cli-tools.unitas]
+unitas_pass_threads = true
 path_to_unitas = "unitas"
 unitas_params = []
 
 [cli-tools.bowtie2]
+bowtie2_pass_threads = true
 path_to_bowtie2 = "bowtie2"
 bowtie2_params = []
 path_to_bowtie2_build = "bowtie2-build"
