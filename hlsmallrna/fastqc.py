@@ -43,11 +43,6 @@ def cut_rna_below_cutoff(fastq_path, cutoff, quiet=0):
     Read the fastqc result and automatically trim off any base that is below the threshold
     '''
 
-    # TODO: Ask about what I should be cutting, currently just cutting from the 3' end where
-    # all subsiquent bases are < cutoff
-
-    # TODO: produce better error messages
-
     do_log(quiet, '====> Extracting results from FastQC Output')
 
     # Unzip file produced by fastqc

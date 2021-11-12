@@ -6,8 +6,6 @@ from multiprocessing import cpu_count
 
 CONFIG = {}
 
-# TODO: thread passing to programs
-
 DEFALT_CONFIG = {
     'general': {
         'threads': cpu_count(),
@@ -51,12 +49,12 @@ DEFALT_CONFIG = {
     }
 }
 
-def load_config(path_to_config):
+def load_config(path_to_config, quiet=0):
     '''
     Load the config file into the global CONFIG varible and validate the result
     '''
     global CONFIG
-    
+
     try:
         CONFIG = toml.load(path_to_config)
 
@@ -65,7 +63,7 @@ def load_config(path_to_config):
         if result is not None:
             raise Exception(result)
     except FileNotFoundError:
-        pass
+        do_log(quiet, f'No {path_to_config} found, running with defaults...')
 
 def validate_toml(in_dict, compare):
     '''

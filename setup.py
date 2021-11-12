@@ -8,10 +8,11 @@ setup(
     description='Small RNA scripts developed for use in the Hunt Lab',
     author='Kieran Reynolds',
     packages=['hlsmallrna'],
-    scripts=['bin/label_for_unitas', 'bin/build_coord_files'],
+    scripts=['bin/label_for_unitas', 'bin/build_coord_files', 'bin/revcomp_rna', 'bin/overlap_ss.sh'],
     entry_points = {
         'console_scripts': [
-            'hlsmallrna = hlsmallrna:climain',                  
+            'hlsmallrna = hlsmallrna:climain',
+            'overlap_ss = hlsmallrna:ssoverlap_main'               
         ]          
     }
 )

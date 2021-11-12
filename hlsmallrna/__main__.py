@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+from os import path
 import os.path
 import glob
 import shutil
 
 from math import inf
 from argparse import ArgumentParser
+from Bio import SeqIO
+
+from Bio.SeqIO import parse
 
 from .trim import run_trim
 from .fastqc import run_fastqc, cut_rna_below_cutoff
@@ -13,8 +17,10 @@ from .genome_align import align_to_genome, bin_rna_size, graph_length
 from .create_noncoding import extract_noncoding
 from .unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
 from .targetid import revcomp_input_file, find_targets, build_summary_files
+from .ss_overlap import samestrand_overlap
 
 from .config import get_config_key, mkdir_if_not_exists, load_config, do_log
+from hlsmallrna import genome_align
 
 def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     '''
@@ -144,7 +150,7 @@ def main():
 
     args = parser.parse_args()
 
-    load_config(args.path_to_config)
+    load_config(args.path_to_config, quiet=args.quiet)
 
     def get_command_args(name):
         arguments = vars(args)
@@ -226,6 +232,62 @@ def main():
             get_command_args('refseq'),
             get_command_args('quiet')
         )
+
+def main_ssoverlap():
+    '''
+    Main function form the overlap_ss script
+    '''
+    
+    parser = ArgumentParser(description='Looks for overlaps of two classes of RNA on the same strand of DNA')
+
+    parser.add_argument('genome', help='FASTA file containing the genome of the organism')
+    parser.add_argument('rna_file_1', help='File containing the RNA to use as a base')
+    parser.add_argument('rna_file_2', help='File containing the RNA to look for overlaps with')
+
+    parser.add_argument('-q', '--quiet', help='Supress output from intermediate commands', action='count', default=0)    
+
+    args = parser.parse_args()
+
+    OUTPUT_DIR = os.path.join(get_config_key('general', 'output_directory'), 'samestrand_overlap')
+
+    mkdir_if_not_exists(OUTPUT_DIR)
+
+    do_log(args.quiet, '==> Converting RNA to FASTA format')
+
+    global longest_rna
+    longest_rna = 0
+    for rna_file in [args.rna_file_1, args.rna_file_2]:
+        if (
+            rna_file.endswith('.fa') 
+            or rna_file.endswith('.fasta') 
+            or rna_file.endswith('.fna') 
+            or rna_file.endswith('.ffn') 
+            or rna_file.endswith('.faa') 
+            or rna_file.endswith('.frn')
+        ):
+            filetype = 'fasta'
+        elif rna_file.endswith('.fq') or rna_file.endswith('.fastq'):
+            filetype = 'fastq'
+
+        def convert_to_fasta(seq):
+            global longest_rna
+            if len(seq) > longest_rna:
+                longest_rna = len(seq)
+
+            return seq
+
+        seqs = SeqIO.parse(rna_file, filetype)
+        seqs = map(convert_to_fasta, seqs)
+        SeqIO.write(seqs, os.path.join(OUTPUT_DIR, os.path.basename(rna_file) + '.fasta'), 'fasta')
+
+    samestrand_overlap(
+        args.genome, 
+        os.path.join(OUTPUT_DIR, os.path.basename(args.rna_file_1) + '.fasta'), 
+        os.path.join(OUTPUT_DIR, os.path.basename(args.rna_file_2) + '.fasta'),
+        longest_rna,
+        quiet=args.quiet
+    )
+
 
 if __name__ == '__main__':
     main()
