@@ -132,18 +132,6 @@ def build_summary_files(sam_files, quiet=0):
             samfile = pysam.AlignmentFile(filename, 'r')
             fileheader = samfile.header
 
-            remove_duplicate_command = [
-                get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
-                'view',
-                '-o', filename + '.nodup.sam',
-                filename
-            ]
-
-            remove_duplicate_command = remove_duplicate_command + get_config_key('cli-tools', 'samtools', 'samtools_view_params')
-
-            run(remove_duplicate_command)
-            filename = filename + '.nodup.sam'
-
             for read in samfile:
                 if not read.is_unmapped:
                     query_name = read.query_name
@@ -158,14 +146,30 @@ def build_summary_files(sam_files, quiet=0):
 
                     writer.writerow([query_name, os.path.abspath(filename), r_name, start, end, strand])
 
-            bam_to_fastq_command = [
-                get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
-                'fastq',
-                filename
-            ]
+            try:
+                remove_duplicate_command = [
+                    get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+                    'view',
+                    '-o', filename + '.nodup.sam',
+                    filename
+                ]
 
-            bam_to_fastq_command = bam_to_fastq_command + get_config_key('cli-tools', 'samtools', 'samtools_fastq_params')
+                remove_duplicate_command = remove_duplicate_command + get_config_key('cli-tools', 'samtools', 'samtools_view_params')
+            
+                run(remove_duplicate_command)
+                filename = filename + '.nodup.sam'
 
-            result = run(bam_to_fastq_command, capture_output=True)
-            with open(filename + '.fastq', 'wb') as f:
-                f.write(result.stdout)
+                bam_to_fastq_command = [
+                    get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+                    'fastq',
+                    filename
+                ]
+
+                bam_to_fastq_command = bam_to_fastq_command + get_config_key('cli-tools', 'samtools', 'samtools_fastq_params')
+
+                result = run(bam_to_fastq_command, capture_output=True)
+                with open(filename + '.fastq', 'wb') as f:
+                    f.write(result.stdout)
+
+            except:
+                print('SAMTOOLS convertion failed, skipping creating filtered and FASTQ files...')
