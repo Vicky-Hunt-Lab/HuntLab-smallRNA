@@ -156,7 +156,8 @@ def build_summary_files(sam_files, quiet=0):
 
                 remove_duplicate_command = remove_duplicate_command + get_config_key('cli-tools', 'samtools', 'samtools_view_params')
             
-                run(remove_duplicate_command)
+                result = run(remove_duplicate_command)
+                result.check_returncode()
                 filename = filename + '.nodup.sam'
 
                 bam_to_fastq_command = [
@@ -168,6 +169,7 @@ def build_summary_files(sam_files, quiet=0):
                 bam_to_fastq_command = bam_to_fastq_command + get_config_key('cli-tools', 'samtools', 'samtools_fastq_params')
 
                 result = run(bam_to_fastq_command, capture_output=True)
+                result.check_returncode()
                 with open(filename + '.fastq', 'wb') as f:
                     f.write(result.stdout)
 
