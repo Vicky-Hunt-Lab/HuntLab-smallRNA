@@ -74,38 +74,39 @@ def process_feature_pysam(path_to_sam, filetype, output, scaffold_index=None):
     antisene_targets = []
 
     for alignment in data:
-        if scaffold_index is None:
-            if alignment.is_reverse:
-                antisene_targets.append([
-                    fileheader.get_reference_name(alignment.reference_id), alignment.query_name, 
-                    alignment.reference_start + 1, alignment.reference_start + alignment.query_alignment_end + 1
-                ])
+        if alignment.is_mapped:
+            if scaffold_index is None:
+                if alignment.is_reverse:
+                    antisene_targets.append([
+                        fileheader.get_reference_name(alignment.reference_id), alignment.query_name, 
+                        alignment.reference_start + 1, alignment.reference_start + alignment.query_alignment_end + 1
+                    ])
+                else:
+                    sense_targets.append([
+                        fileheader.get_reference_name(alignment.reference_id), alignment.query_name, 
+                        alignment.reference_start + 1, alignment.reference_start + alignment.query_alignment_end + 1
+                    ])
             else:
-                sense_targets.append([
-                    fileheader.get_reference_name(alignment.reference_id), alignment.query_name, 
-                    alignment.reference_start + 1, alignment.reference_start + alignment.query_alignment_end + 1
-                ])
-        else:
-            name = fileheader.get_reference_name(alignment.reference_id)
-            start = alignment.reference_start + 1
-            end = alignment.reference_start + alignment.query_alignment_end + 1
+                name = fileheader.get_reference_name(alignment.reference_id)
+                start = alignment.reference_start + 1
+                end = alignment.reference_start + alignment.query_alignment_end + 1
 
-            if name in scaffold_index:
-                start += scaffold_index[name][1]
-                end += scaffold_index[name][1]
+                if name in scaffold_index:
+                    start += scaffold_index[name][1]
+                    end += scaffold_index[name][1]
 
-                name = scaffold_index[name][0]
+                    name = scaffold_index[name][0]
 
-            if alignment.is_reverse:
-                antisene_targets.append([
-                    name, alignment.query_name, 
-                    start, end
-                ])
-            else:
-                sense_targets.append([
-                    name, alignment.query_name, 
-                    start, end
-                ])
+                if alignment.is_reverse:
+                    antisene_targets.append([
+                        name, alignment.query_name, 
+                        start, end
+                    ])
+                else:
+                    sense_targets.append([
+                        name, alignment.query_name, 
+                        start, end
+                    ])
 
     with open('sense_' + output, 'w') as f:
         writer = csv.writer(f, delimiter='\t')
