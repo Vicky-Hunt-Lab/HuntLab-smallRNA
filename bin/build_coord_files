@@ -74,7 +74,7 @@ def process_feature_pysam(path_to_sam, filetype, output, scaffold_index=None):
     antisene_targets = []
 
     for alignment in data:
-        if alignment.is_mapped:
+        if not alignment.is_unmapped:
             if scaffold_index is None:
                 if alignment.is_reverse:
                     antisene_targets.append([
