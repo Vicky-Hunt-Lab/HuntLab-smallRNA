@@ -123,8 +123,8 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
         print(f'Error: expected a directory containing small RNA FASTQ of varing lengths, got {small_rna_path}')
         return False
 
-    if species_name == 'x' and len(ref_seqs) < 1:
-        print(f'Error: expected at least one of, a non x species name (-s) or at least one reference file (-r_')
+    if species_name == 'x' and ref_seqs is None:
+        print(f'Error: expected at least one of, a non x species name (-s) or at least one reference file (-r)')
         return False
 
     do_log(quiet, '==> Starting command Unitas')
@@ -188,7 +188,7 @@ def main():
     parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
-    parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=[])
+    parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_unitas.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
 
@@ -205,12 +205,16 @@ def main():
     parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
     parser_all.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_all.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
-    parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=[])
+    parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_all.add_argument('genome', help='Genome to align against')
 
     args = parser.parse_args()
+
+    do_log(args.quiet, f"Output directory set to {os.path.abspath(get_config_key('general', 'output_directory'))}")
+    if os.path.exists(get_config_key('general', 'output_directory')):
+        do_log(args.quiet, 'WARNING: output directory already exists, this run may use previously generated data, if you didn\'t mean this, try again with a different output directory')
 
     load_config(args.path_to_config, quiet=args.quiet)
 

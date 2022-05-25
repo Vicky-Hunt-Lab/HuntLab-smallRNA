@@ -74,7 +74,7 @@ def merge_summary():
                 file_dict_str[str(filename)] = file_table
 
     for key in sorted(file_dict_int.keys()):
-        file_table = file_dict[key]
+        file_table = file_dict_int[key]
 
         while len(new_file) < len(file_table):
             new_file.append(['' for i in range(len(new_file[0]))])
@@ -83,7 +83,7 @@ def merge_summary():
             new_file[i] = new_file[i] + line + ['']
 
     for key in sorted(file_dict_str.keys()):
-        file_table = file_dict[key]
+        file_table = file_dict_str[key]
 
         while len(new_file) < len(file_table):
             new_file.append(['' for i in range(len(new_file[0]))])
@@ -117,14 +117,19 @@ def graph_unitas_classification_type(path_to_table):
 
         for i, header in enumerate(headers):
             if header != '':
-                rna_length = re.findall(r'\d+', header)[0]
+                rna_length = re.findall(r'\d+', header)
 
-                for row in data_rows:
-                    try:
-                        if len(row[i]) > 0 and not row[i][0].isspace():
-                            values[rna_length][row[i]] = float(row[i + 1])
-                    except IndexError:
-                        break
+                if len(rna_length) > 0:
+                    rna_length = rna_length[0]
+
+                    for row in data_rows:
+                        try:
+                            if len(row[i]) > 0 and not row[i][0].isspace():
+                                values[rna_length][row[i]] = float(row[i + 1])
+                        except ValueError:
+                            pass
+                        except IndexError:
+                            break
 
         for length in values:
             labels = labels | set(values[length].keys())
