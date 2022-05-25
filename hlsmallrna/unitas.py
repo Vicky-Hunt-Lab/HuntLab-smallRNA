@@ -51,7 +51,8 @@ def merge_summary():
     '''
     Merge together the summery files into one CSV
     '''
-    file_dict = defaultdict(lambda: [])
+    file_dict_int = defaultdict(lambda: [])
+    file_dict_str = defaultdict(lambda: [])
     new_file = [[]]
 
     for filename in glob.glob(os.path.join(get_config_key('general', 'output_directory'), 'unitas', '*/unitas.annotation_summary.txt')):
@@ -68,11 +69,20 @@ def merge_summary():
                 file_table.append(line)
 
             if len(length) > 0:
-                file_dict[int(length[0])] = file_table
+                file_dict_int[int(length[0])] = file_table
             else:
-                file_dict[filename] = file_table
+                file_dict_str[str(filename)] = file_table
 
-    for key in sorted(file_dict.keys()):
+    for key in sorted(file_dict_int.keys()):
+        file_table = file_dict[key]
+
+        while len(new_file) < len(file_table):
+            new_file.append(['' for i in range(len(new_file[0]))])
+
+        for i, line in enumerate(file_table):
+            new_file[i] = new_file[i] + line + ['']
+
+    for key in sorted(file_dict_str.keys()):
         file_table = file_dict[key]
 
         while len(new_file) < len(file_table):

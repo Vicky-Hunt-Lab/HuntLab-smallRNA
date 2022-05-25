@@ -83,10 +83,11 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
                 '--ignore-quals',
                 '--rdg', '9,1',
                 '--rfg', '9,1',
-                '-M', '0',
                 '-x', INDEX_NAME,
                 '-U', os.path.join(CWD, smallRNA),
-                '-S', sam_files[-1]
+                '-S', sam_files[-1],
+                '-a',
+                '-p', get_config_key('general', 'threads')
             ]
         else:
             bowtie2_align_command = [
@@ -99,7 +100,9 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
                 '-M', '0',
                 '-x', INDEX_NAME,
                 '-U', os.path.join(CWD, smallRNA),
-                '-S', sam_files[-1]
+                '-S', sam_files[-1],
+                '-a',
+                '-p', get_config_key('general', 'threads')
             ]
 
         bowtie2_align_command = bowtie2_align_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')

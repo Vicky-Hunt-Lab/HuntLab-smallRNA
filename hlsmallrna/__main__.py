@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
-from os import path
 import os.path
 import glob
 import shutil
 
 from math import inf
 from argparse import ArgumentParser
-from Bio import SeqIO
 
-from Bio.SeqIO import parse
+from Bio import SeqIO, SeqRecord
+from gffutils.iterators import DataIterator
 
 from .trim import run_trim
 from .fastqc import run_fastqc, cut_rna_below_cutoff
@@ -20,12 +19,39 @@ from .targetid import revcomp_input_file, find_targets, build_summary_files
 from .ss_overlap import samestrand_overlap
 
 from .config import get_config_key, mkdir_if_not_exists, load_config, do_log
-from hlsmallrna import genome_align
+
+def validate_file(path_to_file, file_type):
+    '''
+    Examine a file and determine if it is of the requested file type
+    '''
+    if file_type == 'directory':
+        return os.path.isdir(path_to_file)
+    elif file_type == 'fasta':
+        try:
+            item = next(SeqIO.parse(path_to_file, 'fasta'))
+            return type(item) == SeqRecord.SeqRecord
+        except:
+            return False
+    elif file_type == 'fastq':
+        try:
+            item = next(SeqIO.parse(path_to_file, 'fastq'))
+            return type(item) == SeqRecord.SeqRecord
+        except:
+            return False
+    elif file_type == 'gff':
+        iter = DataIterator(path_to_file)
+        return len(iter.peek) > 0
+
 
 def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
     '''
     Code to run when the user chooses the process command
     '''
+
+    if not validate_file(small_rna, 'fastq'):
+        print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
+        return False
+
     do_log(quiet, '==> Starting command Process')
     small_rna_path = small_rna
 
@@ -48,6 +74,15 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
     '''
     Code to run when the user chooses the sort command
     '''
+
+    if not validate_file(genome, 'fasta'):
+        print(f'Error: expected a genome in FASTA format, got {genome}')
+        return False
+
+    if not validate_file(small_rna):
+        print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
+        return False
+
     do_log(quiet, '==> Starting command Sort')
     new_fastq = align_to_genome(genome, small_rna, quiet=quiet)
     table_file = bin_rna_size(new_fastq, min_length, max_length, quiet=quiet)
@@ -60,6 +95,15 @@ def extractnc_command(genome, gff, quiet):
     '''
     Code to run when the user chooses to extract the noncoding mRNA reigon
     '''
+
+    if not validate_file(genome, 'fasta'):
+        print(f'Error: expected a genome in FASTA format, got {genome}')
+        return False
+
+    if not validate_file(gff, 'gff'):
+        print(f'Error: expected a GFF file with at least one feature, got {gff}')
+        return False
+
     do_log(quiet, '==> Starting command extractNC')
 
     extract_noncoding(
@@ -74,6 +118,15 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     '''
     Code to run when the user chooses the unitas command
     '''
+
+    if not validate_file(small_rna_path, 'directory'):
+        print(f'Error: expected a directory containing small RNA FASTQ of varing lengths, got {small_rna_path}')
+        return False
+
+    if species_name == 'x' and len(ref_seqs) < 1:
+        print(f'Error: expected at least one of, a non x species name (-s) or at least one reference file (-r_')
+        return False
+
     do_log(quiet, '==> Starting command Unitas')
     UNITAS_OUTPUT = os.path.join(get_config_key('general', 'output_directory'), 'unitas')
 
@@ -90,10 +143,19 @@ def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, qui
     '''
     Code to run when the user chooses the targetid command
     '''
+
+    if not validate_file(small_rna):
+        print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
+        return False
+
+    if len(targets) < 1:
+        print(f'Error: expected at least one target file (-t)')
+        return False
+
     do_log(quiet, '==> Starting TargetID command')
 
     if targets is None:
-        raise Exception('You need to supply at least one target file with -t')
+        print('Error: You need to supply at least one target file with -t')
 
     revcomp_file = revcomp_input_file(small_rna, quiet=quiet)
     sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
@@ -126,7 +188,7 @@ def main():
     parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
-    parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
+    parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=[])
     parser_unitas.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
 
@@ -143,7 +205,7 @@ def main():
     parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
     parser_all.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_all.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
-    parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*')
+    parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=[])
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_all.add_argument('genome', help='Genome to align against')
@@ -209,7 +271,7 @@ def main():
         )
 
     if args.command == 'all':
-        process_command(
+        out_code = process_command(
             get_command_args('small_rna'), 
             get_command_args('adapter'),
             get_command_args('front'),
@@ -218,13 +280,19 @@ def main():
             get_command_args('quiet')
         )
 
-        sort_command(
+        if out_code is not None:
+            return
+
+        out_code = sort_command(
             get_command_args('genome'),
             os.path.join(get_config_key('general', 'output_directory'), 'cut_sequences.fastq'),
             get_command_args('min_length'),
             get_command_args('max_length'),
             get_command_args('quiet')
         )
+
+        if out_code is not None:
+            return
 
         unitas_command(
             os.path.join(get_config_key('general', 'output_directory'), 'binned_rna'),
