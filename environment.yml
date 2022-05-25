@@ -13,6 +13,8 @@ dependencies:
   - fastqc
   - bbmap
   - unitas
+  - perl-archive-extract
+  - bioconda/label/main::perl-lwp-simple
   - bowtie2
   - samtools
   - bedtools
