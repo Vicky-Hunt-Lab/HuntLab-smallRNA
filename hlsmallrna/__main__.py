@@ -79,7 +79,7 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
         print(f'Error: expected a genome in FASTA format, got {genome}')
         return False
 
-    if not validate_file(small_rna):
+    if not validate_file(small_rna, 'fastq'):
         print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
         return False
 
@@ -144,11 +144,11 @@ def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, qui
     Code to run when the user chooses the targetid command
     '''
 
-    if not validate_file(small_rna):
+    if not validate_file(small_rna, 'fastq'):
         print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
         return False
 
-    if len(targets) < 1:
+    if targets is None:
         print(f'Error: expected at least one target file (-t)')
         return False
 

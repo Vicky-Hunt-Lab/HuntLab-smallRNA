@@ -101,8 +101,7 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
                 '-x', INDEX_NAME,
                 '-U', os.path.join(CWD, smallRNA),
                 '-S', sam_files[-1],
-                '-a',
-                '-p', get_config_key('general', 'threads')
+                '-a'
             ]
 
         bowtie2_align_command = bowtie2_align_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
