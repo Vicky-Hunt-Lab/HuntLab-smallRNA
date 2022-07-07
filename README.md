@@ -1,22 +1,22 @@
 # Small RNA Pipeline for the Hunt Lab
 
-This pipeline is designed to automate commen tasks to do with small RNA analysis in the lab. It currently enables six different tasks:
+This pipeline is designed to automate common tasks to do with small RNA analysis in the lab. It currently enables six different tasks:
 
-1. "Process" - Takes the small RNA, removes specified adapter sequences (with cutadapt) and performs a quality check with FastQC. Automatically trims the 3' end to remove bases that fail to pass a minimun threashold.
+1. "Process" - Takes the small RNA, removes specified adapter sequences (with cutadapt) and performs a quality check with FastQC. Automatically trims the 3' end to remove bases that fail to pass a minimum threshold.
 
-2. "Sort" - Aligns the small RNA against a specified genome, removes ones that fail to align and splits them into files baised on their length
+2. "Sort" - Aligns the small RNA against a specified genome, removes ones that fail to align and splits them into files based on their length
 
-3. "ExtractNC" - Extract the non-coding reigon to use with unitas. Needs a FASTA file containing a genome and a GFF conataining feature labels
+3. "ExtractNC" - Extract the non-coding region to use with unitas. Needs a FASTA file containing a genome and a GFF containing feature labels
 
-4. "Classify" - Uses unitas to try and classify the small RNA into groups and also runs a differntial expression analysis with edgeR to allow visulising which RNA are upregulated.
+4. "Classify" - Uses unitas to try and classify the small RNA into groups and also runs a differential expression analysis with edgeR to allow visulising which RNA are up-regulated.
 
-5. "TargetID" - Align small RNAs aganist a number of potential targets and creates a list of targets for each small RNA
+5. "TargetID" - Align small RNAs against a number of potential targets and creates a list of targets for each small RNA
 
 6. "All" - run steps 1, 2 and 4 one after the other - piping the output of one into the next
 
-## Configeration File
+## Configuration File
 
-This pipeline can be configered with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://toml.io/en/) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python)
+This pipeline can be configured with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://toml.io/en/) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python)
 
 ```toml
 # Configeration that doesn't fit anywhere else
