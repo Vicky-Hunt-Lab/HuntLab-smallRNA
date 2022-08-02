@@ -4,20 +4,20 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - toml
-  - pysam
-  - biopython
-  - gffutils
-  - matplotlib
-  - cutadapt
-  - fastqc
-  - bbmap
-  - unitas
-  - perl-archive-extract
-  - bioconda/label/main::perl-lwp-simple
-  - bowtie2
-  - samtools
-  - bedtools
+  - toml=0.10.*
+  - pysam=0.19.*
+  - biopython=1.*
+  - gffutils=0.11.*
+  - matplotlib=3.5.*
+  - cutadapt=4.*
+  - fastqc=0.11.*
+  - bbmap=38.*
+  - unitas=1.6.1
+  - perl-archive-extract=0.88
+  - bioconda/label/main::perl-lwp-simple=6.39
+  - bowtie2=2.4.*
+  - samtools=1.*
+  - bedtools=2.*
   - pip
   - pip:
     - .
