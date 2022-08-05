@@ -154,6 +154,7 @@ def graph_unitas_classification_type(path_to_table):
             writer.writerow(['RNA Length'] + rna_lengths)
         
             offsets = None
+            counts = []
             for l in labels:
                 counts = []
 

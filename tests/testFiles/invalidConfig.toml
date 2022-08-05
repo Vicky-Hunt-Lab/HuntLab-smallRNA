@@ -1,0 +1,21 @@
+[general]
+output = 666
+threads = 8
+
+[cli-tools]
+[cli-tools.trim]
+trim_pass_threads = true
+path_to_trim = "cutadapt"
+trim_type = ""
+trim_params = []
+
+[cli-tools.fastqc]
+fastqc_pass_threads = true
+path_to_fastqc = "fastqc"
+fastqc_params = []
+
+[cli-tools.bbmap]
+bbmap_pass_threads = 'someTrash'
+path_to_bbmap = "bbmap.sh"
+bbmap_align_params = []
+bbmap_index_params = ['--hello', '--world', '7']
