@@ -4,6 +4,8 @@ import os
 
 from multiprocessing import cpu_count
 
+# global object to load config into, it works, but isn't nice
+# or good practice
 CONFIG = {}
 
 DEFALT_CONFIG = {
