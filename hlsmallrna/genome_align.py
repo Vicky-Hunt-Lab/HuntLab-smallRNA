@@ -14,7 +14,6 @@
 import os
 import os.path
 import csv
-import shutil
 
 from subprocess import run
 
@@ -52,6 +51,29 @@ def make_fastqs_unique(fastq1, fastq2, output):
 
     SeqIO.write(into_seqrecord(unique_sequences), output, 'fastq')
 
+def make_fastq_overlap_only(fastq1, fastq2, output):
+    '''
+    Create a fastq with only sequences that appear in both fastq files
+    '''
+    fastq1_seqs = set()
+
+    for sequence in SeqIO.parse(fastq1, 'fastq'):
+        fastq1_seqs.add(str(sequence.seq))
+
+    try:
+        fastq2_seqs = set()
+
+        for sequence in SeqIO.parse(fastq2, 'fastq'):
+            fastq2_seqs.add(str(sequence.seq))
+
+        result_seqs = fastq1_seqs.intersection(fastq2_seqs)
+        print(result_seqs)
+    except FileNotFoundError as e:
+        result_seqs = fastq1_seqs
+        print(e)
+
+    SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
+
 def align_to_genome(genome, small_rnas, cds, quiet=0):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
@@ -59,14 +81,19 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
 
     INTERMEDIATE_SAM = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.sam')
     INTERMEDIATE_BAM = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.bam')
+    UNMAPPED_BAM = os.path.join(get_config_key('general', 'output_directory'), 'unmapped_sequences.bam')
     RESULT_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'genome_mapped_sequences.fastq')
+    RESULT_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'genome_unmapped_sequences.fastq')
     INDEX_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'bbmap_index')
 
     CDS_INTERMEDIATE_SAM = os.path.join(get_config_key('general', 'output_directory'), 'cds_sequences.sam')
     CDS_INTERMEDIATE_BAM = os.path.join(get_config_key('general', 'output_directory'), 'cds_sequences.bam')
+    CDS_UNMAPPED_BAM = os.path.join(get_config_key('general', 'output_directory'), 'cds_unmapped_sequences.bam')
+    CDS_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'cds_unmapped_sequences.fastq')
     CDS_RESULT_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'cds_sequences.fastq')
 
     FINAL_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.fastq')
+    FINAL_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'unmapped_sequences.fastq')
 
     mkdir_if_not_exists(INDEX_DIRECTORY)
 
@@ -148,6 +175,45 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
 
     cds_bedtools_bamtofastq_command = cds_bedtools_bamtofastq_command + get_config_key('cli-tools', 'bedtools', 'bedtools_bamtofastq_params')
 
+    unmapped_samtools_view = [
+        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        'view',
+        '-h',
+        '-b',
+        '-f', '4',
+        '-o', UNMAPPED_BAM,
+        INTERMEDIATE_SAM
+    ]
+
+    unmapped_bedtools_bamtofastq_command = [
+        get_config_key('cli-tools', 'bedtools', 'path_to_bedtools'),
+        'bamtofastq',
+        '-i', UNMAPPED_BAM,
+        '-fq', RESULT_UNMAPPED_FASTQ
+    ]
+
+    unmapped_bedtools_bamtofastq_command = unmapped_bedtools_bamtofastq_command + get_config_key('cli-tools', 'bedtools', 'bedtools_bamtofastq_params')
+
+    cds_unmapped_samtools_view = [
+        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        'view',
+        '-h',
+        '-b',
+        '-f', '4',
+        '-o', CDS_UNMAPPED_BAM,
+        CDS_INTERMEDIATE_SAM
+    ]
+
+    cds_unmapped_bedtools_bamtofastq_command = [
+        get_config_key('cli-tools', 'bedtools', 'path_to_bedtools'),
+        'bamtofastq',
+        '-i', CDS_UNMAPPED_BAM,
+        '-fq', CDS_UNMAPPED_FASTQ
+    ]
+
+    cds_unmapped_bedtools_bamtofastq_command = cds_unmapped_bedtools_bamtofastq_command + get_config_key('cli-tools', 'bedtools', 'bedtools_bamtofastq_params')
+
+
     if get_config_key('cli-tools', 'bowtie2', 'bowtie2_pass_threads'):
         threads = get_config_key('general', 'threads')
 
@@ -174,11 +240,16 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
     do_log(quiet, '====> Converting to FASTQ')
     run(samtools_view, capture_output=(quiet != 0)) 
     run(bedtools_bamtofastq_command, capture_output=(quiet != 0))
+    run(unmapped_samtools_view, capture_output=(quiet != 0))
+    run(unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
     if cds is not None:
         run(cds_samtools_view, capture_output=(quiet != 0))
         run(cds_bedtools_bamtofastq_command, capture_output=(quiet != 0))
+        run(cds_unmapped_samtools_view, capture_output=(quiet != 0))
+        run(cds_unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
 
     make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
+    make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
     return FINAL_FASTQ
 
