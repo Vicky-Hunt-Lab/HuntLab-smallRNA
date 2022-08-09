@@ -83,7 +83,7 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
 
     do_log(quiet, '==> Completed command Process')
 
-def sort_command(genome, small_rna, min_length, max_length, quiet):
+def sort_command(genome, small_rna, cds, min_length, max_length, quiet):
     '''
     Code to run when the user chooses the sort command
     '''
@@ -97,7 +97,7 @@ def sort_command(genome, small_rna, min_length, max_length, quiet):
         return False
 
     do_log(quiet, '==> Starting command Sort')
-    new_fastq = align_to_genome(genome, small_rna, quiet=quiet)
+    new_fastq = align_to_genome(genome, small_rna, cds, quiet=quiet)
     table_file = bin_rna_size(new_fastq, min_length, max_length, quiet=quiet)
 
     graph_length(table_file)
@@ -191,6 +191,7 @@ def main():
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')
+    parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
     parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
@@ -213,6 +214,7 @@ def main():
 
     parser_all = subparsers.add_parser('all', help='Run process, sort and unitas one after the other')
     parser_all.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
+    parser_all.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
     parser_all.add_argument('-g', '--front', help='Sequence of the adapter to remove from the 5\' end')
     parser_all.add_argument('-b', '--anywhere', help='Sequence of the adapters to remove from both ends')
     parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
@@ -258,6 +260,7 @@ def main():
         sort_command(
             get_command_args('genome'),
             get_command_args('small_rna'),
+            get_command_args('cds'),
             get_command_args('min_length'),
             get_command_args('max_length'),
             get_command_args('quiet')
@@ -303,6 +306,7 @@ def main():
         out_code = sort_command(
             get_command_args('genome'),
             os.path.join(get_config_key('general', 'output_directory'), 'cut_sequences.fastq'),
+            get_command_args('cds'),
             get_command_args('min_length'),
             get_command_args('max_length'),
             get_command_args('quiet')

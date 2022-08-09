@@ -47,6 +47,10 @@ DEFALT_CONFIG = {
             'path_to_samtools': 'samtools',
             'samtools_view_params': ['-h', '-F', '256', '-F', '4'],
             'samtools_fastq_params': []
+        },
+        'bedtools': {
+            'path_to_bedtools': 'bedtools',
+            'bedtools_bamtofastq_params': []
         }
     }
 }
