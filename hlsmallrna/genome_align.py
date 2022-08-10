@@ -256,7 +256,55 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
     make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
     make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
+    create_stats_table(small_rnas, get_config_key('general', 'output_directory'))
+
     return FINAL_FASTQ
+
+def create_stats_table(smallrna, output_dir):
+    '''
+    Count sequences to create the statistics file
+    '''
+
+    input_reads = 0
+    for read in SeqIO.parse(smallrna, 'fastq'):
+        input_reads += 1
+
+    overall_mapped = 0
+    for read in SeqIO.parse(os.path.join(output_dir, 'mapped_sequences.fastq'), 'fastq'):
+        overall_mapped += 1
+
+    overall_unmapped = input_reads - overall_mapped
+
+    genome_mapped = 0
+    for read in SeqIO.parse(os.path.join(output_dir, 'genome_mapped_sequences.fastq'), 'fastq'):
+        genome_mapped += 1
+
+    cds_mapped = 0
+    try:
+        for read in SeqIO.parse(os.path.join(output_dir, 'cds_sequences.fastq'), 'fastq'):
+            cds_mapped += 1
+    except:
+        pass
+
+    cds_unmapped = input_reads - cds_mapped
+    genome_unmapped = input_reads - genome_mapped
+
+    with open(os.path.join(output_dir, 'report.tsv'), 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+
+        writer.writerow(['Total Reads', input_reads])
+        writer.writerow(['Total Mapped', overall_mapped])
+        writer.writerow(['Percentage Mapped', overall_mapped / input_reads * 100])
+        writer.writerow(['Total Unmapped', overall_unmapped])
+        writer.writerow(['Percentage Unmapped', overall_unmapped / input_reads * 100])
+        writer.writerow(['Mapped to Genome', genome_mapped])
+        writer.writerow(['Percentage Mapped to Genome', genome_mapped / input_reads * 100])
+        writer.writerow(['Unmapped to Genome', genome_unmapped])
+        writer.writerow(['Percentage Unmapped to Genome', genome_unmapped / input_reads * 100])
+        writer.writerow(['Mapped to CDS', cds_mapped])
+        writer.writerow(['Percentage Mapped to CDS', cds_mapped / input_reads * 100])
+        writer.writerow(['Unmapped to CDS', cds_unmapped])
+        writer.writerow(['Percentage Unmapped to CDS', cds_unmapped / input_reads * 100])
 
 def bin_rna_size(rna_file, min_length, max_length, quiet=0):
     '''
