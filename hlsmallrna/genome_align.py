@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from collections import defaultdict
 import os
 import os.path
 import csv
@@ -36,18 +37,24 @@ def into_seqrecord(seqs):
 
 def make_fastqs_unique(fastq1, fastq2, output):
     '''
-    Take 2 FastQ files and make the sequence in them unique
+    Take 2 FastQ files, combine and remove duplicates from the second
     '''
-    unique_sequences = set()
+    unique_sequences = []
+    cds_sequences = defaultdict(lambda: 0)
 
     for sequence in SeqIO.parse(fastq1, 'fastq'):
-        unique_sequences.add(str(sequence.seq))
+        unique_sequences.append(str(sequence.seq))
 
     try:
         for sequence in SeqIO.parse(fastq2, 'fastq'):
-            unique_sequences.add(str(sequence.seq))
+            cds_sequences[str(sequence.seq)] += 1
     except FileNotFoundError:
         pass
+
+    for key in cds_sequences.keys():
+        if key not in unique_sequences:
+            for i in range(cds_sequences[key]):
+                unique_sequences.append(key)
 
     SeqIO.write(into_seqrecord(unique_sequences), output, 'fastq')
 
@@ -55,19 +62,23 @@ def make_fastq_overlap_only(fastq1, fastq2, output):
     '''
     Create a fastq with only sequences that appear in both fastq files
     '''
-    fastq1_seqs = set()
+    fastq1_seqs = []
 
     for sequence in SeqIO.parse(fastq1, 'fastq'):
-        fastq1_seqs.add(str(sequence.seq))
+        fastq1_seqs.append(str(sequence.seq))
 
     try:
-        fastq2_seqs = set()
+        fastq2_seqs = defaultdict(lambda: 0)
 
         for sequence in SeqIO.parse(fastq2, 'fastq'):
-            fastq2_seqs.add(str(sequence.seq))
+            fastq2_seqs[str(sequence.seq)] += 1
 
-        result_seqs = fastq1_seqs.intersection(fastq2_seqs)
-        print(result_seqs)
+        for seq in fastq2_seqs.keys():
+            if seq not in fastq1_seqs:
+                for i in range(fastq1_seqs[seq]):
+                    fastq1_seqs.append(seq)
+                    
+        result_seqs = fastq1_seqs
     except FileNotFoundError as e:
         result_seqs = fastq1_seqs
         print(e)
