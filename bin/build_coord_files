@@ -25,6 +25,42 @@ import pysam
 from Bio import SeqIO
 from gffutils.iterators import DataIterator
 
+def process_chrom_biopython_merge_all(path_to_fasta, filetype, output, band_width=20000):
+    '''
+    Use Biopython to produce the genome coordinates, version that merges all scaffolds into one 
+    '''
+    sequences = SeqIO.parse(path_to_fasta, filetype)
+
+    scaffolds = {}
+
+    result_file = []
+    scaffold_info = []
+    for seq in sequences:
+        scaffolds[seq.id] = {'name': seq.id, 'length': len(seq)}
+
+    current_start = 1
+    for scaffold in sorted(scaffolds, key=lambda x: x['length']):
+        result_file.append([
+                'GENOME',
+                current_start, current_start + scaffolds[scaffold]['length'],
+                scaffold
+            ])
+
+        current_start = current_start + scaffolds[scaffold]['length'] + 1
+        scaffold_info.append(['GENOME', current_start, current_start + band_width, scaffold, 'red'])
+
+    with open(output, 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+
+        writer.writerow(['Chrom', 'Start', 'End', 'Name'])
+        writer.writerows(result_file)
+        
+    with open('scaffold_info_' + output, 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+
+        writer.writerow(['Chrom', 'Start', 'End', 'Name', 'Colors'])
+        writer.writerows(scaffold_info)
+
 def process_chrom_biopython(path_to_fasta, filetype, output, band_width=20000, scaffold_aware=False):
     '''
     Use Biopython to produce the genome coordinates, scaffold aware tries to merge scaffolds into continuious reigons
@@ -255,6 +291,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rm-fa-out', action='store_true', help='Treat input as a RepeatMasker .fa.out file')
 
     parser.add_argument('-c', '--scaffold-aware', action='store_true', help='Merge scaffolds into one chromosome')
+    parser.add_argument('-m', '--merge-all', action='store_true', help='When building the genome file merge all scaffolds')
 
     parser.add_argument('--feature', help='Select a gff feature to use')
     parser.add_argument('--genome-coords', help='File containing the coordinates of the genome')
@@ -306,7 +343,10 @@ if __name__ == '__main__':
     print(f'File type detected as : {filetype}')
 
     if filetype in ['fasta', 'fastq']:
-        process_chrom_biopython(args.input_file, filetype, args.output, band_width=args.band_width, scaffold_aware=args.scaffold_aware)
+        if not args.merge_all:
+            process_chrom_biopython(args.input_file, filetype, args.output, band_width=args.band_width, scaffold_aware=args.scaffold_aware)
+        else:
+            process_chrom_biopython_merge_all(args.input_file, filetype, args.output, band_width=args.band_width)
     else:
         scaffold_index = None
 
