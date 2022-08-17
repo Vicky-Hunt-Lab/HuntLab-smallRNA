@@ -127,7 +127,7 @@ def extractnc_command(genome, gff, quiet):
 
     do_log(quiet, '==> Completed command extractNC')
 
-def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
+def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transcriptome, quiet):
     '''
     Code to run when the user chooses the unitas command
     '''
@@ -135,6 +135,19 @@ def unitas_command(small_rna_path, species_name, ref_seqs, quiet):
     if not validate_file(small_rna_path, 'directory'):
         print(f'Error: expected a directory containing small RNA FASTQ of varing lengths, got {small_rna_path}')
         return False
+
+    # add the CDS and unspliced transcriptome to the unitas input
+    if cds is not None:
+        if ref_seqs is None:
+            ref_seqs = [cds]
+        else:
+            ref_seqs.append(cds)
+
+    if unspliced_transcriptome is not None:
+        if ref_seqs is None:
+            ref_seqs = [unspliced_transcriptome]
+        else:
+            ref_seqs.append(unspliced_transcriptome)
 
     if species_name == 'x' and ref_seqs is None:
         print(f'Error: expected at least one of, a non x species name (-s) or at least one reference file (-r)')
@@ -202,6 +215,8 @@ def main():
     parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
+    parser_unitas.add_argument('-d', '--cds', help='Optional CDS region, passed to unitas')
+    parser_unitas.add_argument('-u', '--unspliced-transcriptome', help='Optional, unspliced transcriptome, passed to unitas')
     parser_unitas.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_unitas.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_unitas.add_argument('path_to_rnas', help='Path to the folder with varying length RNAs in')
@@ -222,6 +237,7 @@ def main():
     parser_all.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
     parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
+    parser_all.add_argument('-u', '--unspliced-transcriptome', help='Optional, unspliced transcriptome, passed to unitas')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_all.add_argument('genome', help='Genome to align against')
 
@@ -278,6 +294,8 @@ def main():
             get_command_args('path_to_rnas'),
             get_command_args('species'),
             get_command_args('refseq'),
+            get_command_args('cds'),
+            get_command_args('unspliced_transcriptome'),
             get_command_args('quiet')
         )
 
