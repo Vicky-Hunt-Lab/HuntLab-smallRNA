@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2022 Vicky Hunt Lab Members
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#!/usr/bin/env python3
 
 import os.path
 import glob
@@ -27,7 +27,7 @@ from .trim import run_trim
 from .fastqc import run_fastqc, cut_rna_below_cutoff
 from .genome_align import align_to_genome, bin_rna_size, graph_length
 from .create_noncoding import extract_noncoding
-from .unitas import run_unitas_annotation, merge_summary, graph_unitas_classification_type
+from .unitas import copy_and_label_file, run_unitas_annotation, merge_summary, graph_unitas_classification_type
 from .targetid import revcomp_input_file, find_targets, build_summary_files
 from .ss_overlap import samestrand_overlap
 
@@ -137,17 +137,25 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
         return False
 
     # add the CDS and unspliced transcriptome to the unitas input
+    needs_merge = True
+
     if cds is not None:
+        new_path = copy_and_label_file(cds, 'CDS', 'Gene')
         if ref_seqs is None:
-            ref_seqs = [cds]
+            ref_seqs = [new_path]
         else:
-            ref_seqs.append(cds)
+            ref_seqs.append(new_path)
+    else:
+        needs_merge = False
 
     if unspliced_transcriptome is not None:
+        new_path = copy_and_label_file(unspliced_transcriptome, 'UnsplicedTranscriptome', 'Gene')
         if ref_seqs is None:
-            ref_seqs = [unspliced_transcriptome]
+            ref_seqs = [new_path]
         else:
-            ref_seqs.append(unspliced_transcriptome)
+            ref_seqs.append(new_path)
+    else:
+        needs_merge = False
 
     if species_name == 'x' and ref_seqs is None:
         print(f'Error: expected at least one of, a non x species name (-s) or at least one reference file (-r)')
@@ -161,7 +169,7 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
     for small_rna in glob.glob(os.path.join(small_rna_path, '*.fastq')):
         run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
 
-    table_path = merge_summary()
+    table_path = merge_summary(needs_merge)
     graph_unitas_classification_type(table_path)
     do_log(quiet, '==> Completed command Unitas')
 

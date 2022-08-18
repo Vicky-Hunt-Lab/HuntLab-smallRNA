@@ -33,7 +33,7 @@ DEFALT_CONFIG = {
         },
         'unitas': {
             'unitas_pass_threads': True,
-            'path_to_unitas': 'unitas',
+            'path_to_unitas': 'unitas.pl',
             'unitas_params': []
         },
         'bowtie2': {

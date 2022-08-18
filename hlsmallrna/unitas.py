@@ -23,8 +23,26 @@ from collections import defaultdict
 import numpy as np
 
 from matplotlib import pyplot as plt
+from Bio import SeqIO
 
 from .config import do_log, get_config_key
+
+def copy_and_label_file(ref_file, filename, label):
+    '''
+    Labeling function for the CDS and Unspliced Transcriptome files
+    '''
+
+    def rename_iter(path):
+        for seq in SeqIO.parse(path, 'fasta'):
+            seq.id = f'{label}|{seq.id}'
+
+            yield seq
+
+    
+    new_path = os.path.join(get_config_key('general', 'output_directory'), f'{filename}.fasta')
+    SeqIO.write(rename_iter(ref_file), new_path, 'fasta')
+
+    return new_path
 
 def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_output='.'):
     '''
@@ -60,7 +78,7 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_ou
 
     os.chdir(CWD)
 
-def merge_summary():
+def merge_summary(needs_merge):
     '''
     Merge together the summery files into one CSV
     '''
