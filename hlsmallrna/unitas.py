@@ -84,15 +84,17 @@ def merge_summary():
     '''
     new_file = []
 
+    numbered_results = {}
+    named_results = {}
     for filename in glob.glob(os.path.join(get_config_key('general', 'output_directory'), 'unitas', '*/unitas.annotation_summary.txt')):
         with open(filename) as f:
             reader = csv.reader(f, delimiter='\t')
 
             length = re.findall(r'length(\d+)', filename)
             if len(length) < 1:
-                new_file.append(['File Name : ', filename])
+                namestr = f'File Name : {filename}'
             else:
-                new_file.append(['RNA Length ' + length[0], ''])
+                namestr = f'RNA Length {length[0]}'
 
             names = []
             values = []
@@ -100,8 +102,20 @@ def merge_summary():
                 names.append(line[0])
                 values.append(line[1])
 
-            new_file.append(names)
-            new_file.append(values)
+            if len(length) > 1:
+                numbered_results[length[1]] = [namestr, names, values]
+            else:
+                named_results[namestr] = [names, values]
+
+    for result in sorted(numbered_results):
+        new_file.append([numbered_results[result][0]])
+        new_file.append(numbered_results[result][1])
+        new_file.append(numbered_results[result][2])
+
+    for result in sorted(named_results):
+        new_file.append([result])
+        new_file.append(named_results[result][0])
+        new_file.append(named_results[result][1])
 
     unitas_table = os.path.join(get_config_key('general', 'output_directory'), 'unitas_summary.csv')
     with open(unitas_table, 'w') as f:
