@@ -78,13 +78,11 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_ou
 
     os.chdir(CWD)
 
-def merge_summary(needs_merge):
+def merge_summary():
     '''
     Merge together the summery files into one CSV
     '''
-    file_dict_int = defaultdict(lambda: [])
-    file_dict_str = defaultdict(lambda: [])
-    new_file = [[]]
+    new_file = []
 
     for filename in glob.glob(os.path.join(get_config_key('general', 'output_directory'), 'unitas', '*/unitas.annotation_summary.txt')):
         with open(filename) as f:
@@ -92,37 +90,20 @@ def merge_summary(needs_merge):
 
             length = re.findall(r'length(\d+)', filename)
             if len(length) < 1:
-                file_table = [['File Name : ', filename]]
+                new_file.append(['File Name : ', filename])
             else:
-                file_table = [['RNA Length ' + length[0], '']]
+                new_file.append(['RNA Length ' + length[0], ''])
 
+            names = []
+            values = []
             for line in reader:
-                file_table.append(line)
+                names.append(line[0])
+                values.append(line[1])
 
-            if len(length) > 0:
-                file_dict_int[int(length[0])] = file_table
-            else:
-                file_dict_str[str(filename)] = file_table
+            new_file.append(names)
+            new_file.append(values)
 
-    for key in sorted(file_dict_int.keys()):
-        file_table = file_dict_int[key]
-
-        while len(new_file) < len(file_table):
-            new_file.append(['' for i in range(len(new_file[0]))])
-
-        for i, line in enumerate(file_table):
-            new_file[i] = new_file[i] + line + ['']
-
-    for key in sorted(file_dict_str.keys()):
-        file_table = file_dict_str[key]
-
-        while len(new_file) < len(file_table):
-            new_file.append(['' for i in range(len(new_file[0]))])
-
-        for i, line in enumerate(file_table):
-            new_file[i] = new_file[i] + line + ['']
-
-    unitas_table = os.path.join(get_config_key('general', 'output_directory'), 'unitas_summery.csv')
+    unitas_table = os.path.join(get_config_key('general', 'output_directory'), 'unitas_summary.csv')
     with open(unitas_table, 'w') as f:
         writer = csv.writer(f)
 
@@ -137,33 +118,39 @@ def graph_unitas_classification_type(path_to_table):
     with open(path_to_table) as f:
         reader = csv.reader(f)
 
-        headers = next(reader)
-        values = defaultdict(lambda: {})
-
-        data_rows = list(reader)
-
         fig, ax = plt.subplots(figsize=(11.69, 8.27))
 
         labels = set()
+        values = defaultdict(lambda: defaultdict(lambda: 0))
 
-        for i, header in enumerate(headers):
-            if header != '':
-                rna_length = re.findall(r'\d+', header)
+        # Use skip_group to skip any group not named by length
+        skip_group = False
+        for i, line in enumerate(reader):
+            if i % 3 == 0:
+                if not line[0].startswith('RNA Length '):
+                    skip_group = True
+                else:
+                    line_name = re.findall('\d+', line[0])[0]
+            elif i % 3 == 1:
+                if skip_group:
+                    continue
+                
+                line_labels = set()
+                for l in line:
+                    if not l[0].isspace():
+                        line_labels.add(l)
 
-                if len(rna_length) > 0:
-                    rna_length = rna_length[0]
+                all_labels = line
+                        
+                labels = labels | line_labels
+            elif i % 3 == 2:
+                if skip_group:
+                    skip_group = False
+                    continue
 
-                    for row in data_rows:
-                        try:
-                            if len(row[i]) > 0 and not row[i][0].isspace():
-                                values[rna_length][row[i]] = float(row[i + 1])
-                        except ValueError:
-                            pass
-                        except IndexError:
-                            break
-
-        for length in values:
-            labels = labels | set(values[length].keys())
+                for j, name in enumerate(all_labels):
+                    if name in line_labels:
+                        values[line_name][name] = float(line[j])
 
         with open(os.path.join(get_config_key('general', 'output_directory'), 'unitas_graph_data.csv'), 'w') as f:
             writer = csv.writer(f)
@@ -172,15 +159,11 @@ def graph_unitas_classification_type(path_to_table):
             writer.writerow(['RNA Length'] + rna_lengths)
         
             offsets = None
-            counts = []
             for l in labels:
                 counts = []
 
-                for key in values.keys():
-                    try:
-                        counts.append(values[key][l])
-                    except KeyError:
-                        counts.append(0)
+                for key in rna_lengths:
+                    counts.append(values[key][l])
 
                 ax.bar(rna_lengths, counts, label=l, bottom=offsets)
 

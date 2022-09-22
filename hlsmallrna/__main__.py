@@ -136,17 +136,12 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
         print(f'Error: expected a directory containing small RNA FASTQ of varing lengths, got {small_rna_path}')
         return False
 
-    # add the CDS and unspliced transcriptome to the unitas input
-    needs_merge = True
-
     if cds is not None:
         new_path = copy_and_label_file(cds, 'CDS', 'Gene')
         if ref_seqs is None:
             ref_seqs = [new_path]
         else:
             ref_seqs.append(new_path)
-    else:
-        needs_merge = False
 
     if unspliced_transcriptome is not None:
         new_path = copy_and_label_file(unspliced_transcriptome, 'UnsplicedTranscriptome', 'Gene')
@@ -154,8 +149,6 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
             ref_seqs = [new_path]
         else:
             ref_seqs.append(new_path)
-    else:
-        needs_merge = False
 
     if species_name == 'x' and ref_seqs is None:
         print(f'Error: expected at least one of, a non x species name (-s) or at least one reference file (-r)')
@@ -169,7 +162,7 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
     for small_rna in glob.glob(os.path.join(small_rna_path, '*.fastq')):
         run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
 
-    table_path = merge_summary(needs_merge)
+    table_path = merge_summary()
     graph_unitas_classification_type(table_path)
     do_log(quiet, '==> Completed command Unitas')
 
