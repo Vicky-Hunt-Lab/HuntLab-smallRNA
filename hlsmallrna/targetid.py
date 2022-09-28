@@ -31,9 +31,17 @@ def revcomp_input_file(smallRNA, quiet=0):
     do_log(quiet, '====> Reverse complimenting RNA...')
     PATH_TO_REVCOMP = os.path.join(get_config_key('general', 'output_directory'), 'revcomp_rna.fastq')
 
+    ids_in_use = set()
+
     def do_revcomp(seq):
         revcomp = seq.reverse_complement()
         revcomp.id = seq.id
+
+        if revcomp.id in ids_in_use:
+            print('Error: Duplicate ID found in your input file, make the IDs unique and try again')
+            exit(1)
+        else:
+            ids_in_use.add(revcomp.id)
 
         return revcomp
 
