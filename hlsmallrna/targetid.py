@@ -23,6 +23,19 @@ from Bio import SeqIO
 
 from .config import get_config_key, mkdir_if_not_exists, do_log
 
+def check_ids_unique(path_to_file, format):
+    '''
+    Make sure that the sequences in a FASTA or FASTQ file are unique
+    '''
+    seen_ids = set()
+    for seq in SeqIO.parse(path_to_file, format):
+        if seq.id in seen_ids:
+            return False
+        else:
+            seen_ids.add(seq.id)
+
+    return True
+
 def revcomp_input_file(smallRNA, quiet=0):
     '''
     Create a file containing the reverse complement of a file of small RNA
@@ -31,19 +44,15 @@ def revcomp_input_file(smallRNA, quiet=0):
     do_log(quiet, '====> Reverse complimenting RNA...')
     PATH_TO_REVCOMP = os.path.join(get_config_key('general', 'output_directory'), 'revcomp_rna.fastq')
 
-    ids_in_use = set()
-
     def do_revcomp(seq):
         revcomp = seq.reverse_complement()
         revcomp.id = seq.id
 
-        if revcomp.id in ids_in_use:
-            print('Error: Duplicate ID found in your input file, make the IDs unique and try again')
-            exit(1)
-        else:
-            ids_in_use.add(revcomp.id)
-
         return revcomp
+
+    if not check_ids_unique(smallRNA, 'fastq'):
+        print('Error: duplicate ID found in your small RNA file, make IDs unique and try again')
+        exit(1)
 
     seqs = SeqIO.parse(smallRNA, 'fastq')
     revcomps = map(do_revcomp, seqs)
@@ -69,6 +78,10 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
     os.chdir(INDEX_DIR)
 
     for target in possible_target_list:
+        if not check_ids_unique(os.path.join(CWD, target), 'fasta'):
+            print(f'Error: duplicate ID found in your target file: {target}. Make IDs unique and try again')
+            exit(1)
+
         do_log(quiet, f'====> Builing index for {target}')
         INDEX_NAME = os.path.basename(target) + '_index'
 
