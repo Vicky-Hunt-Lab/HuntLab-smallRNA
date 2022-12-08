@@ -4,6 +4,25 @@ This repository contains the code for the pipeline used to carry out sRNA-seq an
 
 Note this software is very new, please report any bugs found to the GitHub bug tracker. Also note that it currently does not support GZipped input files, though support will be considered in the future if it is wanted enough.
 
+## Installation
+
+Stable versions of the pipeline can be downloaded from releases on GitHub, unstable can be cloned using `git`.
+
+It is recommended to use conda to install this pipeline. To perform the installation, ensure conda is installed on the machine, navigate to the directory containing the code and `environment.yml` file, then run:
+
+```
+$ conda env create -f environment.yml
+```
+
+This will create a conda environment called huntlab-smallrna. This can then be activated each time you want to use the software with the command:
+
+```
+$ conda activate huntlab-smallrna
+```
+
+By default this provides the hlsmallrna executable. This provides all of the tasks listed below, each one can be run by typing hlsmallrna followed by the name and options for the task.
+
+
 ## Configuration File
 
 This pipeline can be configured with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://toml.io/en/) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python). An example is below, see the documentation for more comprihensive instructions.
