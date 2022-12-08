@@ -1,22 +1,12 @@
 # Small RNA Pipeline for the Hunt Lab
 
-This pipeline is designed to automate common tasks to do with small RNA analysis in the lab. It currently enables six different tasks:
+This repository contains the code for the pipeline used to carry out sRNA-seq ananlysis in Vicky Hunt's lab. For usage and the tasks the pipeline can run, see the documentation, avalible in PDF, DOCX and HTML format in the `docs/` directory in the repository. 
 
-1. "Process" - Takes the small RNA, removes specified adapter sequences (with cutadapt) and performs a quality check with FastQC. Automatically trims the 3' end to remove bases that fail to pass a minimum threshold.
-
-2. "Sort" - Aligns the small RNA against a specified genome, removes ones that fail to align and splits them into files based on their length
-
-3. "ExtractNC" - Extract the non-coding region to use with unitas. Needs a FASTA file containing a genome and a GFF containing feature labels
-
-4. "Classify" - Uses unitas to try and classify the small RNA into groups and also runs a differential expression analysis with edgeR to allow visulising which RNA are up-regulated.
-
-5. "TargetID" - Align small RNAs against a number of potential targets and creates a list of targets for each small RNA
-
-6. "All" - run steps 1, 2 and 4 one after the other - piping the output of one into the next
+Note this software is very new, please report any bugs found to the GitHub bug tracker. Also note that it currently does not support GZipped input files, though support will be considered in the future if it is wanted enough.
 
 ## Configuration File
 
-This pipeline can be configured with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://toml.io/en/) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python)
+This pipeline can be configured with a "config.toml" file. This file is written in ["Tom's Obvious, Minimal Language"](https://toml.io/en/) (TOML) format, which is a common format for configeration. This file is split into multiple sections, with headers in square brackets. Valid keys are shown in the example file below. (Note lines starting with a # are comments like in python). An example is below, see the documentation for more comprihensive instructions.
 
 ```toml
 # Configeration that doesn't fit anywhere else
@@ -66,12 +56,6 @@ trim_params = []
 fastqc_pass_threads = true
 path_to_fastqc = "fastqc"
 fastqc_params = []
-
-[cli-tools.bbmap]
-bbmap_pass_threads = true
-path_to_bbmap = "bbmap.sh"
-bbmap_align_params = []
-bbmap_index_params = []
 
 [cli-tools.unitas]
 unitas_pass_threads = true
