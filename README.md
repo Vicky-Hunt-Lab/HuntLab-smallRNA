@@ -20,7 +20,7 @@ This will create a conda environment called huntlab-smallrna. This can then be a
 $ conda activate huntlab-smallrna
 ```
 
-By default this provides the hlsmallrna executable. This provides all of the tasks listed below, each one can be run by typing hlsmallrna followed by the name and options for the task.
+By default this provides the hlsmallrna executable. This provides all of the tasks listed in the documentation, each one can be run by typing hlsmallrna followed by the name and options for the task.
 
 
 ## Configuration File
