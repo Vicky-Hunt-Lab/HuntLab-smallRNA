@@ -84,6 +84,15 @@ def make_fastq_overlap_only(fastq1, fastq2, output):
 
     SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
 
+def remove_symbols_from_header(fasta):
+    '''
+    Remove @s from the FASTA header before doing the alignment
+    '''
+    for seq in SeqIO.parse(fasta, 'fasta'):
+        seq.id = seq.id.replace('@', '_')
+
+        yield seq
+
 def align_to_genome(genome, small_rnas, cds, quiet=0, small_rna_filetype='fastq'):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
@@ -106,6 +115,12 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, small_rna_filetype='fastq'
     FINAL_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'unmapped_sequences.fastq')
 
     mkdir_if_not_exists(INDEX_DIRECTORY)
+
+    if small_rna_filetype == 'fasta':
+        NEW_SMALL_RNAS = os.path.join(get_config_key('general', 'output_directory'), 'corrected_headers.fasta')
+        SeqIO.write(remove_symbols_from_header(small_rnas), NEW_SMALL_RNAS, 'fasta')
+
+        small_rnas = NEW_SMALL_RNAS
 
     bbmap_build_index = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
