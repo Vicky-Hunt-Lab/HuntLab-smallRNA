@@ -84,7 +84,7 @@ def make_fastq_overlap_only(fastq1, fastq2, output):
 
     SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
 
-def align_to_genome(genome, small_rnas, cds, quiet=0):
+def align_to_genome(genome, small_rnas, cds, quiet=0, small_rna_filetype='fastq'):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
@@ -131,6 +131,9 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
                 '-S', INTERMEDIATE_SAM
     ]
 
+    if small_rna_filetype == 'fasta':
+        bbmap_align_reads.append('-f')
+
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
     cds_align_reads = [
@@ -140,6 +143,9 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
                 '-U', small_rnas,
                 '-S', CDS_INTERMEDIATE_SAM
     ]
+
+    if small_rna_filetype == 'fasta':
+        cds_align_reads.append('-f')
 
     cds_align_reads = cds_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
@@ -256,17 +262,17 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
     make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
     make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
-    create_stats_table(small_rnas, get_config_key('general', 'output_directory'))
+    create_stats_table(small_rnas, get_config_key('general', 'output_directory'), small_rna_filetype=small_rna_filetype)
 
     return FINAL_FASTQ
 
-def create_stats_table(smallrna, output_dir):
+def create_stats_table(smallrna, output_dir, small_rna_filetype='fastq'):
     '''
     Count sequences to create the statistics file
     '''
 
     input_reads = 0
-    for read in SeqIO.parse(smallrna, 'fastq'):
+    for read in SeqIO.parse(smallrna, small_rna_filetype):
         input_reads += 1
 
     overall_mapped = 0

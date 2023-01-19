@@ -92,12 +92,16 @@ def sort_command(genome, small_rna, cds, min_length, max_length, quiet):
         print(f'Error: expected a genome in FASTA format, got {genome}')
         return False
 
-    if not validate_file(small_rna, 'fastq'):
-        print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
+    if validate_file(small_rna, 'fastq'):
+        small_rna_filetype = 'fastq'
+    elif validate_file(small_rna, 'fasta'):
+        small_rna_filetype = 'fasta'
+    else:
+        print(f'Error: expected a small RNA FASTQ or FASTA with at least one sequence, got {small_rna}')
         return False
 
     do_log(quiet, '==> Starting command Sort')
-    new_fastq = align_to_genome(genome, small_rna, cds, quiet=quiet)
+    new_fastq = align_to_genome(genome, small_rna, cds, small_rna_filetype=small_rna_filetype, quiet=quiet)
     table_file = bin_rna_size(new_fastq, min_length, max_length, quiet=quiet)
 
     graph_length(table_file)
