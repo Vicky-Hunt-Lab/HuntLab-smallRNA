@@ -83,13 +83,18 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
 
     do_log(quiet, '==> Completed command Process')
 
-def sort_command(genome, small_rna, cds, min_length, max_length, quiet):
+def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches, disable_align, quiet):
     '''
     Code to run when the user chooses the sort command
     '''
 
-    if not validate_file(genome, 'fasta'):
+    if not disable_align and not validate_file(genome, 'fasta'):
         print(f'Error: expected a genome in FASTA format, got {genome}')
+        
+        # Add note if genome positional argument has been missed
+        if genome is None:
+            print('It looks like you missed the Genome FASTA argument, try adding one to the end of your command')
+            
         return False
 
     if validate_file(small_rna, 'fastq'):
@@ -101,7 +106,11 @@ def sort_command(genome, small_rna, cds, min_length, max_length, quiet):
         return False
 
     do_log(quiet, '==> Starting command Sort')
-    new_fastq = align_to_genome(genome, small_rna, cds, small_rna_filetype=small_rna_filetype, quiet=quiet)
+    if not disable_align:
+        new_fastq = align_to_genome(genome, small_rna, cds, small_rna_filetype=small_rna_filetype, mismatches=num_mismatches, quiet=quiet)
+    else:
+        new_fastq = small_rna
+
     table_file = bin_rna_size(new_fastq, min_length, max_length, quiet=quiet)
 
     graph_length(table_file)
@@ -212,8 +221,10 @@ def main():
     parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
     parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
+    parser_sort.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2, None for default behavior')
+    parser_sort.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the refernce genome step')
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
-    parser_sort.add_argument('genome', help='Genome to align against')
+    parser_sort.add_argument('genome', nargs='?', default=None, help='Genome to align against')
 
     parser_extractnc = subparsers.add_parser('extractnc', help='Extarct the noncoding reigon from a fasta with a GFF file')
     parser_extractnc.add_argument('genome', help='FASTA containing the genome to extract from')
@@ -243,8 +254,10 @@ def main():
     parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('-u', '--unspliced-transcriptome', help='Optional, unspliced transcriptome, passed to unitas')
+    parser_all.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2 when aligning to the genome, None for default behavior')
+    parser_all.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the refernce genome step')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
-    parser_all.add_argument('genome', help='Genome to align against')
+    parser_all.add_argument('genome', nargs='?', default=None, help='Genome to align against')
 
     args = parser.parse_args()
 
@@ -284,6 +297,8 @@ def main():
             get_command_args('cds'),
             get_command_args('min_length'),
             get_command_args('max_length'),
+            get_command_args('ref_mismatches'),
+            get_command_args('disable_alignment'),
             get_command_args('quiet')
         )
 
@@ -332,6 +347,8 @@ def main():
             get_command_args('cds'),
             get_command_args('min_length'),
             get_command_args('max_length'),
+            get_command_args('ref_mismatches'),
+            get_command_args('disable_alignment'),
             get_command_args('quiet')
         )
 

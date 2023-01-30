@@ -93,7 +93,7 @@ def remove_symbols_from_header(fasta):
 
         yield seq
 
-def align_to_genome(genome, small_rnas, cds, quiet=0, small_rna_filetype='fastq'):
+def align_to_genome(genome, small_rnas, cds, quiet=0, small_rna_filetype='fastq', mismatches=None):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
@@ -138,26 +138,58 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, small_rna_filetype='fastq'
 
     cds_build_index = cds_build_index + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
 
-    bbmap_align_reads = [
-                get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                '-L', '18',
-                '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
-                '-U', small_rnas,
-                '-S', INTERMEDIATE_SAM
-    ]
+    if mismatches is not None:
+        bbmap_align_reads = [
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '-L', '18',
+            '--no-1mm-upfront',
+            '--score-min', 'L,' + str(-mismatches) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '9,1',
+            '--rfg', '9,1',
+            '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
+            '-U', small_rnas,
+            '-S', INTERMEDIATE_SAM
+        ]
+    else:
+        bbmap_align_reads = [
+                    get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                    '-L', '18',
+                    '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
+                    '-U', small_rnas,
+                    '-S', INTERMEDIATE_SAM
+        ]
 
     if small_rna_filetype == 'fasta':
         bbmap_align_reads.append('-f')
 
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
-    cds_align_reads = [
-                get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                '-L', '18',
-                '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-                '-U', small_rnas,
-                '-S', CDS_INTERMEDIATE_SAM
-    ]
+    if mismatches is not None:
+        cds_align_reads = [
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '-L', '18',
+            '--no-1mm-upfront',
+            '--score-min', 'L,' + str(-mismatches) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '9,1',
+            '--rfg', '9,1',
+            '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
+            '-U', small_rnas,
+            '-S', CDS_INTERMEDIATE_SAM
+        ]
+    else:
+        cds_align_reads = [
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '-L', '18',
+            '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
+            '-U', small_rnas,
+            '-S', CDS_INTERMEDIATE_SAM
+        ]
 
     if small_rna_filetype == 'fasta':
         cds_align_reads.append('-f')
