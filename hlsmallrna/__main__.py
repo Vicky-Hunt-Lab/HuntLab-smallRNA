@@ -13,11 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ast import Num
 import os.path
 import glob
 import shutil
 
 from math import inf
+from multiprocessing import Pool
 from argparse import ArgumentParser
 
 from Bio import SeqIO, SeqRecord
@@ -83,7 +85,7 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
 
     do_log(quiet, '==> Completed command Process')
 
-def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches, disable_align, quiet):
+def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches, disable_align, threads, quiet):
     '''
     Code to run when the user chooses the sort command
     '''
@@ -107,7 +109,7 @@ def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches,
 
     do_log(quiet, '==> Starting command Sort')
     if not disable_align:
-        new_fastq = align_to_genome(genome, small_rna, cds, small_rna_filetype=small_rna_filetype, mismatches=num_mismatches, quiet=quiet)
+        new_fastq = align_to_genome(genome, small_rna, cds, threads=threads small_rna_filetype=small_rna_filetype, mismatches=num_mismatches, quiet=quiet)
     else:
         new_fastq = small_rna
 
@@ -140,7 +142,7 @@ def extractnc_command(genome, gff, quiet):
 
     do_log(quiet, '==> Completed command extractNC')
 
-def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transcriptome, quiet):
+def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transcriptome, threads, quiet):
     '''
     Code to run when the user chooses the unitas command
     '''
@@ -172,14 +174,18 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
 
-    for small_rna in glob.glob(os.path.join(small_rna_path, '*.fastq')):
+    # easiest way to implement this quickly
+    def unitas_threads(small_rna):
         run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
+
+    with Pool(threads) as p:
+        p.map(unitas_threads, glob.glob(os.path.join(small_rna_path, '*.fastq')))
 
     table_path = merge_summary()
     graph_unitas_classification_type(table_path)
     do_log(quiet, '==> Completed command Unitas')
 
-def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, quiet):
+def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, threads, quiet):
     '''
     Code to run when the user chooses the targetid command
     '''
@@ -198,7 +204,7 @@ def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, qui
         print('Error: You need to supply at least one target file with -t')
 
     revcomp_file = revcomp_input_file(small_rna, quiet=quiet)
-    sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
+    sam_files = find_targets(revcomp_file, targets, threads=threads, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
     build_summary_files(sam_files, quiet=quiet)
 
     do_log(quiet, '==> Ending TargetID command')
@@ -279,6 +285,7 @@ def main():
                 return None
 
     mkdir_if_not_exists(get_config_key('general', 'output_directory'))
+    num_threads = get_config_key('general', 'threads')
 
     if args.command == 'process':
         process_command(
@@ -299,6 +306,7 @@ def main():
             get_command_args('max_length'),
             get_command_args('ref_mismatches'),
             get_command_args('disable_alignment'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -316,6 +324,7 @@ def main():
             get_command_args('refseq'),
             get_command_args('cds'),
             get_command_args('unspliced_transcriptome'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -325,6 +334,7 @@ def main():
             get_command_args('target_files'),
             get_command_args('min_seq_length'),
             get_command_args('num_mismatches'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -349,6 +359,7 @@ def main():
             get_command_args('max_length'),
             get_command_args('ref_mismatches'),
             get_command_args('disable_alignment'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -359,6 +370,7 @@ def main():
             os.path.join(get_config_key('general', 'output_directory'), 'binned_rna'),
             get_command_args('species'),
             get_command_args('refseq'),
+            num_threads,
             get_command_args('quiet')
         )
 
