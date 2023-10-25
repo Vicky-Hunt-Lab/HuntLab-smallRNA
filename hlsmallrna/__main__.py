@@ -109,7 +109,7 @@ def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches,
 
     do_log(quiet, '==> Starting command Sort')
     if not disable_align:
-        new_fastq = align_to_genome(genome, small_rna, cds, threads=threads small_rna_filetype=small_rna_filetype, mismatches=num_mismatches, quiet=quiet)
+        new_fastq = align_to_genome(genome, small_rna, cds, threads=threads, small_rna_filetype=small_rna_filetype, mismatches=num_mismatches, quiet=quiet)
     else:
         new_fastq = small_rna
 

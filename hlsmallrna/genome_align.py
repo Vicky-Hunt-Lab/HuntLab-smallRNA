@@ -124,7 +124,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
 
     bbmap_build_index = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
-        '--threads', threads,
+        '--threads', str(threads),
         genome,
         os.path.join(INDEX_DIRECTORY, 'genome_index')
     ]
@@ -133,7 +133,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
 
     cds_build_index = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
-        '--threads', threads,
+        '--threads', str(threads),
         cds,
         os.path.join(INDEX_DIRECTORY, 'cds_index')
     ]
@@ -143,7 +143,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     if mismatches is not None:
         bbmap_align_reads = [
             get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-            '--threads', threads,
+            '--threads', str(threads),
             '-L', '18',
             '--no-1mm-upfront',
             '--score-min', 'L,' + str(-mismatches) + ',0',
@@ -159,7 +159,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     elif mismatches == 0:
         bbmap_align_reads = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                '--threads', threads,
+                '--threads', str(threads),
                 '-L', '18',
                 '--no-1mm-upfront',
                 '--score-min', 'L,0,0',
@@ -172,7 +172,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     else:
         bbmap_align_reads = [
                     get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                    '--threads', threads,
+                    '--threads', str(threads),
                     '-L', '18',
                     '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
                     '-U', small_rnas,
@@ -187,7 +187,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     if mismatches is not None:
         cds_align_reads = [
             get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-            '--threads', threads,
+            '--threads', str(threads),
             '-L', '18',
             '--no-1mm-upfront',
             '--score-min', 'L,' + str(-mismatches) + ',0',
@@ -203,7 +203,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     elif mismatches == 0:
         cds_align_reads = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                '--threads', threads,
+                '--threads', str(threads),
                 '-L', '18',
                 '--no-1mm-upfront',
                 '--score-min', 'L,0,0',
@@ -216,7 +216,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     else:
         cds_align_reads = [
             get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-            '--threads', threads,
+            '--threads', str(threads),
             '-L', '18',
             '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
             '-U', small_rnas,
