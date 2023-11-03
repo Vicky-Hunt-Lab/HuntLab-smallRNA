@@ -365,11 +365,13 @@ def main():
 
         if out_code is not None:
             return
-
+        
         unitas_command(
             os.path.join(get_config_key('general', 'output_directory'), 'binned_rna'),
             get_command_args('species'),
             get_command_args('refseq'),
+            get_command_args('cds'),
+            get_command_args('unspliced_transcriptome'),
             num_threads,
             get_command_args('quiet')
         )
