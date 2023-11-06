@@ -142,6 +142,22 @@ def extractnc_command(genome, gff, quiet):
 
     do_log(quiet, '==> Completed command extractNC')
 
+# Parallelism bits for unitas
+# initialize worker processes
+def init_worker(a, b, c, d):
+    # declare scope of a new global variable
+    global species_name, ref_seqs, quiet, UNITAS_OUTPUT
+    # store argument in the global variable for this process
+    species_name = a
+    ref_seqs = b
+    quiet = c
+    UNITAS_OUTPUT = d
+
+
+# easiest way to implement this quickly
+def unitas_threads(small_rna):
+    run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
+
 def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transcriptome, threads, quiet):
     '''
     Code to run when the user chooses the unitas command
@@ -174,11 +190,7 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
 
-    # easiest way to implement this quickly
-    def unitas_threads(small_rna):
-        run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
-
-    with Pool(threads) as p:
+    with Pool(threads, initializer=init_worker, initargs=(species_name, ref_seqs, quiet, UNITAS_OUTPUT,)) as p:
         p.map(unitas_threads, glob.glob(os.path.join(small_rna_path, '*.fastq')))
 
     table_path = merge_summary()
