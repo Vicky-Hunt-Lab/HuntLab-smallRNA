@@ -190,8 +190,10 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
 
+    small_rna_list = glob.glob(os.path.join(small_rna_path, '*.fastq'))
+
     with Pool(threads, initializer=init_worker, initargs=(species_name, ref_seqs, quiet, UNITAS_OUTPUT,)) as p:
-        p.map(unitas_threads, glob.glob(os.path.join(small_rna_path, '*.fastq')))
+        p.map(unitas_threads, small_rna_list)
 
     table_path = merge_summary()
     graph_unitas_classification_type(table_path)
