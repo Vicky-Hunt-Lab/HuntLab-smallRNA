@@ -121,7 +121,7 @@ def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches,
 
 def extractnc_command(genome, gff, quiet):
     '''
-    Code to run when the user chooses to extract the noncoding mRNA reigon
+    Code to run when the user chooses to extract the noncoding mRNA region
     '''
 
     if not validate_file(genome, 'fasta'):
@@ -238,17 +238,17 @@ def main():
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')
-    parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
+    parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS region as well as the genome')
     parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
-    parser_sort.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2, None for default behavior')
-    parser_sort.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the refernce genome step')
+    parser_sort.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2, None for default behaviour')
+    parser_sort.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the reference genome step')
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_sort.add_argument('genome', nargs='?', default=None, help='Genome to align against')
 
-    parser_extractnc = subparsers.add_parser('extractnc', help='Extarct the noncoding reigon from a fasta with a GFF file')
+    parser_extractnc = subparsers.add_parser('extractnc', help='Extarct the noncoding region from a fasta with a GFF file')
     parser_extractnc.add_argument('genome', help='FASTA containing the genome to extract from')
-    parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
+    parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA regions')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
     parser_unitas.add_argument('-d', '--cds', help='Optional CDS region, passed to unitas')
@@ -265,7 +265,7 @@ def main():
 
     parser_all = subparsers.add_parser('all', help='Run process, sort and unitas one after the other')
     parser_all.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
-    parser_all.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
+    parser_all.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS region as well as the genome')
     parser_all.add_argument('-g', '--front', help='Sequence of the adapter to remove from the 5\' end')
     parser_all.add_argument('-b', '--anywhere', help='Sequence of the adapters to remove from both ends')
     parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
@@ -274,8 +274,8 @@ def main():
     parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('-u', '--unspliced-transcriptome', help='Optional, unspliced transcriptome, passed to unitas')
-    parser_all.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2 when aligning to the genome, None for default behavior')
-    parser_all.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the refernce genome step')
+    parser_all.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2 when aligning to the genome, None for default behaviour')
+    parser_all.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the reference genome step')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_all.add_argument('genome', nargs='?', default=None, help='Genome to align against')
 
