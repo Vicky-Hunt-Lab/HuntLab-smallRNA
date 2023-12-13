@@ -17,7 +17,7 @@ from distutils.core import setup
 
 setup(
     name='HuntLab-smallRNA',
-    version='1.0.0',
+    version='1.1.0',
     description='Small RNA scripts developed for use in the Hunt Lab',
     author='Vicky Hunt Lab',
     packages=['hlsmallrna'],

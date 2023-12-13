@@ -61,7 +61,7 @@ def revcomp_input_file(smallRNA, quiet=0):
     return PATH_TO_REVCOMP
 
 
-def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_allowed=0, quiet=0):
+def find_targets(smallRNA, possible_target_list, threads=4, min_seq_length=2, mismatches_allowed=0, quiet=0):
     '''
     Align the small RNA against the lists of possible targets with bowtie2 and
     analyse the output
@@ -87,17 +87,12 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
 
         bowtie2_build_command = [
             get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
+            '--threads', str(threads),
             os.path.join(CWD, target),
             INDEX_NAME
         ]
 
         bowtie2_build_command = bowtie2_build_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
-
-        if get_config_key('cli-tools', 'bowtie2', 'bowtie2_pass_threads'):
-            threads = get_config_key('general', 'threads')
-
-            bowtie2_build_command.append('--threads')
-            bowtie2_build_command.append(str(threads))
 
         run(bowtie2_build_command, capture_output=(quiet != 0))
 
@@ -108,6 +103,7 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
         if mismatches_allowed > 0:
             bowtie2_align_command = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                '--threads', str(threads),
                 '-L', str(min_seq_length),
                 '--no-1mm-upfront',
                 '--score-min', 'L,-' + str(mismatches_allowed) + ',0',
@@ -120,12 +116,12 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
                 '-x', INDEX_NAME,
                 '-U', os.path.join(CWD, smallRNA),
                 '-S', sam_files[-1],
-                '-a',
-                '-p', get_config_key('general', 'threads')
+                '-a'
             ]
         else:
             bowtie2_align_command = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                '--threads', str(threads),
                 '-L', str(min_seq_length),
                 '--no-1mm-upfront',
                 '--score-min', 'L,0,0',
@@ -139,12 +135,6 @@ def find_targets(smallRNA, possible_target_list, min_seq_length=2, mismatches_al
             ]
 
         bowtie2_align_command = bowtie2_align_command + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
-
-        if get_config_key('cli-tools', 'bowtie2', 'bowtie2_pass_threads'):
-            threads = get_config_key('general', 'threads')
-
-            bowtie2_align_command.append('--threads')
-            bowtie2_align_command.append(str(threads))
 
         run(bowtie2_align_command, capture_output=(quiet != 0))
 

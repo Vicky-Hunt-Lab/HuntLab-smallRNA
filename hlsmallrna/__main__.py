@@ -13,11 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ast import Num
 import os.path
 import glob
 import shutil
 
 from math import inf
+from multiprocessing import Pool
 from argparse import ArgumentParser
 
 from Bio import SeqIO, SeqRecord
@@ -83,21 +85,34 @@ def process_command(small_rna, adapter, front, anywhere, cutoff, quiet):
 
     do_log(quiet, '==> Completed command Process')
 
-def sort_command(genome, small_rna, cds, min_length, max_length, quiet):
+def sort_command(genome, small_rna, cds, min_length, max_length, num_mismatches, disable_align, threads, quiet):
     '''
     Code to run when the user chooses the sort command
     '''
 
-    if not validate_file(genome, 'fasta'):
+    if not disable_align and not validate_file(genome, 'fasta'):
         print(f'Error: expected a genome in FASTA format, got {genome}')
+        
+        # Add note if genome positional argument has been missed
+        if genome is None:
+            print('It looks like you missed the Genome FASTA argument, try adding one to the end of your command')
+            
         return False
 
-    if not validate_file(small_rna, 'fastq'):
-        print(f'Error: expected a small RNA FASTQ with at least one sequence, got {small_rna}')
+    if validate_file(small_rna, 'fastq'):
+        small_rna_filetype = 'fastq'
+    elif validate_file(small_rna, 'fasta'):
+        small_rna_filetype = 'fasta'
+    else:
+        print(f'Error: expected a small RNA FASTQ or FASTA with at least one sequence, got {small_rna}')
         return False
 
     do_log(quiet, '==> Starting command Sort')
-    new_fastq = align_to_genome(genome, small_rna, cds, quiet=quiet)
+    if not disable_align:
+        new_fastq = align_to_genome(genome, small_rna, cds, threads=threads, small_rna_filetype=small_rna_filetype, mismatches=num_mismatches, quiet=quiet)
+    else:
+        new_fastq = small_rna
+
     table_file = bin_rna_size(new_fastq, min_length, max_length, quiet=quiet)
 
     graph_length(table_file)
@@ -106,7 +121,7 @@ def sort_command(genome, small_rna, cds, min_length, max_length, quiet):
 
 def extractnc_command(genome, gff, quiet):
     '''
-    Code to run when the user chooses to extract the noncoding mRNA reigon
+    Code to run when the user chooses to extract the noncoding mRNA region
     '''
 
     if not validate_file(genome, 'fasta'):
@@ -127,7 +142,23 @@ def extractnc_command(genome, gff, quiet):
 
     do_log(quiet, '==> Completed command extractNC')
 
-def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transcriptome, quiet):
+# Parallelism bits for unitas
+# initialize worker processes
+def init_worker(a, b, c, d):
+    # declare scope of a new global variable
+    global species_name, ref_seqs, quiet, UNITAS_OUTPUT
+    # store argument in the global variable for this process
+    species_name = a
+    ref_seqs = b
+    quiet = c
+    UNITAS_OUTPUT = d
+
+
+# easiest way to implement this quickly
+def unitas_threads(small_rna):
+    run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
+
+def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transcriptome, threads, quiet):
     '''
     Code to run when the user chooses the unitas command
     '''
@@ -159,14 +190,16 @@ def unitas_command(small_rna_path, species_name, ref_seqs, cds, unspliced_transc
 
     mkdir_if_not_exists(UNITAS_OUTPUT)
 
-    for small_rna in glob.glob(os.path.join(small_rna_path, '*.fastq')):
-        run_unitas_annotation(small_rna, species_name, ref_seqs, quiet=quiet, unitas_output=UNITAS_OUTPUT)
+    small_rna_list = glob.glob(os.path.join(small_rna_path, '*.fastq'))
+
+    with Pool(threads, initializer=init_worker, initargs=(species_name, ref_seqs, quiet, UNITAS_OUTPUT,)) as p:
+        p.map(unitas_threads, small_rna_list)
 
     table_path = merge_summary()
     graph_unitas_classification_type(table_path)
     do_log(quiet, '==> Completed command Unitas')
 
-def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, quiet):
+def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, threads, quiet):
     '''
     Code to run when the user chooses the targetid command
     '''
@@ -185,7 +218,7 @@ def targetid_command(small_rna, targets, min_seq_length, mismatches_allowed, qui
         print('Error: You need to supply at least one target file with -t')
 
     revcomp_file = revcomp_input_file(small_rna, quiet=quiet)
-    sam_files = find_targets(revcomp_file, targets, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
+    sam_files = find_targets(revcomp_file, targets, threads=threads, min_seq_length=min_seq_length, mismatches_allowed=mismatches_allowed, quiet=quiet)
     build_summary_files(sam_files, quiet=quiet)
 
     do_log(quiet, '==> Ending TargetID command')
@@ -205,15 +238,17 @@ def main():
     parser_process.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
 
     parser_sort = subparsers.add_parser('sort', help='Find RNAs that align to a genome and sort them by length')
-    parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
+    parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS region as well as the genome')
     parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
+    parser_sort.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2, None for default behaviour')
+    parser_sort.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the reference genome step')
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
-    parser_sort.add_argument('genome', help='Genome to align against')
+    parser_sort.add_argument('genome', nargs='?', default=None, help='Genome to align against')
 
-    parser_extractnc = subparsers.add_parser('extractnc', help='Extarct the noncoding reigon from a fasta with a GFF file')
+    parser_extractnc = subparsers.add_parser('extractnc', help='Extarct the noncoding region from a fasta with a GFF file')
     parser_extractnc.add_argument('genome', help='FASTA containing the genome to extract from')
-    parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA reigons')
+    parser_extractnc.add_argument('gff_file', help='GFF file containing annotations of CDS and mRNA regions')
 
     parser_unitas = subparsers.add_parser('unitas', help='Run unitas on split files and merge results')
     parser_unitas.add_argument('-d', '--cds', help='Optional CDS region, passed to unitas')
@@ -230,7 +265,7 @@ def main():
 
     parser_all = subparsers.add_parser('all', help='Run process, sort and unitas one after the other')
     parser_all.add_argument('-a', '--adapter', help='Sequence of the adapter to remove from the 3\' end')
-    parser_all.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS reigon as well as the genome')
+    parser_all.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS region as well as the genome')
     parser_all.add_argument('-g', '--front', help='Sequence of the adapter to remove from the 5\' end')
     parser_all.add_argument('-b', '--anywhere', help='Sequence of the adapters to remove from both ends')
     parser_all.add_argument('-c', '--cutoff', help='Quality cutoff to trin RNA sequences at', default=20, type=int)
@@ -239,8 +274,10 @@ def main():
     parser_all.add_argument('-r', '--refseq', help='References for use with unitas', nargs='*', default=None)
     parser_all.add_argument('-s', '--species', help='Species to set in unitas arguments', default='x')
     parser_all.add_argument('-u', '--unspliced-transcriptome', help='Optional, unspliced transcriptome, passed to unitas')
+    parser_all.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2 when aligning to the genome, None for default behaviour')
+    parser_all.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the reference genome step')
     parser_all.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
-    parser_all.add_argument('genome', help='Genome to align against')
+    parser_all.add_argument('genome', nargs='?', default=None, help='Genome to align against')
 
     args = parser.parse_args()
 
@@ -262,6 +299,7 @@ def main():
                 return None
 
     mkdir_if_not_exists(get_config_key('general', 'output_directory'))
+    num_threads = get_config_key('general', 'threads')
 
     if args.command == 'process':
         process_command(
@@ -280,6 +318,9 @@ def main():
             get_command_args('cds'),
             get_command_args('min_length'),
             get_command_args('max_length'),
+            get_command_args('ref_mismatches'),
+            get_command_args('disable_alignment'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -297,6 +338,7 @@ def main():
             get_command_args('refseq'),
             get_command_args('cds'),
             get_command_args('unspliced_transcriptome'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -306,6 +348,7 @@ def main():
             get_command_args('target_files'),
             get_command_args('min_seq_length'),
             get_command_args('num_mismatches'),
+            num_threads,
             get_command_args('quiet')
         )
 
@@ -328,16 +371,22 @@ def main():
             get_command_args('cds'),
             get_command_args('min_length'),
             get_command_args('max_length'),
+            get_command_args('ref_mismatches'),
+            get_command_args('disable_alignment'),
+            num_threads,
             get_command_args('quiet')
         )
 
         if out_code is not None:
             return
-
+        
         unitas_command(
             os.path.join(get_config_key('general', 'output_directory'), 'binned_rna'),
             get_command_args('species'),
             get_command_args('refseq'),
+            get_command_args('cds'),
+            get_command_args('unspliced_transcriptome'),
+            num_threads,
             get_command_args('quiet')
         )
 

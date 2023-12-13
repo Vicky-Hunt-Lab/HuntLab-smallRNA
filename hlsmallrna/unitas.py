@@ -59,9 +59,10 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_ou
         '-species', species_name
     ]
 
-    for refs in ref_files:
-        unitas_command.append('-refseq')
-        unitas_command.append(os.path.join(CWD, refs))
+    if ref_files is not None:
+        for refs in ref_files:
+            unitas_command.append('-refseq')
+            unitas_command.append(os.path.join(CWD, refs))
 
     unitas_command = unitas_command + get_config_key('cli-tools', 'unitas', 'unitas_params')
 

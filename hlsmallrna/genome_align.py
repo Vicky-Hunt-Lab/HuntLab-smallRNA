@@ -84,7 +84,16 @@ def make_fastq_overlap_only(fastq1, fastq2, output):
 
     SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
 
-def align_to_genome(genome, small_rnas, cds, quiet=0):
+def remove_symbols_from_header(fasta):
+    '''
+    Remove @s from the FASTA header before doing the alignment
+    '''
+    for seq in SeqIO.parse(fasta, 'fasta'):
+        seq.id = seq.id.replace('@', '_')
+
+        yield seq
+
+def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filetype='fastq', mismatches=None):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
@@ -107,8 +116,15 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
 
     mkdir_if_not_exists(INDEX_DIRECTORY)
 
+    if small_rna_filetype == 'fasta':
+        NEW_SMALL_RNAS = os.path.join(get_config_key('general', 'output_directory'), 'corrected_headers.fasta')
+        SeqIO.write(remove_symbols_from_header(small_rnas), NEW_SMALL_RNAS, 'fasta')
+
+        small_rnas = NEW_SMALL_RNAS
+
     bbmap_build_index = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
+        '--threads', str(threads),
         genome,
         os.path.join(INDEX_DIRECTORY, 'genome_index')
     ]
@@ -117,29 +133,98 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
 
     cds_build_index = [
         get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
+        '--threads', str(threads),
         cds,
         os.path.join(INDEX_DIRECTORY, 'cds_index')
     ]
 
     cds_build_index = cds_build_index + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
 
-    bbmap_align_reads = [
+    if mismatches is not None:
+        bbmap_align_reads = [
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '--threads', str(threads),
+            '-L', '18',
+            '--no-1mm-upfront',
+            '--score-min', 'L,' + str(-mismatches) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '9,1',
+            '--rfg', '9,1',
+            '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
+            '-U', small_rnas,
+            '-S', INTERMEDIATE_SAM
+        ]
+    elif mismatches == 0:
+        bbmap_align_reads = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                '--threads', str(threads),
                 '-L', '18',
+                '--no-1mm-upfront',
+                '--score-min', 'L,0,0',
+                '--end-to-end',
+                '-M', '0',
                 '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
                 '-U', small_rnas,
                 '-S', INTERMEDIATE_SAM
-    ]
+            ]
+    else:
+        bbmap_align_reads = [
+                    get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                    '--threads', str(threads),
+                    '-L', '18',
+                    '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
+                    '-U', small_rnas,
+                    '-S', INTERMEDIATE_SAM
+        ]
+
+    if small_rna_filetype == 'fasta':
+        bbmap_align_reads.append('-f')
 
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
-    cds_align_reads = [
+    if mismatches is not None:
+        cds_align_reads = [
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '--threads', str(threads),
+            '-L', '18',
+            '--no-1mm-upfront',
+            '--score-min', 'L,' + str(-mismatches) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '9,1',
+            '--rfg', '9,1',
+            '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
+            '-U', small_rnas,
+            '-S', CDS_INTERMEDIATE_SAM
+        ]
+    elif mismatches == 0:
+        cds_align_reads = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                '--threads', str(threads),
                 '-L', '18',
+                '--no-1mm-upfront',
+                '--score-min', 'L,0,0',
+                '--end-to-end',
+                '-M', '0',
                 '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
                 '-U', small_rnas,
                 '-S', CDS_INTERMEDIATE_SAM
-    ]
+            ]
+    else:
+        cds_align_reads = [
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '--threads', str(threads),
+            '-L', '18',
+            '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
+            '-U', small_rnas,
+            '-S', CDS_INTERMEDIATE_SAM
+        ]
+
+    if small_rna_filetype == 'fasta':
+        cds_align_reads.append('-f')
 
     cds_align_reads = cds_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
@@ -219,19 +304,6 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
         '-0', CDS_UNMAPPED_FASTQ
     ]
 
-    if get_config_key('cli-tools', 'bowtie2', 'bowtie2_pass_threads'):
-        threads = get_config_key('general', 'threads')
-
-        bbmap_build_index.append('--threads')
-        bbmap_build_index.append(str(threads))
-        bbmap_align_reads.append('--threads')
-        bbmap_align_reads.append(str(threads))
-
-        cds_build_index.append('--threads')
-        cds_build_index.append(str(threads))
-        cds_align_reads.append('--threads')
-        cds_align_reads.append(str(threads))
-
     do_log(quiet, '====> Building BBMap Index')
     run(bbmap_build_index, capture_output=(quiet != 0))
     if cds is not None:
@@ -256,17 +328,17 @@ def align_to_genome(genome, small_rnas, cds, quiet=0):
     make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
     make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
-    create_stats_table(small_rnas, get_config_key('general', 'output_directory'))
+    create_stats_table(small_rnas, get_config_key('general', 'output_directory'), small_rna_filetype=small_rna_filetype)
 
     return FINAL_FASTQ
 
-def create_stats_table(smallrna, output_dir):
+def create_stats_table(smallrna, output_dir, small_rna_filetype='fastq'):
     '''
     Count sequences to create the statistics file
     '''
 
     input_reads = 0
-    for read in SeqIO.parse(smallrna, 'fastq'):
+    for read in SeqIO.parse(smallrna, small_rna_filetype):
         input_reads += 1
 
     overall_mapped = 0
