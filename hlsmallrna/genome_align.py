@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from collections import defaultdict
 from shutil import copy2
 
 import os
@@ -37,64 +36,16 @@ def into_seqrecord(seqs):
 
         yield record
 
-# def make_fastqs_unique(fastq1, fastq2, output):
-#     '''
-#     Take 2 FastQ files, combine and remove duplicates from the second
-#     '''
-#     unique_sequences = []
-#     cds_sequences = defaultdict(lambda: 0)
-
-#     for sequence in SeqIO.parse(fastq1, 'fastq'):
-#         unique_sequences.append(str(sequence.seq))
-
-#     try:
-#         for sequence in SeqIO.parse(fastq2, 'fastq'):
-#             cds_sequences[str(sequence.seq)] += 1
-#     except FileNotFoundError:
-#         pass
-
-#     for key in cds_sequences.keys():
-#         if key not in unique_sequences:
-#             for i in range(cds_sequences[key]):
-#                 unique_sequences.append(key)
-
-#     SeqIO.write(into_seqrecord(unique_sequences), output, 'fastq')
-
-# def make_fastq_overlap_only(fastq1, fastq2, output):
-#     '''
-#     Create a fastq with only sequences that appear in both fastq files
-#     '''
-#     fastq1_seqs = []
-
-#     for sequence in SeqIO.parse(fastq1, 'fastq'):
-#         fastq1_seqs.append(str(sequence.seq))
-
-#     try:
-#         fastq2_seqs = defaultdict(lambda: 0)
-
-#         for sequence in SeqIO.parse(fastq2, 'fastq'):
-#             fastq2_seqs[str(sequence.seq)] += 1
-
-#         for seq in fastq2_seqs.keys():
-#             if seq not in fastq1_seqs:
-#                 for i in range(fastq2_seqs[seq]):
-#                     fastq1_seqs.append(seq)
-                    
-#         result_seqs = fastq1_seqs
-#     except FileNotFoundError as e:
-#         result_seqs = fastq1_seqs
-
-#     SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
-
 def merge_genome_cds_hits(results_seq, cds_seq):
     '''
     Merge FASTQ hits from the genome and CDS
     '''
     for seq in SeqIO.parse(results_seq, 'fastq'):
-        yield seq
+        yield seq.seq
 
-    for seq in SeqIO.parse(cds_seq, 'fastq'):
-        yield seq
+    if os.path.exists(cds_seq):
+        for seq in SeqIO.parse(cds_seq, 'fastq'):
+            yield seq.seq
 
 def remove_symbols_from_header(fasta):
     '''
@@ -322,14 +273,15 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
 
     do_log(quiet, '====> Aligning reads to the genome')
     run(bbmap_align_reads, capture_output=(quiet != 0))
-    if cds is not None:
-        run(cds_align_reads, capture_output=(quiet != 0))
 
-    do_log(quiet, '====> Converting to FASTQ')
     run(samtools_view, capture_output=(quiet != 0)) 
     run(bedtools_bamtofastq_command, capture_output=(quiet != 0))
     run(unmapped_samtools_view, capture_output=(quiet != 0))
     run(unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
+    if cds is not None:
+        run(cds_align_reads, capture_output=(quiet != 0))
+
+    do_log(quiet, '====> Converting to FASTQ')
     if cds is not None:
         run(cds_samtools_view, capture_output=(quiet != 0))
         run(cds_bedtools_bamtofastq_command, capture_output=(quiet != 0))
@@ -337,14 +289,13 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
         run(cds_unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
 
         copy2(CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
-        merge_genome_cds_hits(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
     else:
         copy2(RESULT_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
-        copy2(RESULT_FASTQ, FINAL_FASTQ)
 
     # make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
     # make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
+    SeqIO.write(into_seqrecord(merge_genome_cds_hits(RESULT_FASTQ, CDS_RESULT_FASTQ)), FINAL_FASTQ, 'fastq')
     create_stats_table(small_rnas, get_config_key('general', 'output_directory'), small_rna_filetype=small_rna_filetype)
 
     return FINAL_FASTQ
