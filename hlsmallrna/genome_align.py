@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from collections import defaultdict
+from shutil import copy2
+
 import os
 import os.path
 import csv
@@ -35,54 +37,64 @@ def into_seqrecord(seqs):
 
         yield record
 
-def make_fastqs_unique(fastq1, fastq2, output):
-    '''
-    Take 2 FastQ files, combine and remove duplicates from the second
-    '''
-    unique_sequences = []
-    cds_sequences = defaultdict(lambda: 0)
+# def make_fastqs_unique(fastq1, fastq2, output):
+#     '''
+#     Take 2 FastQ files, combine and remove duplicates from the second
+#     '''
+#     unique_sequences = []
+#     cds_sequences = defaultdict(lambda: 0)
 
-    for sequence in SeqIO.parse(fastq1, 'fastq'):
-        unique_sequences.append(str(sequence.seq))
+#     for sequence in SeqIO.parse(fastq1, 'fastq'):
+#         unique_sequences.append(str(sequence.seq))
 
-    try:
-        for sequence in SeqIO.parse(fastq2, 'fastq'):
-            cds_sequences[str(sequence.seq)] += 1
-    except FileNotFoundError:
-        pass
+#     try:
+#         for sequence in SeqIO.parse(fastq2, 'fastq'):
+#             cds_sequences[str(sequence.seq)] += 1
+#     except FileNotFoundError:
+#         pass
 
-    for key in cds_sequences.keys():
-        if key not in unique_sequences:
-            for i in range(cds_sequences[key]):
-                unique_sequences.append(key)
+#     for key in cds_sequences.keys():
+#         if key not in unique_sequences:
+#             for i in range(cds_sequences[key]):
+#                 unique_sequences.append(key)
 
-    SeqIO.write(into_seqrecord(unique_sequences), output, 'fastq')
+#     SeqIO.write(into_seqrecord(unique_sequences), output, 'fastq')
 
-def make_fastq_overlap_only(fastq1, fastq2, output):
-    '''
-    Create a fastq with only sequences that appear in both fastq files
-    '''
-    fastq1_seqs = []
+# def make_fastq_overlap_only(fastq1, fastq2, output):
+#     '''
+#     Create a fastq with only sequences that appear in both fastq files
+#     '''
+#     fastq1_seqs = []
 
-    for sequence in SeqIO.parse(fastq1, 'fastq'):
-        fastq1_seqs.append(str(sequence.seq))
+#     for sequence in SeqIO.parse(fastq1, 'fastq'):
+#         fastq1_seqs.append(str(sequence.seq))
 
-    try:
-        fastq2_seqs = defaultdict(lambda: 0)
+#     try:
+#         fastq2_seqs = defaultdict(lambda: 0)
 
-        for sequence in SeqIO.parse(fastq2, 'fastq'):
-            fastq2_seqs[str(sequence.seq)] += 1
+#         for sequence in SeqIO.parse(fastq2, 'fastq'):
+#             fastq2_seqs[str(sequence.seq)] += 1
 
-        for seq in fastq2_seqs.keys():
-            if seq not in fastq1_seqs:
-                for i in range(fastq2_seqs[seq]):
-                    fastq1_seqs.append(seq)
+#         for seq in fastq2_seqs.keys():
+#             if seq not in fastq1_seqs:
+#                 for i in range(fastq2_seqs[seq]):
+#                     fastq1_seqs.append(seq)
                     
-        result_seqs = fastq1_seqs
-    except FileNotFoundError as e:
-        result_seqs = fastq1_seqs
+#         result_seqs = fastq1_seqs
+#     except FileNotFoundError as e:
+#         result_seqs = fastq1_seqs
 
-    SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
+#     SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
+
+def merge_genome_cds_hits(results_seq, cds_seq):
+    '''
+    Merge FASTQ hits from the genome and CDS
+    '''
+    for seq in SeqIO.parse(results_seq, 'fastq'):
+        yield seq
+
+    for seq in SeqIO.parse(cds_seq, 'fastq'):
+        yield seq
 
 def remove_symbols_from_header(fasta):
     '''
@@ -171,18 +183,20 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
             ]
     else:
         bbmap_align_reads = [
-                    get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                    '--threads', str(threads),
-                    '-L', '18',
-                    '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
-                    '-U', small_rnas,
-                    '-S', INTERMEDIATE_SAM
+            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            '--threads', str(threads),
+            '-L', '18',
+            '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
+            '-U', small_rnas,
+            '-S', INTERMEDIATE_SAM
         ]
 
     if small_rna_filetype == 'fasta':
         bbmap_align_reads.append('-f')
 
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
+
+
 
     if mismatches is not None:
         cds_align_reads = [
@@ -197,7 +211,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
             '--rdg', '9,1',
             '--rfg', '9,1',
             '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-            '-U', small_rnas,
+            '-U', RESULT_UNMAPPED_FASTQ,
             '-S', CDS_INTERMEDIATE_SAM
         ]
     elif mismatches == 0:
@@ -210,7 +224,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
                 '--end-to-end',
                 '-M', '0',
                 '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-                '-U', small_rnas,
+                '-U', RESULT_UNMAPPED_FASTQ,
                 '-S', CDS_INTERMEDIATE_SAM
             ]
     else:
@@ -219,12 +233,9 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
             '--threads', str(threads),
             '-L', '18',
             '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-            '-U', small_rnas,
+            '-U', RESULT_UNMAPPED_FASTQ,
             '-S', CDS_INTERMEDIATE_SAM
         ]
-
-    if small_rna_filetype == 'fasta':
-        cds_align_reads.append('-f')
 
     cds_align_reads = cds_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
@@ -325,8 +336,14 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
         run(cds_unmapped_samtools_view, capture_output=(quiet != 0))
         run(cds_unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
 
-    make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
-    make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
+        copy2(CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
+        merge_genome_cds_hits(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
+    else:
+        copy2(RESULT_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
+        copy2(RESULT_FASTQ, FINAL_FASTQ)
+
+    # make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
+    # make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
     create_stats_table(small_rnas, get_config_key('general', 'output_directory'), small_rna_filetype=small_rna_filetype)
 
