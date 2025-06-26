@@ -241,7 +241,7 @@ def main():
     parser_sort.add_argument('-d', '--cds', help='Optional CDS region, also align this to the CDS region as well as the genome')
     parser_sort.add_argument('-l', '--min-length', help='Minimum length to bin', type=int, default=-inf)
     parser_sort.add_argument('-x', '--max-length', help='Maximum length to bin', type=int, default=inf)
-    parser_sort.add_argument('-m', '--ref-mismatches', type=int, default=None, help='Number of mismatches to use in bowtie2, None for default behaviour')
+    parser_sort.add_argument('-m', '--ref-mismatches', help='Number of mismatches to use in bowtie2, defaults to 0', type=int, default=0)
     parser_sort.add_argument('--disable-alignment', action='store_true', help='Skip the alignment to the reference genome step')
     parser_sort.add_argument('small_rna', help='Path to FASTQ containing the small RNA')
     parser_sort.add_argument('genome', nargs='?', default=None, help='Genome to align against')

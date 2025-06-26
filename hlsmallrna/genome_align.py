@@ -56,7 +56,7 @@ def remove_symbols_from_header(fasta):
 
         yield seq
 
-def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filetype='fastq', mismatches=None):
+def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filetype='fastq', mismatches=0):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
@@ -103,23 +103,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
 
     cds_build_index = cds_build_index + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
 
-    if mismatches is not None:
-        bbmap_align_reads = [
-            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-            '--threads', str(threads),
-            '-L', '18',
-            '--no-1mm-upfront',
-            '--score-min', 'L,' + str(-mismatches) + ',0',
-            '--end-to-end',
-            '--mp', '1,1',
-            '--ignore-quals',
-            '--rdg', '9,1',
-            '--rfg', '9,1',
-            '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
-            '-U', small_rnas,
-            '-S', INTERMEDIATE_SAM
-        ]
-    elif mismatches == 0:
+    if mismatches == 0:
         bbmap_align_reads = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
                 '--threads', str(threads),
@@ -137,6 +121,12 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
             get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
             '--threads', str(threads),
             '-L', '18',
+            '--score-min', 'L,' + str(-(mismatches - 1)) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '9,1',
+            '--rfg', '9,1',
             '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
             '-U', small_rnas,
             '-S', INTERMEDIATE_SAM
@@ -148,24 +138,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
 
 
-
-    if mismatches is not None:
-        cds_align_reads = [
-            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-            '--threads', str(threads),
-            '-L', '18',
-            '--no-1mm-upfront',
-            '--score-min', 'L,' + str(-mismatches) + ',0',
-            '--end-to-end',
-            '--mp', '1,1',
-            '--ignore-quals',
-            '--rdg', '9,1',
-            '--rfg', '9,1',
-            '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-            '-U', RESULT_UNMAPPED_FASTQ,
-            '-S', CDS_INTERMEDIATE_SAM
-        ]
-    elif mismatches == 0:
+    if mismatches == 0:
         cds_align_reads = [
                 get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
                 '--threads', str(threads),
@@ -183,6 +156,12 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
             get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
             '--threads', str(threads),
             '-L', '18',
+            '--score-min', 'L,' + str(-(mismatches - 1)) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '9,1',
+            '--rfg', '9,1',
             '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
             '-U', RESULT_UNMAPPED_FASTQ,
             '-S', CDS_INTERMEDIATE_SAM
@@ -291,9 +270,6 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
         copy2(CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
     else:
         copy2(RESULT_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
-
-    # make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
-    # make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
     SeqIO.write(into_seqrecord(merge_genome_cds_hits(RESULT_FASTQ, CDS_RESULT_FASTQ)), FINAL_FASTQ, 'fastq')
     create_stats_table(small_rnas, get_config_key('general', 'output_directory'), small_rna_filetype=small_rna_filetype)
