@@ -1,17 +1,3 @@
-# Welcome to MkDocs
+# Welcome to the Hunt Lab Small RNA Pipeline Documentation
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+This tool is designed to automate a lot of the common bioinformatics performed on small RNA by the [Hunt Lab](https://www.vickyhuntlab.org/). It is deliberately designed to be highly configurable so it can be easily applied to a wide range of scenarios, though most of our work is on nematode and nematomorph worms.

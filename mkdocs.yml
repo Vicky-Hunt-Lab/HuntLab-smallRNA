@@ -1,4 +1,31 @@
 site_name: Hunt Lab Small RNA Pipeline
 site_url: https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA
+repo_url: https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA
+repo_name: Vicky-Hunt-Lab/HuntLab-smallRNA
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Walkthrough:
+    - Tasks: walkthrough/tasks.md
+    - Quick Start: walkthrough/quick-start.md
+    - Configuration and Troubleshooting Notes: walkthrough/config-and-troubleshooting.md
+  - Other Tasks: other-tasks.md
+  - CLI Reference:
+    - Overview: cli-reference/index.md
+    - Process: cli-reference/process.md
+    - Sort: cli-reference/sort.md
+    - ExtractNC: cli-reference/extractnc.md
+    - Label for Unitas: cli-reference/label-for-unitas.md
+    - Unitas: cli-reference/unitas.md
+    - TargetID: cli-reference/targetid.md
+    - Build Coord Files: cli-reference/build-coord-files.md
+    - Overlap SS: cli-reference/overlapss.md
 theme:
   name: material
+  features:
+    - navigation.instant
+    - navigation.path
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - toc.follow
+    - toc.integrate
