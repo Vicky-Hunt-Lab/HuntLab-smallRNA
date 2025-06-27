@@ -143,7 +143,7 @@ $ perl unitas.pl -pp -input map.file  –species x –refseq reference.fasta
 
 ## Dicer Signature (StepRNA)
 
-To install stepRNA, see the documentation on [the GitHub page](https://github.com/bmm514/stepRNA).
+To install stepRNA, see the documentation on [the GitHub page](https://github.com/Vicky-Hunt-Lab/stepRNA).
 
 stepRNA is able to identify a Dicer processing signature from a small RNA sequence dataset. It requires two FASTA files as input that have had their adapters already trimmed from the ends.
 

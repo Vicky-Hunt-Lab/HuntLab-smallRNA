@@ -1,6 +1,6 @@
 # Installation
 
-You can obtain the code for the pipeline from [https://github.com/kieranr51/HuntLab-smallRNA](https://github.com/kieranr51/HuntLab-smallRNA). To download, click the code button and copy the URL. You can then download it to a computer with git installed on it by opening the command line and running:
+You can obtain the code for the pipeline from [https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA](https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA). To download, click the code button and copy the URL. You can then download it to a computer with git installed on it by opening the command line and running:
 
 ```
 $ git clone https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA.git

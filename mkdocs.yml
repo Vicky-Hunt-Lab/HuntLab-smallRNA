@@ -25,6 +25,7 @@ theme:
   features:
     - navigation.instant
     - navigation.path
+    - navigation.footer
     - navigation.tabs
     - navigation.tabs.sticky
     - toc.follow
