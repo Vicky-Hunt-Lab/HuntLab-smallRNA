@@ -129,6 +129,8 @@ def main():
     if not os.path.exists(args.output):
         os.makedirs(args.output)
 
+    shutil.copy2(args.config_file, os.path.join(args.output, 'config.yml'))
+
     print('==> Validating config and converting files...')
     success, err_msg, config = load_and_validate_input(args.config_file, args.output)
 
