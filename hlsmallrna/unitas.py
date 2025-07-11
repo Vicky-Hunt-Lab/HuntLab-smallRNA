@@ -180,7 +180,7 @@ def graph_unitas_classification_type(numbered_results, min_length, max_length, o
         writer = csv.writer(f)
         writer.writerows(plot_data)
 
-    ax.set_xticks(list(range(len(rna_lengths))))
+    ax.set_xticks(rna_lengths)
     ax.set_xticklabels(rna_lengths, fontsize=7)
     ax.set_xlabel('Length of small RNA')
     ax.set_ylabel('Unitas RPM')
