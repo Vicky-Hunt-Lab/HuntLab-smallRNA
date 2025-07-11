@@ -1,4 +1,4 @@
-# Copyright 2022 Vicky Hunt Lab Members
+# Copyright 2022 - 2025 Vicky Hunt Lab Members
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,48 +11,57 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os.path
+import os
+import sys
+import shutil
 
 from subprocess import run
 
-from .config import do_log, get_config_key
-
-def run_trim(file_to_trim, start_adapter, end_adapter, both_adapters, quiet=0):
+def run_trim(
+        file_to_trim, output, five_prime_adapter=None, three_prime_adapter=None, quality_cutoff=20, threads=4,
+        cutadapt_path='cutadapt', keep_intermediate=False, verbose=False
+    ):
     '''
     Call cutadapt to remove adapters
     '''
+    current_input = file_to_trim
+    files_to_remove = []
 
-    outfile = os.path.join(get_config_key('general', 'output_directory'), 'trimmed_rna.fastq')
-    command = [
-        get_config_key('cli-tools', 'trim', 'path_to_trim'),
-        file_to_trim
-    ]
+    # quality filter
+    if quality_cutoff > 0:
+        print('====> Removing low quality reads...', file=sys.stderr)
+        cutadapt_quality = [
+            cutadapt_path, '-q', str(quality_cutoff), '-o', os.path.join(output, 'quality_filtered.fq'), '-j', str(threads), current_input
+        ]
+        run(cutadapt_quality, capture_output=not verbose)
 
-    if start_adapter is not None:
-        command.append('-a')
-        command.append(start_adapter)
+        current_input = os.path.join(output, 'quality_filtered.fq')
+        files_to_remove.append(current_input)
 
-    if end_adapter is not None:
-        command.append('-g')
-        command.append(end_adapter)
+    # trim five prime adapters
+    if five_prime_adapter is not None:
+        print('====> Removing complete 5\' adapters...', file=sys.stderr)
+        cutadapt_five_prime = [
+            cutadapt_path, '-g', five_prime_adapter, '-o', os.path.join(output, 'five_prime_removed.fq'), '-j', str(threads), current_input
+        ]
+        run(cutadapt_five_prime, capture_output=not verbose)
 
-    if both_adapters is not None:
-        command.append('-b')
-        command.append(both_adapters)
+        current_input = os.path.join(output, 'five_prime_removed.fq')
+        files_to_remove.append(current_input)
 
-    if get_config_key('cli-tools', 'trim', 'trim_pass_threads'):
-        threads = get_config_key('general', 'threads')
+    # trim three prime adapters and remove reads without
+    if three_prime_adapter is not None:
+        print('====> Removing 3\' adapters and filtering reads...', file=sys.stderr)
+        cutadapt_three_prime = [
+            cutadapt_path, '-a', three_prime_adapter, '-m', '1', '--discard-untrimmed', '-o', os.path.join(output, 'three_prime_removed.fq'),
+            '-j', str(threads), current_input
+        ]
+        run(cutadapt_three_prime, capture_output=not verbose)
 
-        command.append('-j')
-        command.append(str(threads))
+        current_input = os.path.join(output, 'three_prime_removed.fq')
+        files_to_remove.append(current_input)
 
-    command = command + get_config_key('cli-tools', 'trim', 'trim_params')
-
-    do_log(quiet, '====> Removing adpters from ends')
-    do_log(quiet, command)
-    with open(outfile, 'w') as f:
-        result = run(command, stdout=f)
-
-    result.check_returncode()
-
-    return result.returncode == 0
+    shutil.copy2(current_input, os.path.join(output, 'trimmed_reads.fq'))
+    if not keep_intermediate:
+        for filename in files_to_remove:
+            os.remove(filename)

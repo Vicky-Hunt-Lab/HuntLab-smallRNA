@@ -1,4 +1,4 @@
-# Copyright 2022 Vicky Hunt Lab Members
+# Copyright 2022 - 2025 Vicky Hunt Lab Members
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import glob
 import csv
 import re
 
+from math import inf
 from subprocess import run
 from collections import defaultdict
 
@@ -25,36 +26,41 @@ import numpy as np
 from matplotlib import pyplot as plt
 from Bio import SeqIO
 
-from .config import do_log, get_config_key
-
-def copy_and_label_file(ref_file, filename, label):
+def find_min_max_lengths(unitas_in):
     '''
-    Labeling function for the CDS and Unspliced Transcriptome files
+    Calculate the minimum and maximum lengths for the unitas report based on fastq filenames
     '''
+    minimum = inf
+    maximum = -inf
 
-    def rename_iter(path):
-        for seq in SeqIO.parse(path, 'fasta'):
-            seq.id = f'{label}|{seq.id}'
+    filenames = glob.glob(os.path.join(unitas_in, '*.fq')) + glob.glob(os.path.join(unitas_in, '*.fastq'))
+    for name in filenames:
+        length = int(re.findall(r'length(\d+)', name)[0])
 
-            yield seq
+        if length > maximum:
+            maximum = length
+        
+        if length < minimum:
+            minimum = length
 
-    
-    new_path = os.path.join(get_config_key('general', 'output_directory'), f'{filename}.fasta')
-    SeqIO.write(rename_iter(ref_file), new_path, 'fasta')
+    if maximum == -inf:
+        maximum = 30
+    if minimum == inf:
+        minimum = 18
 
-    return new_path
+    return minimum, maximum
 
-def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_output='.'):
+def run_unitas_annotation(species_name, ref_files, program_paths, output, verbose, small_rna):
     '''
     Run Unitas on the small RNAs, given a file and species name
     '''
     CWD = os.getcwd()
     SMALL_RNA_PATH = os.path.join(CWD, small_rna)
 
-    os.chdir(unitas_output)
+    os.chdir(output)
 
     unitas_command = [
-        get_config_key('cli-tools', 'unitas', 'path_to_unitas'),
+        program_paths['unitas'],
         '-input', SMALL_RNA_PATH,
         '-species', species_name
     ]
@@ -64,138 +70,121 @@ def run_unitas_annotation(small_rna, species_name, ref_files, quiet=0, unitas_ou
             unitas_command.append('-refseq')
             unitas_command.append(os.path.join(CWD, refs))
 
-    unitas_command = unitas_command + get_config_key('cli-tools', 'unitas', 'unitas_params')
-
-    if get_config_key('cli-tools', 'unitas', 'unitas_pass_threads'):
-        threads = get_config_key('general', 'threads')
-
-        unitas_command.append('-threads')
-        unitas_command.append(str(threads))
-
-    do_log(quiet, '==> Running first unitas pass')
-    result = run(unitas_command, capture_output=(quiet != 0))
+    print(f'====> Running unitas on {os.path.basename(small_rna)}...')
+    result = run(unitas_command, capture_output=not verbose)
 
     result.check_returncode()
 
     os.chdir(CWD)
 
-def merge_summary():
+def merge_summary(output):
     '''
     Merge together the summery files into one CSV
     '''
-    new_file = []
+    numbered_names = defaultdict(lambda: 'Unnamed')
+    numbered_results = defaultdict(lambda: defaultdict(lambda: 0))
+    named_results = defaultdict(lambda: defaultdict(lambda: 0))
+    unitas_order = defaultdict(lambda: [])
 
-    numbered_results = {}
-    named_results = {}
-    for filename in glob.glob(os.path.join(get_config_key('general', 'output_directory'), 'unitas', '*/unitas.annotation_summary.txt')):
+    for filename in glob.glob(os.path.join(output, 'unitas', '*/unitas.annotation_summary.txt')):
+        length_regex_result = re.findall(r'length(\d+)', filename)
+        if len(length_regex_result) < 1:
+            namestr = f'File Name : {filename}'
+        else:
+            length = int(length_regex_result[0])
+            namestr = f'RNA Length {length}'
+            numbered_names[length] = namestr
+
+            namestr = length
+
         with open(filename) as f:
             reader = csv.reader(f, delimiter='\t')
 
-            length = re.findall(r'length(\d+)', filename)
-            if len(length) < 1:
-                namestr = f'File Name : {filename}'
-            else:
-                namestr = f'RNA Length {length[0]}'
-
-            names = []
-            values = []
             for line in reader:
-                names.append(line[0])
-                values.append(line[1])
+                if type(namestr) == int:
+                    numbered_results[namestr][line[0]] = float(line[1])
+                else:
+                    named_results[namestr][line[0]] = float(line[1])
 
-            if len(length) > 1:
-                numbered_results[length[1]] = [namestr, names, values]
-            else:
-                named_results[namestr] = [names, values]
+                unitas_order[namestr].append(line[0])
 
-    for result in sorted(numbered_results):
-        new_file.append([numbered_results[result][0]])
-        new_file.append(numbered_results[result][1])
-        new_file.append(numbered_results[result][2])
+    combined_unitas_file = []
+    for result in sorted(numbered_results.keys()):
+        names = []
+        values = []
 
-    for result in sorted(named_results):
-        new_file.append([result])
-        new_file.append(named_results[result][0])
-        new_file.append(named_results[result][1])
+        for unitas_cat in unitas_order[result]:
+            names.append(unitas_cat)
+            values.append(numbered_results[result][unitas_cat])
 
-    unitas_table = os.path.join(get_config_key('general', 'output_directory'), 'unitas_summary.csv')
+        combined_unitas_file.append([numbered_names[result]])
+        combined_unitas_file.append(names)
+        combined_unitas_file.append(values)
+        combined_unitas_file.append([])
+
+    for result in sorted(named_results.keys()):
+        names = []
+        values = []
+
+        for unitas_cat in unitas_order[result]:
+            names.append(unitas_cat)
+            values.append(numbered_results[result][unitas_cat])
+
+        combined_unitas_file.append([result])
+        combined_unitas_file.append(names)
+        combined_unitas_file.append(values)
+        combined_unitas_file.append([])
+
+    unitas_table = os.path.join(output, 'unitas_summary.csv')
     with open(unitas_table, 'w') as f:
         writer = csv.writer(f)
+        writer.writerows(combined_unitas_file)
+    
+    return numbered_results
 
-        writer.writerows(new_file)
-
-    return unitas_table
-
-def graph_unitas_classification_type(path_to_table):
+def graph_unitas_classification_type(numbered_results, min_length, max_length, output):
     '''
     Craete a graph of small RNA by length against unitas type
     '''
-    with open(path_to_table) as f:
-        reader = csv.reader(f)
+    fig, ax = plt.subplots(figsize=(11.69, 8.27))
+    final_cats = ['gene', '5_UTR', '3_UTR', 'miRNA', 'tRNA', 'rRNA', 'TE', 'no annotation', 'low_complexity']
+    rna_lengths = list(range(min_length, max_length + 1))
 
-        fig, ax = plt.subplots(figsize=(11.69, 8.27))
+    # figure out if there are any other toplevel categories we need to include on the graph
+    included_cats = set(final_cats)
+    for length in numbered_results:
+        for category in numbered_results[length]:
+            if not category.startswith(' '):
+                included_cats.add(category)
 
-        labels = set()
-        values = defaultdict(lambda: defaultdict(lambda: 0))
+    for label in included_cats:
+        if label not in final_cats:
+            final_cats.append(label)
 
-        # Use skip_group to skip any group not named by length
-        skip_group = False
-        for i, line in enumerate(reader):
-            if i % 3 == 0:
-                if not line[0].startswith('RNA Length '):
-                    skip_group = True
-                else:
-                    line_name = re.findall('\d+', line[0])[0]
-            elif i % 3 == 1:
-                if skip_group:
-                    continue
-                
-                line_labels = set()
-                for l in line:
-                    if not l[0].isspace():
-                        line_labels.add(l)
-
-                all_labels = line
-                        
-                labels = labels | line_labels
-            elif i % 3 == 2:
-                if skip_group:
-                    skip_group = False
-                    continue
-
-                for j, name in enumerate(all_labels):
-                    if name in line_labels:
-                        values[line_name][name] = float(line[j])
-
-        with open(os.path.join(get_config_key('general', 'output_directory'), 'unitas_graph_data.csv'), 'w') as f:
-            writer = csv.writer(f)
-
-            rna_lengths = list(values.keys())
-            writer.writerow(['RNA Length'] + rna_lengths)
-        
-            offsets = None
-            for l in labels:
-                counts = []
-
-                for key in rna_lengths:
-                    counts.append(values[key][l])
-
-                ax.bar(rna_lengths, counts, label=l, bottom=offsets)
-
-                writer.writerow([l] + counts)
-
-            if offsets is None:
-                offsets = np.array(counts)
+    # Plot each caegory on the graph and add to the plot data table
+    base_offset = np.array([0] * len(rna_lengths))
+    plot_data = [['RNA Length'] + rna_lengths]
+    for category in final_cats:
+        category_bars = []
+        for length in rna_lengths:
+            if category in numbered_results[length]:
+                category_bars.append(numbered_results[length][category])
             else:
-                offsets = offsets + np.array(counts)
+                category_bars.append(0)
 
+        ax.bar(rna_lengths, category_bars, bottom=base_offset, label=category, align='edge', width=0.8)
+        plot_data.append([category] + category_bars)
+        base_offset = base_offset + np.array(category_bars)
+
+    with open(os.path.join(output, 'unitas_graph_data.csv'), 'w') as f:
+        writer = csv.writer(f)
+        writer.writerows(plot_data)
+
+    ax.set_xticks(list(range(len(rna_lengths))))
     ax.set_xticklabels(rna_lengths, fontsize=7)
     ax.set_xlabel('Length of small RNA')
-    ax.set_ylabel('')
+    ax.set_ylabel('Unitas RPM')
 
     plt.legend(title='Unitas Category')
 
-    plt.savefig(os.path.join(get_config_key('general', 'output_directory'), 'unitasGraph.png'))
-
-if __name__ == '__main__':
-    graph_unitas_classification_type('output/unitas_summery.csv')
+    plt.savefig(os.path.join(output, 'unitasGraph.png'))

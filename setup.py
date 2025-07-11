@@ -1,4 +1,4 @@
-# Copyright 2022 Vicky Hunt Lab Members
+# Copyright 2022 - 2025 Vicky Hunt Lab Members
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@ from distutils.core import setup
 
 setup(
     name='HuntLab-smallRNA',
-    version='1.1.0',
+    version='2.0.0',
     description='Small RNA scripts developed for use in the Hunt Lab',
     author='Vicky Hunt Lab',
     packages=['hlsmallrna'],
-    scripts=['bin/label_for_unitas', 'bin/build_coord_files', 'bin/revcomp_rna', 'bin/overlap_ss.sh'],
+    scripts=['bin/extract_nc', 'bin/build_coord_files', 'bin/revcomp_rna', 'bin/overlap_ss.sh'],
     entry_points = {
         'console_scripts': [
             'hlsmallrna = hlsmallrna:climain',
-            'overlap_ss = hlsmallrna:ssoverlap_main'               
+            'overlap_ss = hlsmallrna:ssoverlap_main',
+            'label_for_unitas = hlsmallrna:labelforunitas_main'
         ]          
     }
 )

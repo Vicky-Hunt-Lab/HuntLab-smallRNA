@@ -4,7 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - toml=0.10.*
+  - pyyaml
   - pysam=0.19.*
   - biopython=1.*
   - gffutils=0.11.*

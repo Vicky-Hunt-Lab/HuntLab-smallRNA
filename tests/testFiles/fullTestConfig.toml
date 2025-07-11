@@ -1,7 +1,0 @@
-[general]
-output = './output'
-threads = 8
-
-[cli-tools]
-[cli-tools.unitas]
-path_to_unitas = "unitas.pl"

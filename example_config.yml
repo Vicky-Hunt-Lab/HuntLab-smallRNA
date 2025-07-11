@@ -1,0 +1,36 @@
+smallRNA_fastq: smallrna.fastq
+# size_sorted_fastqs: binned_reads
+compress_output: true
+keep_intermediate_files: true
+cds: cds.fasta
+unspliced_transcriptome: unspliced.fasta
+trim:
+  # input: smallrna.fastq
+  kit: qiagen
+  # 5_prime: ACGTTTAG
+  # 3_prime: CGTAGGAT
+  min_quality: 20
+# new behaviour: output by first base as well e.g. file of 26G
+sort:
+  # input: output/trimmed_reads.fq
+  genome: genome.fasta
+  align_to_cds: True
+  min_length: 5
+  max_length: 50
+  mismatches: 0
+unitas:
+  # input: output/binned_rna
+  refseq:
+    - gene
+    - miRNA: test/miRNA.fasta
+    - piRNA: test/piRNA.fasta
+    - tRNA: test/tRNA.fasta
+    - TE: test/transposable_elements.fasta
+  species: x
+# new behaviour, output by length and first base, e.g. 26G_targets.tsv
+targetid:
+  min_seq_length: 5
+  target_files:
+    - test/file1.fasta
+    - test/file2.fasta
+  mismatches: 0
