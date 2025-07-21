@@ -140,6 +140,12 @@ def load_and_validate_input(input_yaml, output_dir):
     if 'bedtools' not in input_yaml['program_paths']:
         input_yaml['program_paths']['bedtools'] = 'bedtools'
 
+    if 'eggnog-mapper' not in input_yaml['program_paths']:
+        input_yaml['program_paths']['eggnog-mapper'] = 'emapper.py'
+
+    if 'rscript' not in input_yaml['program_paths']:
+        input_yaml['program_paths']['rscript'] = 'Rscript'
+
     # trim
     if 'trim' in input_yaml:
         # if trim is specified, require smallRNA_fastq
@@ -233,6 +239,8 @@ def load_and_validate_input(input_yaml, output_dir):
             input_yaml['targetid']['inputs'] = os.path.join(output_dir, 'binned_length_rna')
         elif 'size_sorted_fastqs' in input_yaml:
             input_yaml['targetid']['inputs'] = input_yaml['size_sorted_fastqs']
+        elif 'trim' in input_yaml:
+            input_yaml['targetid']['inputs'] = os.path.join(output_dir, 'trimmed_reads.fq')
         else:
             input_yaml['targetid']['inputs'] = input_yaml['smallRNA_fastq']
 
@@ -260,5 +268,21 @@ def load_and_validate_input(input_yaml, output_dir):
         # mismatches defaults to 0
         if 'mismatches' not in input_yaml['targetid']:
             input_yaml['targetid']['mismatches'] = 0
+        
+        # optional functional enrichment part
+        if 'enrich' in input_yaml['targetid']:
+            if 'eggnog_data' not in input_yaml['targetid']['enrich']:
+                return False, 'If enrich is specified, at least eggnog_data must be specified in it, either add eggnog_data or remove enrich', input_yaml
+            
+            # Create a list of incuded files based on target_files and exclude
+            if 'exclude' in input_yaml['targetid']['enrich']:
+                if type(input_yaml['targetid']['enrich']['exclude']) == str:
+                    input_yaml['targetid']['enrich']['exclude'] = [input_yaml['targetid']['enrich']['exclude']]
+                elif type(input_yaml['targetid']['enrich']['exclude']) != list:
+                    return False, f'In enrich, the exclude part should be a list of paths, not {type(input_yaml["targetid"]["enrich"]["exclude"])}', input_yaml
+                
+                input_yaml['targetid']['enrich']['included_files'] = set(input_yaml['targetid']['target_files']) - set(input_yaml['targetid']['enrich']['exclude'])
+            else:
+                input_yaml['targetid']['enrich']['included_files'] = set(input_yaml['targetid']['target_files'])
 
     return True, None, input_yaml

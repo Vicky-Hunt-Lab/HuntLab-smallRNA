@@ -27,10 +27,13 @@ unitas:
     - tRNA: test/tRNA.fasta
     - TE: test/transposable_elements.fasta
   species: x
-# new behaviour, output by length and first base, e.g. 26G_targets.tsv
 targetid:
   min_seq_length: 5
   target_files:
     - test/file1.fasta
     - test/file2.fasta
   mismatches: 0
+  enrich:
+    eggnog_data_dir: /home/user/eggnog-mapper-data
+    exclude_files:
+      - test/file2.fasta

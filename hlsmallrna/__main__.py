@@ -25,7 +25,7 @@ from .trim import run_trim
 from .genome_align import align_to_genome, bin_rna_size, graph_length
 from .label_for_unitas import label_file_for_unitas
 from .unitas import find_min_max_lengths, run_unitas_annotation, merge_summary, graph_unitas_classification_type
-from .targetid import merge_and_revcomp_input_files, find_targets, build_summary_files
+from .targetid import merge_and_revcomp_input_files, find_targets, build_summary_files, do_term_enrichment
 
 def run_trim_reads(trim_config, program_paths, output, threads, verbose, keep_intermediate):
     '''
@@ -107,7 +107,13 @@ def run_targetid(targetid_config, program_paths, output, threads, verbose, keep_
         min_seq_length=targetid_config['min_seq_length'], mismatches_allowed=targetid_config['mismatches'],
         verbose=verbose
     )
-    build_summary_files(target_sam_files, output, program_paths, verbose=verbose)
+    targets = build_summary_files(target_sam_files, output, program_paths, verbose=verbose)
+
+    if 'enrich' in targetid_config:
+        do_term_enrichment(
+            targetid_config['enrich']['included_files'], targets, targetid_config['enrich']['eggnog_data'], output, program_paths,
+            threads=threads, verbose=verbose
+        )
 
     if not keep_intermediate:
         shutil.rmtree(os.path.join(output, 'bowtie_indexes'))
