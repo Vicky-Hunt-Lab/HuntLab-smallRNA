@@ -293,7 +293,7 @@ def do_term_enrichment(files_to_annotate, target_list, path_to_emapper_data, out
         program_paths['eggnog-mapper'], '-i', COMBINED_TARGETS_FILE, '-o', 'eggnog_mapper', '--output_dir', EGGNOG_MAPPER_OUTPUT, '--cpu', str(threads), 
         '--data_dir', path_to_emapper_data, '--itype', 'CDS'
     ]
-    # run(eggnog_mapper_command, capture_output=not verbose)
+    run(eggnog_mapper_command, capture_output=not verbose)
 
     print('====> Reading eggnog-mapper output...')
     go_terms = {}
