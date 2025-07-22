@@ -7,18 +7,18 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Walkthrough:
-    - Tasks: walkthrough/tasks.md
-    - Quick Start: walkthrough/quick-start.md
-    - Configuration and Troubleshooting Notes: walkthrough/config-and-troubleshooting.md
+    - Overview: walkthrough/index.md
+    - Prerequisites and Considerations: walkthrough/prereq.md
+    - The Config File: walkthrough/config.md
+    - Running Trim: walkthrough/trim.md
+    - Running Sort: walkthrough/sort.md
+    - Running Unitas: walkthrough/unitas.md
+    - Running TargetID: walkthrough/targetid.md
   - Other Tasks: other-tasks.md
   - CLI Reference:
     - Overview: cli-reference/index.md
-    - Process: cli-reference/process.md
-    - Sort: cli-reference/sort.md
     - ExtractNC: cli-reference/extractnc.md
     - Label for Unitas: cli-reference/label-for-unitas.md
-    - Unitas: cli-reference/unitas.md
-    - TargetID: cli-reference/targetid.md
     - Build Coord Files: cli-reference/build-coord-files.md
     - Overlap SS: cli-reference/overlapss.md
 theme:
@@ -31,6 +31,11 @@ theme:
     - navigation.tabs.sticky
     - toc.follow
     - toc.integrate
+    - content.code.copy
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 extra:
   version:
     provider: mike

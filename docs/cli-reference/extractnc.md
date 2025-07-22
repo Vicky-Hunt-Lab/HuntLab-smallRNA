@@ -1,14 +1,17 @@
 # ExtractNC
 
 ```
-extarctnc [-h] genome gff_file
+usage: extract_nc [-h] [-o OUTPUT] genome gff_file
 
 positional arguments:
-  genome  	FASTA containing the genome to extract from
-  gff_file	GFF file containing annotations of CDS and mRNA regions
+  genome                FASTA containing the genome to extract from
+  gff_file              GFF file containing annotations of CDS and mRNA
+                        regions
 
-optional arguments:
-  -h, --help  show this help message and exit
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        FASTA file to write output to
 ```
 
 Input files:
@@ -21,4 +24,5 @@ Output files:
 
 - `noncoding.fasta` - FASTA file containing only the transcribed noncoding regions of the DNA
 
-*Note the method used here will not work if there a coding region is labelled outside a single mRNA region. The program does a check before running to make sure this is true and throws an exception before trying to run if so, to prevent nonsense results from being produced.*
+!!! warning
+    The method used here will not work if there a coding region is labelled outside a single mRNA region. The program does a check before running to make sure this is true and throws an exception before trying to run if so, to prevent nonsense results from being produced.

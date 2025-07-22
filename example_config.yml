@@ -1,7 +1,5 @@
 smallRNA_fastq: smallrna.fastq
 # size_sorted_fastqs: binned_reads
-compress_output: true
-keep_intermediate_files: true
 cds: cds.fasta
 unspliced_transcriptome: unspliced.fasta
 trim:
