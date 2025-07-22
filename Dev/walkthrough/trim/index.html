@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/cli-reference/targetid/">
+        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/walkthrough/trim/">
       
       
-        <link rel="prev" href="../unitas/">
+        <link rel="prev" href="../config/">
       
       
-        <link rel="next" href="../build-coord-files/">
+        <link rel="next" href="../sort/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>TargetID - Hunt Lab Small RNA Pipeline</title>
+        <title>Running Trim - Hunt Lab Small RNA Pipeline</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#targetid" class="md-skip">
+        <a href="#running-trim" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              TargetID
+              Running Trim
             
           </span>
         </div>
@@ -219,11 +219,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../walkthrough/tasks/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -258,13 +260,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../cli-reference/" class="md-tabs__link">
           
   
   
@@ -377,24 +377,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -407,7 +412,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Walkthrough
@@ -421,12 +426,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../walkthrough/tasks/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Tasks
+    Overview
     
   </span>
   
@@ -444,12 +449,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../walkthrough/quick-start/" class="md-nav__link">
+      <a href="../prereq/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Prerequisites and Considerations
     
   </span>
   
@@ -467,12 +472,203 @@
   
   
     <li class="md-nav__item">
-      <a href="../../walkthrough/config-and-troubleshooting/" class="md-nav__link">
+      <a href="../config/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Configuration and Troubleshooting Notes
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optional Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#min_quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      min_quality
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Output Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trimmed_readsfq" class="md-nav__link">
+    <span class="md-ellipsis">
+      trimmed_reads.fq
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sort/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Unitas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../targetid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running TargetID
     
   </span>
   
@@ -516,29 +712,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -551,7 +742,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             CLI Reference
@@ -565,7 +756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../cli-reference/" class="md-nav__link">
         
   
   
@@ -588,53 +779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../process/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sort/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Sort
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../extractnc/" class="md-nav__link">
+      <a href="../../cli-reference/extractnc/" class="md-nav__link">
         
   
   
@@ -657,7 +802,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../label-for-unitas/" class="md-nav__link">
+      <a href="../../cli-reference/label-for-unitas/" class="md-nav__link">
         
   
   
@@ -680,63 +825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../unitas/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    TargetID
-    
-  </span>
-  
-
-      </a>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../build-coord-files/" class="md-nav__link">
+      <a href="../../cli-reference/build-coord-files/" class="md-nav__link">
         
   
   
@@ -759,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overlapss/" class="md-nav__link">
+      <a href="../../cli-reference/overlapss/" class="md-nav__link">
         
   
   
@@ -801,46 +890,51 @@
   
 
 
-<h1 id="targetid">TargetID</h1>
-<pre><code>targetid [-h] [-m MIN_SEQ_LENGTH] [-t TARGET_FILES [TARGET_FILES ...]]
-                        [--num-mismatches NUM_MISMATCHES]
-                        small_rna
-
-positional arguments:
-  small_rna             Path to the FASTQ containing the small RNA to find targets of
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -m MIN_SEQ_LENGTH, --min-seq-length MIN_SEQ_LENGTH
-                        Minimum sequence length to properly align
-  -t TARGET_FILES [TARGET_FILES ...], --target-files TARGET_FILES [TARGET_FILES ...]
-                        Files containing genome features that could be targeted
-  --num-mismatches NUM_MISMATCHES
-                        Number of mismatches to allow in the alignment, defaults to 0
-</code></pre>
-<p>Input: </p>
+<h1 id="running-trim">Running Trim</h1>
+<h2 id="basic-configuration">Basic Configuration</h2>
+<p>Trim requires a file of untrimmed small RNAs and the adpaters to trim - either explicitly or through the kit used - to be specified. Examples of config files for  possible usage is as follows.</p>
+<p>Trimming adapters with the 5' sequence ACGTTTAGAT and the 3' sequence GCTAGGATA:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smallrna_untrimmed.fastq</span>
+<span class="nt">trim</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">5_prime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ACGTTTAGAT</span>
+<span class="w">  </span><span class="nt">3_prime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCTAGGATA</span>
+</code></pre></div>
+<p>Trimming adapters from the qiagen kit in forward direction:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smallrna_untrimmed.fastq</span>
+<span class="nt">trim</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">qiagen</span>
+</code></pre></div>
+<p>Trimming adapters from the qiagen kit in reverse direction:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smallrna_untrimmed.fastq</span>
+<span class="nt">trim</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">qiagen-rev</span>
+</code></pre></div>
+<p>Currently the valid values for kit are:</p>
 <ul>
-<li>
-<p><code>small_rna</code> - fastq file containing small RNA to look for targets of</p>
-</li>
-<li>
-<p><code>target_files</code> - one or more fastq files containing a list of potential target sequences</p>
-</li>
+<li><code>qiagen</code> - qiagen kit, forward direction</li>
+<li><code>qiagen-rev</code> - qiagen kit, reverse direction</li>
+<li><code>neb</code> - NEB kit, forward direction </li>
+<li><code>neb-rev</code> - NEB kit, reverse direction</li>
 </ul>
-<p>Output:</p>
-<ul>
-<li>
-<p><code>bowtie_indexes/</code> - indexes produced of the target files with bowtie2</p>
-</li>
-<li>
-<p><code>target_alignments/</code> - SAM files containing the results of alignment attempts and FASTQ files containing all the small RNA successfully aligned against the targets. One set of files are produced for each target file provided</p>
-</li>
-<li>
-<p><code>rna_target_list.csv</code> - list of RNA target pairs</p>
-</li>
-</ul>
-<p><em>Note that the samtools view command used in this step is the only one that has defaults pre-set in the <code>samtools_view_params</code> config key, namly <code>-h -F 256 -F 4</code>. They will be removed if you set the value differently in the config file. To only add parameters, you will need to set these ones again before the extra ones you want to set. E.g. <code>samtools_view_params = ["-h", "-F", "256", "-F", "4", ...]</code></em></p>
-<p><em>Make sure all of your target files are labelled with what they are, by prepending the name and | (the bar or pipe character) to the ID in the fasta file. If you don’t do this, it will not be nicely sorted in the results correctly.</em></p>
+<p>Once this config is written, it can be run as usual using:</p>
+<div class="highlight"><pre><span></span><code>$ hlsmallrna config.yml
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remember if you install via apptainer or docker you will need to prepend the command from the install page. For apptainer this command becomes:
+<div class="highlight"><pre><span></span><code>$ apptainer run -B $HOME:$HOME hlsmallrna.sif hlsmallrna config.yml
+</code></pre></div></p>
+</div>
+<h2 id="optional-parameters">Optional Parameters</h2>
+<h3 id="min_quality">min_quality</h3>
+<p>This sets the quality cutoff in cutadapt when filtering low quality ends. Defaults to 20 - example below sets it to 15:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">trim</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">min_quality</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
+</code></pre></div>
+<h2 id="output-files">Output Files</h2>
+<h3 id="trimmed_readsfq">trimmed_reads.fq</h3>
+<p>This is a FASTQ file containing all the trimmed reads that passed the filters of quaility and had a 3' adapter present.</p>
 
 
 
@@ -870,7 +964,7 @@ optional arguments:
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../unitas/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Unitas">
+          <a href="../config/" class="md-footer__link md-footer__link--prev" aria-label="Previous: The Config File">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -880,20 +974,20 @@ optional arguments:
                 Previous
               </span>
               <div class="md-ellipsis">
-                Unitas
+                The Config File
               </div>
             </div>
           </a>
         
         
           
-          <a href="../build-coord-files/" class="md-footer__link md-footer__link--next" aria-label="Next: Build Coord Files">
+          <a href="../sort/" class="md-footer__link md-footer__link--next" aria-label="Next: Running Sort">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Build Coord Files
+                Running Sort
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -933,7 +1027,7 @@ optional arguments:
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>

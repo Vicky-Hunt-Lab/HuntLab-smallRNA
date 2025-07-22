@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/walkthrough/tasks/">
+        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/walkthrough/sort/">
       
       
-        <link rel="prev" href="../../installation/">
+        <link rel="prev" href="../trim/">
       
       
-        <link rel="next" href="../quick-start/">
+        <link rel="next" href="../unitas/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Tasks - Hunt Lab Small RNA Pipeline</title>
+        <title>Running Sort - Hunt Lab Small RNA Pipeline</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tasks" class="md-skip">
+        <a href="#running-sort" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tasks
+              Running Sort
             
           </span>
         </div>
@@ -225,7 +225,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,6 +423,98 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prereq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prerequisites and Considerations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -435,17 +527,187 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
-    Tasks
+    Running Sort
     
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optional Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#align_to_cds" class="md-nav__link">
+    <span class="md-ellipsis">
+      align_to_cds
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#min_length" class="md-nav__link">
+    <span class="md-ellipsis">
+      min_length
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max_length" class="md-nav__link">
+    <span class="md-ellipsis">
+      max_length
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      mismatches
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Output Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alignment_reporttsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      alignment_report.tsv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#countstab" class="md-nav__link">
+    <span class="md-ellipsis">
+      counts.tab
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rna_length_reportcsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      rna_length_report.csv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baseplotpng" class="md-nav__link">
+    <span class="md-ellipsis">
+      baseplot.png
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baseplot_datacsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      baseplot_data.csv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binned_length_rna" class="md-nav__link">
+    <span class="md-ellipsis">
+      binned_length_rna
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binned_group_rna" class="md-nav__link">
+    <span class="md-ellipsis">
+      binned_group_rna
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -459,12 +721,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../quick-start/" class="md-nav__link">
+      <a href="../unitas/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Running Unitas
     
   </span>
   
@@ -482,12 +744,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-and-troubleshooting/" class="md-nav__link">
+      <a href="../targetid/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Configuration and Troubleshooting Notes
+    Running TargetID
     
   </span>
   
@@ -598,52 +860,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli-reference/process/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli-reference/sort/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Sort
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../cli-reference/extractnc/" class="md-nav__link">
         
   
@@ -673,52 +889,6 @@
   
   <span class="md-ellipsis">
     Label for Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli-reference/unitas/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli-reference/targetid/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    TargetID
     
   </span>
   
@@ -801,26 +971,88 @@
   
 
 
-<h1 id="tasks">Tasks</h1>
-<p>Currently the following tasks have been implemented in it:</p>
+<h1 id="running-sort">Running Sort</h1>
+<h2 id="basic-configuration">Basic Configuration</h2>
+<p>At minimum, sort requires a set of trimmed reads and a genome to align to from the species the small RNAs came from. If trim is in the same config file, the set to trimmed reads will be taken from the output of trim. Examples are as follows.</p>
+<p>Without running trim.
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smallrna_trimmed.fastq</span>
+<span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">genome</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">genome.fasta</span>
+</code></pre></div></p>
+<p>With running trim.
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smallrna_untrimmed.fastq</span>
+<span class="nt">trim</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">genome</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">genome.fasta</span>
+</code></pre></div></p>
+<p>Once this config is written, it can be run as usual using:</p>
+<div class="highlight"><pre><span></span><code>$ hlsmallrna config.yml
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remember if you install via apptainer or docker you will need to prepend the command from the install page. For apptainer this command becomes:
+<div class="highlight"><pre><span></span><code>$ apptainer run -B $HOME:$HOME hlsmallrna.sif hlsmallrna config.yml
+</code></pre></div></p>
+</div>
+<h2 id="optional-parameters">Optional Parameters</h2>
+<h3 id="align_to_cds">align_to_cds</h3>
+<p>If true aligns reads that don't align to the genome to the specified CDS file, keeping any that align. This allows for small RNA that are fragments of genes and align accross introns to be kept as they may not align to the genome. </p>
+<div class="highlight"><pre><span></span><code><span class="nt">cds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cds_sequences.fasta</span>
+<span class="nn">...</span>
+<span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">align_to_cds</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+</code></pre></div>
+<h3 id="min_length">min_length</h3>
+<p>Sets a minimum sequence length to look at (default is 18 nt). Anything shorter is filtered during sorting. e.g. to filter anything below 10 nt set the following:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">min_length</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+</code></pre></div>
+<h3 id="max_length">max_length</h3>
+<p>Sets a maximum sequence length to look at (default is 30 nt). Anything longer is filtered during sorting. e.g. to filter anything above 50 nt set the following:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">max_length</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+</code></pre></div>
+<h3 id="mismatches">mismatches</h3>
+<p>Number of mismatches to allow in bowtie2 when aligning to the genome and CDS, defaults to 0. See the <a href="../prereq/">Considerations</a> page for information about why you'd want to change this. The example below sets this to allow 1 mismatch:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mismatches</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The small RNA pipeline supresses gaps by makeing them equal to 100 mismatches. If you set this over 100, some gaps may be included in the alignment.</p>
+</div>
+<h2 id="output-files">Output Files</h2>
+<h3 id="alignment_reporttsv">alignment_report.tsv</h3>
+<p>This is a table showing an overview of how many small RNA reads successfully aligned to the genome and optionally the CDS. It contains the following metrics:</p>
 <ul>
-<li>
-<p>Process - Trim adapters off raw RNA-Seq data, run a quality control report and trim of any bases that fall below a specified threshold from all the RNA</p>
-</li>
-<li>
-<p>Sort - Align the RNA against a given reference, removing any sequences that fail to align, then split them into files based on sequence length to allow for easy further processing. Can also remove sequences below a minimum length and above a maximum length if desired</p>
-</li>
-<li>
-<p>ExtractNC - Using a genome and GFF file containing annotations, extract the region that is transcribed, but not a coding region</p>
-</li>
-<li>
-<p>Unitas - Run a directory of RNA files (e.g. output of sort step) though unitas to classify the types of RNA, then combine the summaries into one spreadsheet for easy viewing and manipulation</p>
-</li>
-<li>
-<p>TargetID - Identify which of a set of potential targets a set of small RNA are targeting by reverse complimenting them and aligning them to the potential targets</p>
-</li>
+<li>Total Reads</li>
+<li>Total Mapped</li>
+<li>Percentage Mapped</li>
+<li>Total Unmapped</li>
+<li>Percentage Unmapped</li>
+<li>Mapped to Genome</li>
+<li>Percentage Mapped to Genome</li>
+<li>Unmapped to Genome</li>
+<li>Percentage Unmapped to Genome</li>
+<li>Mapped to CDS</li>
+<li>Percentage Mapped to CDS (but not to genome)</li>
+<li>Unmapped to CDS or genome</li>
+<li>Percentage Unmapped to CDS or genome</li>
 </ul>
-<p>More in depth documentation on each of these steps is provided, starting with examples and suggestions for further processing. There is also a CLI Reference, that contains general help for each command, including what files are required and what outputs you get from each step.</p>
+<h3 id="countstab">counts.tab</h3>
+<p>Read counts is TSV format for each small RNA sequence, designed as input to a differential expression analysis, if that wanted.</p>
+<h3 id="rna_length_reportcsv">rna_length_report.csv</h3>
+<p>Table of counts of small RNA for each length and first base, in a easily human readable format.</p>
+<h3 id="baseplotpng">baseplot.png</h3>
+<p>Plot of frequency of length and first base in the dataset.</p>
+<h3 id="baseplot_datacsv">baseplot_data.csv</h3>
+<p>That length and first base data used in baseplot.png - normalised to percentages. Should be used if the user wants to replot that graph or feed into downstream analysis.</p>
+<h3 id="binned_length_rna">binned_length_rna</h3>
+<p>Directory containing FASTQ files for each RNA length - named lengthX.fastq where X is the length of small RNA in the file.</p>
+<h3 id="binned_group_rna">binned_group_rna</h3>
+<p>Directory containing FASTQ files for each RNA group - defined by length and first base - named {length}{first_base}.fastq (e.g. 22G.fastq) where {length} is the length of small RNA in the file and {first_base} is the letter corresponding to the first base.</p>
 
 
 
@@ -850,7 +1082,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../installation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation">
+          <a href="../trim/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Running Trim">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -860,20 +1092,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Installation
+                Running Trim
               </div>
             </div>
           </a>
         
         
           
-          <a href="../quick-start/" class="md-footer__link md-footer__link--next" aria-label="Next: Quick Start">
+          <a href="../unitas/" class="md-footer__link md-footer__link--next" aria-label="Next: Running Unitas">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Quick Start
+                Running Unitas
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -913,7 +1145,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>

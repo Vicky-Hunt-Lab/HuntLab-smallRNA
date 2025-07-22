@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/walkthrough/quick-start/">
+        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/walkthrough/unitas/">
       
       
-        <link rel="prev" href="../tasks/">
+        <link rel="prev" href="../sort/">
       
       
-        <link rel="next" href="../config-and-troubleshooting/">
+        <link rel="next" href="../targetid/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Quick Start - Hunt Lab Small RNA Pipeline</title>
+        <title>Running Unitas - Hunt Lab Small RNA Pipeline</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#quick-start" class="md-skip">
+        <a href="#running-unitas" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Quick Start
+              Running Unitas
             
           </span>
         </div>
@@ -225,7 +225,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../tasks/" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -426,12 +426,104 @@
   
   
     <li class="md-nav__item">
-      <a href="../tasks/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Tasks
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prereq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prerequisites and Considerations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sort/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
     
   </span>
   
@@ -463,7 +555,7 @@
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Running Unitas
     
   </span>
   
@@ -476,7 +568,7 @@
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Running Unitas
     
   </span>
   
@@ -499,56 +591,119 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#process" class="md-nav__link">
+  <a href="#basic-configuration" class="md-nav__link">
     <span class="md-ellipsis">
-      Process
+      Basic Configuration
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#sort" class="md-nav__link">
+  <a href="#optional-parameters" class="md-nav__link">
     <span class="md-ellipsis">
-      Sort
+      Optional Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optional Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#species" class="md-nav__link">
+    <span class="md-ellipsis">
+      species
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
+  <a href="#utility-programs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utility Programs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utility Programs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#label_for_unitas" class="md-nav__link">
+    <span class="md-ellipsis">
+      label_for_unitas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract_nc" class="md-nav__link">
+    <span class="md-ellipsis">
+      extract_nc
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output Files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Output Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#unitas" class="md-nav__link">
     <span class="md-ellipsis">
-      Unitas
+      unitas
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#extract-non-coding" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#unitas_summarycsv" class="md-nav__link">
     <span class="md-ellipsis">
-      Extract Non-Coding
+      unitas_summary.csv
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#target-identification" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#unitasgraphpng" class="md-nav__link">
     <span class="md-ellipsis">
-      Target Identification
+      unitasGraph.png
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#all" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#unitas_graph_datacsv" class="md-nav__link">
     <span class="md-ellipsis">
-      All
+      unitas_graph_data.csv
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -568,12 +723,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-and-troubleshooting/" class="md-nav__link">
+      <a href="../targetid/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Configuration and Troubleshooting Notes
+    Running TargetID
     
   </span>
   
@@ -684,52 +839,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli-reference/process/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli-reference/sort/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Sort
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../cli-reference/extractnc/" class="md-nav__link">
         
   
@@ -759,52 +868,6 @@
   
   <span class="md-ellipsis">
     Label for Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli-reference/unitas/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli-reference/targetid/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    TargetID
     
   </span>
   
@@ -887,117 +950,112 @@
   
 
 
-<h1 id="quick-start">Quick Start</h1>
-<p>To use this pipeline, you will need at least a FASTQ file containing raw small RNA-Seq reads. Then depending on what you want to achieve, you can run different steps of the pipeline. If you ever get stuck and need to see the options of a particular stage, all parts have their own help message, that can be seen by passing <code>--help</code> after the name of the stage. </p>
-<p>Before starting, you will need to create a configuration file that allows you to specify some parameters in advance, so you don’t have to keep retyping them. By default, it looks for these in a file in your current directory called <code>config.toml</code>, alternatives can be specified by passing the name to the <code>-C</code> argument before the name of the stage to run. More details on this can be found in the <em>Configuration file</em> section, but for now setup a simple file to specify an output directory of <code>output/</code> by putting the following in <code>config.toml</code>:</p>
-<pre><code class="language-toml">[general]
-output_directory = &quot;./output&quot;
-</code></pre>
-<p>In addition, check that all of the commands can be run by just typing their name in the command line, as this is how the program tries to use them by default. If they can’t, you can set a custom path by setting the relevant <code>path_to_</code> variable in the configuration file. For example if unitas is run with <code>unitas.pl</code> instead of just <code>unitas</code> add the following to the bottom of the config file:</p>
-<pre><code class="language-toml">[cli-tools]
-[cli-tools.unitas]
-path_to_unitas = &quot;unitas.pl&quot;
-</code></pre>
-<h2 id="process">Process</h2>
-<p>The first stage is Process. This is for if you have raw data that hasn’t had it’s adapters trimmed and been quality filtered, so if your data has had this done to it already, this step can be skipped. To run you need a FASTQ file containing raw small RNA and the sequence and end of any adapters attached during sequencing.</p>
-<p>Once you have this data, to include the trimming in the run, you need to set one of three flags with the adapter sequence, depending on the position of the particular adapter. </p>
-<p>If your adapter is on the 3’ end only, use <code>-a</code>; if it is from the  5’ end only, use <code>-g</code> and if it could be on either end use <code>-b</code>. If you don’t need adapters trimmed, just don’t specify any of them and the step will be skipped. For example, if your small RNAs are in <code>smallRNA.fastq</code> and you want to trim the adapter sequence <code>AGCATA</code> from the 3’ end only, you would run:</p>
-<pre><code>$ hlsmallrna process -a AGCATA smallRNA.fastq
-</code></pre>
-<p>In addition, this step runs FastQC to produce a report on the quality of the small RNA and automatically cuts anything with a lower quartile of quality below a cutoff. By default, this is set to 20, but can be changed by the user using the <code>-c</code> flag. If you do not want this, you can set <code>-c 0</code> and the FastQC step will be skipped for efficiency. For example if you want to change the cutoff for the last command to 5, you could run:</p>
-<pre><code>$ hlsmallrna process -c 5 -a AGCATA smallRNA.fastq
-</code></pre>
-<p>This produces a number of files in the output directory, importantly <code>cut_sequences.fastq</code> has the sequences that have adapters trimmed and low quality parts removed. (See <em>CLI Reference</em> section for information on other output for all of the commands).</p>
-<h2 id="sort">Sort</h2>
-<p>The second stage is Sort. This stage aligns the small RNAs to the genome of the organism and filters out any that don’t align, to remove contamination. Then it splits the remaining reads into FASTQ files by length, to allow for easier classification. </p>
-<p>To run this, you need a FASTQ file of processed small RNA and a FASTA file containing the genome of the organism of interest. For example, if your small RNA are in <code>smallRNA.fastq</code> and your genome is in <code>genome.fasta</code> you can run:</p>
-<pre><code>$ hlsmallrna sort smallRNA.fastq genome.fasta
-</code></pre>
-<p>If you are only interested in a subset of lengths of small RNA, this step can be set to restrict the lengths it outputs with <code>-l</code> for minimum and <code>-x</code> for maximum. For example, if you only want small RNA with lengths between 12 and 30, you could run:</p>
-<pre><code>$ hlsmallrna sort -l 12 -x 30 smallRNA.fastq genome.fasta
-</code></pre>
-<p>By default this aligns the small RNA to the genome with bowtie2’s default settings, which allow different amounts of mismatches depending on how long the RNA is. Details of this can be found in the score configuration options in the manual, that can be found at: <a href="https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml">https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml</a>. To deal with cases where we may want to do a more stringent run, the <code>-m</code> or <code>--ref-mismatches</code> argument can be supplied with the number of mismatches for bowtie2 to allow. For example, if you want to perform an operation using the same files as above, but only include small RNA that map exactly to the genome, you could run:</p>
-<pre><code>$ hlsmallrna sort -m 0 smallRNA.fastq genome.fasta
-</code></pre>
-<p>This command produces a few useful files in the output directory: </p>
-<ul>
-<li>
-<p><code>binned_rna/</code> - directory containing one fastq file for each length of small RNA</p>
-</li>
-<li>
-<p><code>rna_length_report.csv</code> - table showing a summary of the RNAs by length and first base</p>
-</li>
-<li>
-<p><code>baseplot.png</code> - plot of the length and first base of the RNAs (this is sometimes wrong, replot from the csv values for now, will fix matplotlib code soon)</p>
-</li>
-</ul>
-<h2 id="unitas">Unitas</h2>
-<p>The third stage is Unitas. This runs unitas on a directory containing a range of lengths of small RNA to classify the origin of the RNA. To do this, you will need files containing reference sets of the genome targets you wish to find, with labels in their IDs and a directory containing small RNA of different lengths, similar to the output of sort.</p>
-<p>You can set the reference file using the <code>-r</code> command line argument, but it is easier to set them in the configuration file, as it makes the command shorter to type. If your reference files are in the same directory you are running in and called <code>ref1.fasta</code>, <code>ref2.fasta</code> and <code>ref3.fasta</code>, you can add the following to the config file:</p>
-<pre><code class="language-toml">[command]
-refseq = [
-    &quot;ref1.fasta&quot;,
-    &quot;ref2.fasta&quot;,
-    &quot;ref3.fasta&quot;
-]
-</code></pre>
-<p>Note that all of these reference sequences should be labelled with the name of the category they belong to and the | (bar or pipe character) before the start of their ID. If this hasn’t been done and all of the sequences in a FASTA file should be labelled the same, you can use the <code>label_for_unitas</code> script that was installed with the small RNA pipeline. For example if you want to label the sequences in <code>unlabelledTEs.fasta</code> with the label TE, with the result produced in <code>teRef.fasta</code>, you could run:</p>
-<pre><code>$ label_for_unitas &quot;TE&quot; unlabelledTEs.fasta -o teRef.fasta
-</code></pre>
-<p>Once the correct reference file are set, if your small RNA, split by length, are in <code>output/binned_rna</code>, you can run:</p>
-<pre><code>$  hlsmallrna unitas output/binned_rna
-</code></pre>
-<p>This produces a useful summary and graph in the output directory:</p>
-<ul>
-<li>
-<p><code>unitasGraph.png</code> - graph showing the categories allocated by unitas against the length of the small RNA (this is sometimes wrong, replot from the csv values for now, will fix matplotlib code soon)</p>
-</li>
-<li>
-<p><code>unitas_graph_data.csv</code> - summary of the raw numbers produced from the unitas runs, used to produce the graph</p>
-</li>
-</ul>
-<p>If you want to get small RNA that are derived from genes, you will need to obtain both of the mRNA and CDS regions and pass them to speciled arguments in the pipeline so they can be combined. This can either be done using the config file as followers or with the corresponding command line arguments (<code>--cds</code> and <code>--unspliced-transcriptome</code>):</p>
-<pre><code class="language-toml">[command]
-refseq = [
-    &quot;ref1.fasta&quot;,
-    &quot;ref2.fasta&quot;,
-    &quot;ref3.fasta&quot;
-]
-cds = &quot;cds_sequences.fasta&quot;
-unspliced_transcriptome = &quot;unspliced_transcriptome.fasta&quot;
-</code></pre>
-<h2 id="extract-non-coding">Extract Non-Coding</h2>
-<p>Sometimes you want to see if a small RNA comes from a non-coding region of the transcriptome, so the pipeline contains a utility command to automatically extract this using a genome and some annotations. At minimum, these annotations need to contain a transcribed region labelled with <code>mRNA</code> and a coding region within the transcribed region labelled <code>CDS</code>. Most of the ones on <a href="https://parasite.wormbase.org/index.html">Wormbase Parasite</a> are fine for this purpose.</p>
-<p>As an example, to extract the regions from <code>genome.fasta</code> using the annotations in <code>annotations.gff</code> you could run:</p>
-<pre><code>$ hlsmallrna extractnc genome.fasta annotations.gff
-</code></pre>
-<p>This will produce a FASTA file containing the non-coding regions, complete with unitas labels applied, called <code>noncoding.fasta</code> in the output directory.</p>
-<h2 id="target-identification">Target Identification</h2>
-<p>The fourth and final main step is Target Identification. This takes a set of small RNA and a set of potential targets and produces a list of genome features that are targeted by each small RNA. </p>
-<p>As with unitas, you can set target files using the command line option <code>-t</code> but it is easier to add them to the configuration file. For example if your target files are <code>target1.fasta</code>, <code>target2.fasta</code> and <code>target3.fasta</code>, they can be set by adding the following in the section below <code>[command]</code>:</p>
-<pre><code class="language-toml">target_files = [
-    &quot;target1.fasta&quot;,
-    &quot;target2.fasta&quot;,
-    &quot;target3.fasta&quot;
-]
-</code></pre>
-<p>Then, if your small RNA are in <code>smallRNA.fastq</code> you can run the following:</p>
-<pre><code>$ hlsmallrna targetid smallRNA.fastq
-</code></pre>
-<p>Make sure the sequences in both <code>smallRNA.fastq</code> and each of the reference files have unique sequence ids, otherwise the command will fail.</p>
-<p>If you are working with very short sequences (&lt;5 bases), you will need to reduce the minimum length with the -m option. Conversely, if you know your minimum length is longer than this, this step can be sped up by increasing it. For example, if you know the shortest sequence you are dealing with is 10 bases long, you could run:</p>
-<pre><code>$ hlsmallrna targetid -m 10 smallRNA.fastq
-</code></pre>
-<p>Though this is not necessary and the program will produce a correct result for sequences longer than 5 without it, so only add if you need the extra speed.</p>
-<p>This produces <code>rna_target_list.csv</code> which contains a list of small RNA target pairs and some general information about each pair’s alignment.</p>
-<p>If you are dealing with a small RNA that doesn’t need perfect complementarity, you can add the <code>--num-mismatches</code> option to set the number of mismatches the alignment should allow. For example, if you want to allow up to four mismatches, you could run:</p>
-<pre><code>$ hlsmallrna targetid --num-mismatches 4 smallRNA.fastq
-</code></pre>
-<h2 id="all">All</h2>
-<p>Since the first three steps are often run one after the other, a shorthand command <code>all</code> is provided for convenience. This takes all of the arguments from the Process, Sort and Unitas steps, then runs them, piping the result from one into the next. All files produced by those steps are then produced in the output directory. </p>
-<p>For example if you have small RNAs in <code>smallRNA.fastq</code>, a genome in <code>genome.fasta</code> and refseq set in the config file and you want to trim the adapter sequence <code>ACATA</code> from both ends, but not run quality filtering you could run:</p>
-<pre><code>$ hlsmallrna all -c 0 -b ACATA smallRNA.fastq genome.fasta
-</code></pre>
+<h1 id="running-unitas">Running Unitas</h1>
+<h2 id="basic-configuration">Basic Configuration</h2>
+<p>Unitas requires two parameters to work - a directory containing length sorted small RNA FASTQ and a set of refseq FASTA files to use a reference for the different types of small RNA or features that they may come from.</p>
+<p>The former (directory containing length sorted small RNA FASTQ) can be specified in two different ways -
+1. Directly though the <code>size_sorted_fastqs</code> parameter e.g.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">size_sorted_fastqs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sorted_small_rna</span>
+<span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+<ol>
+<li>Through having both <code>smallRNA_fastq</code> and <code>sort</code> specified, in which case it uses the output of <code>sort</code>. e.g.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trimmed_smallrna.fastq</span>
+<span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+<p>The latter (set of refseq FASTA files) are specified as a list and can be written in three different forms:</p>
+<ol>
+<li>If the FASTA file is not already labelled for unitas in the IDs (i.e. ID values do not start with <code>[class_name]|</code>) the class name for the pipeline to add can be specified as a key and the file as a value. For example to add a file of miRNA called <code>microRNA.fasta</code> that should be labelled <code>miRNA</code> specify the following:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">refseq</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">miRNA</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">microRNA.fasta</span>
+</code></pre></div>
+<ol>
+<li>If the file already has unitas labels in the IDs (i.e. ID values start with <code>[class_name]|</code>) you only need to specify the path to the FASTA file. e.g. if you have a labeled set of tRNA in a file called <code>transferRNA.fasta</code> specify the following:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">refseq</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transferRNA.fasta</span>
+</code></pre></div>
+<ol>
+<li>If you want to add gene features from <code>cds</code> and/or <code>unspliced_transcriptome</code> specify the special string <code>gene</code>. e.g.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">cds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cds.fasta</span>
+<span class="nt">unspliced_transcriptome</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unspliced.fasta</span>
+<span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">refseq</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gene</span>
+</code></pre></div>
+<p>These can be mixed and matched, so a full example could be:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">smallRNA_fastq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trimmed_smallrna.fastq</span>
+<span class="nt">sort</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">refseq</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gene</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transferRNA.fasta</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">miRNA</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">microRNA.fasta</span>
+</code></pre></div>
+<p>Once this config is written, it can be run as usual using:</p>
+<div class="highlight"><pre><span></span><code>$ hlsmallrna config.yml
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remember if you install via apptainer or docker you will need to prepend the command from the install page. For apptainer this command becomes:
+<div class="highlight"><pre><span></span><code>$ apptainer run -B $HOME:$HOME hlsmallrna.sif hlsmallrna config.yml
+</code></pre></div></p>
+</div>
+<h2 id="optional-parameters">Optional Parameters</h2>
+<h3 id="species">species</h3>
+<p>If unitas allows, you can set a species to have unitas download existing data on it's small RNAs from the internet to help with classification. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">unitas</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">species</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caenorabditis_elegans</span>
+</code></pre></div>
+<h2 id="utility-programs">Utility Programs</h2>
+<p>Two utility programs to help with creating input for unitas are contained in the small RNA pipeline.</p>
+<h3 id="label_for_unitas">label_for_unitas</h3>
+<p>This is a simple program that adds a class label that unitas can read to a FASTA file of sequences. It is recommened to not use this directly most of the time and instead use the key-value labelling syntax shown above. However, if you need a unitas labelled file, you can run the following:</p>
+<div class="highlight"><pre><span></span><code>$ label_for_unitas [class] [FASTA_file]
+</code></pre></div>
+<p>e.g. to label <code>transposons.fasta</code> with TE and write the result to <code>transposons_labelled.fasta</code>, you could run:</p>
+<div class="highlight"><pre><span></span><code>$ label_for_unitas TE transposons.fasta -o transposons_labelled.fasta
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remember if you install via apptainer or docker you will need to prepend the command from the install page. For apptainer this command becomes:
+<div class="highlight"><pre><span></span><code>$ apptainer run -B $HOME:$HOME hlsmallrna.sif label_for_unitas TE transposons.fasta -o transposons_labelled.fasta
+</code></pre></div></p>
+</div>
+<h3 id="extract_nc">extract_nc</h3>
+<p>If you want to test what small RNA come form noncoding reigons - outside of genes - specifically you can use this tool to extract those from the genome. It also adds the unitas label noncoding to the ID of the sequences for you. </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Most of the time you do not want to do this on the first run - as Unitas will likely double classify anything that aligns to something like a transposon. It is advised to take anything unitas has not classified on the first run and only run that on the noncoding if you want the information.</p>
+</div>
+<p>It can be run as follows:</p>
+<div class="highlight"><pre><span></span><code>$ extract_nc [genome_FASTA] [annotation_GFF] -o [output_FASTA]
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remember if you install via apptainer or docker you will need to prepend the command from the install page. For apptainer this command becomes:
+<div class="highlight"><pre><span></span><code>$ apptainer run -B $HOME:$HOME hlsmallrna.sif extract_nc [genome_FASTA] [annotation_GFF] -o [output_FASTA]
+</code></pre></div></p>
+</div>
+<h2 id="output-files">Output Files</h2>
+<h3 id="unitas">unitas</h3>
+<p>Directory containing the raw output of unitas for each length file run. Can be inspected to extract details for particular small RNAs.</p>
+<h3 id="unitas_summarycsv">unitas_summary.csv</h3>
+<p>Human-readable unitas classification summary by length. Conatins the classifications for each RNA length on a row, allowing for inspection of all the details at once.</p>
+<h3 id="unitasgraphpng">unitasGraph.png</h3>
+<p>Graph of unitas classification by length - uses only top level unitas classes.</p>
+<h3 id="unitas_graph_datacsv">unitas_graph_data.csv</h3>
+<p>Data for <code>unitasGraph.png</code>, in case it needs to be replotted, misses the more granular classes from <code>unitas_summary.csv</code>.</p>
 
 
 
@@ -1027,7 +1085,7 @@ unspliced_transcriptome = &quot;unspliced_transcriptome.fasta&quot;
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../tasks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tasks">
+          <a href="../sort/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Running Sort">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1037,20 +1095,20 @@ unspliced_transcriptome = &quot;unspliced_transcriptome.fasta&quot;
                 Previous
               </span>
               <div class="md-ellipsis">
-                Tasks
+                Running Sort
               </div>
             </div>
           </a>
         
         
           
-          <a href="../config-and-troubleshooting/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration and Troubleshooting Notes">
+          <a href="../targetid/" class="md-footer__link md-footer__link--next" aria-label="Next: Running TargetID">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Configuration and Troubleshooting Notes
+                Running TargetID
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1090,7 +1148,7 @@ unspliced_transcriptome = &quot;unspliced_transcriptome.fasta&quot;
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>

@@ -223,7 +223,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="walkthrough/tasks/" class="md-tabs__link">
+        <a href="walkthrough/" class="md-tabs__link">
           
   
   
@@ -291,7 +291,9 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -429,12 +431,12 @@
   
   
     <li class="md-nav__item">
-      <a href="walkthrough/tasks/" class="md-nav__link">
+      <a href="walkthrough/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Tasks
+    Overview
     
   </span>
   
@@ -452,12 +454,12 @@
   
   
     <li class="md-nav__item">
-      <a href="walkthrough/quick-start/" class="md-nav__link">
+      <a href="walkthrough/prereq/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Prerequisites and Considerations
     
   </span>
   
@@ -475,12 +477,104 @@
   
   
     <li class="md-nav__item">
-      <a href="walkthrough/config-and-troubleshooting/" class="md-nav__link">
+      <a href="walkthrough/config/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Configuration and Troubleshooting Notes
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="walkthrough/trim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="walkthrough/sort/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="walkthrough/unitas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Unitas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="walkthrough/targetid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running TargetID
     
   </span>
   
@@ -591,52 +685,6 @@
   
   
     <li class="md-nav__item">
-      <a href="cli-reference/process/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="cli-reference/sort/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Sort
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="cli-reference/extractnc/" class="md-nav__link">
         
   
@@ -666,52 +714,6 @@
   
   <span class="md-ellipsis">
     Label for Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="cli-reference/unitas/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="cli-reference/targetid/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    TargetID
     
   </span>
   
@@ -788,6 +790,8 @@
               <article class="md-content__inner md-typeset">
                 
                   
+  
+
 
 
   
@@ -795,8 +799,40 @@
 
 
 <h1 id="welcome-to-the-hunt-lab-small-rna-pipeline-documentation">Welcome to the Hunt Lab Small RNA Pipeline Documentation</h1>
-<p>This tool is designed to automate a lot of the common bioinformatics performed on small RNA by the <a href="https://www.vickyhuntlab.org/">Hunt Lab</a>. It is deliberately designed to be highly configurable so it can be easily applied to a wide range of scenarios, though most of our work is on nematode and nematomorph worms.</p>
-<p>Use the tabs above or buttons below to navigate this site.</p>
+<p>This documentation is for version 2 of the pipeline, select 1.1.0 from the version dropdown for the version 1 documentation.</p>
+<p>This is a pipeline developed in <a href="https://www.vickyhuntlab.org/">Vicky Hunt's Lab</a> at the <a href="https://www.bath.ac.uk">University of Bath</a>, UK to analyse small RNA data in a quick and consistent way between projects. It is deliberately designed to be highly configurable so it can be easily applied to a wide range of scenarios, though most of our work is on nematode and nematomorph worms. </p>
+<h1 id="background">Background</h1>
+<p>Most of the original methodology was devised by Mona Suleiman, Dominika Lastik and Vicky Hunt for the papers below. This was then developed into a usable pipeline by Kieran Reynolds in 2022 and updated to version 2 in 2025. </p>
+<blockquote>
+<p>Suleiman, M., Kounosu, A., Murcott, B. et al. piRNA-like small RNAs target transposable elements in a Clade IV parasitic nematode. Sci Rep 12, 10156 (2022). <a href="https://doi.org/10.1038/s41598-022-14247-1">https://doi.org/10.1038/s41598-022-14247-1</a></p>
+<p>Lastik, D., Kounosu, A., Dayi, M. et al. Small non-coding RNAs have predicted roles in reproductive biology and transposable element regulation in the parasitic worm Strongyloides venezuelensis. Sci Rep 15, 20608 (2025). <a href="https://doi.org/10.1038/s41598-025-01968-2">https://doi.org/10.1038/s41598-025-01968-2</a></p>
+</blockquote>
+<h1 id="citation">Citation</h1>
+<p>This pipeline is mainly a combination of existing tools so, doesn't have a paper attached to it but can be referenced with the repository URL and version number. For example:</p>
+<blockquote>
+<p>This analysis was performed using HuntLab-smallRNA v2.0.0 (<a href="https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA">https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA</a>).</p>
+</blockquote>
+<p>For the internal steps please cite the papers of the tools used:</p>
+<p><strong>Trim</strong>:</p>
+<blockquote>
+<p>Martin, Marcel. (2011). CUTADAPT removes adapter sequences from high-throughput sequencing reads. EMBnet.journal. 17. 10.14806/ej.17.1.200.</p>
+</blockquote>
+<p><strong>Sort</strong>:</p>
+<blockquote>
+<p>Langmead, B., Salzberg, S. Fast gapped-read alignment with Bowtie 2. Nat Methods 9, 357-359 (2012). https://doi.org/10.1038/nmeth.1923 </p>
+</blockquote>
+<p><strong>Unitas</strong>:</p>
+<blockquote>
+<p>Gebert, D., Hewel, C. &amp; Rosenkranz, D. unitas: the universal tool for annotation of small RNAs. BMC Genomics 18, 644 (2017). https://doi.org/10.1186/s12864-017-4031-9</p>
+</blockquote>
+<p><strong>Targetid</strong>:</p>
+<blockquote>
+<p>Langmead, B., Salzberg, S. Fast gapped-read alignment with Bowtie 2. Nat Methods 9, 357-359 (2012). https://doi.org/10.1038/nmeth.1923</p>
+</blockquote>
+<p><strong>Enrich</strong>:</p>
+<blockquote>
+<p>Carlos P Cantalapiedra, Ana Hernández-Plaza, Ivica Letunic, Peer Bork, Jaime Huerta-Cepas, eggNOG-mapper v2: Functional Annotation, Orthology Assignments, and Domain Prediction at the Metagenomic Scale, Molecular Biology and Evolution, Volume 38, Issue 12, December 2021, Pages 5825-5829, https://doi.org/10.1093/molbev/msab293</p>
+</blockquote>
 
 
 
@@ -804,8 +840,13 @@
 
 
 
+  
+  
 
 
+
+
+  
 
 
 
@@ -822,6 +863,8 @@
         <footer class="md-footer">
   
     
+      
+        
       
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
@@ -873,7 +916,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="assets/javascripts/bundle.56ea9cef.min.js"></script>

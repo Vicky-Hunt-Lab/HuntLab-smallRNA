@@ -14,7 +14,7 @@
         <link rel="prev" href="../other-tasks/">
       
       
-        <link rel="next" href="process/">
+        <link rel="next" href="extractnc/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -223,7 +223,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../walkthrough/tasks/" class="md-tabs__link">
+        <a href="../walkthrough/" class="md-tabs__link">
           
   
   
@@ -421,12 +421,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../walkthrough/tasks/" class="md-nav__link">
+      <a href="../walkthrough/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Tasks
+    Overview
     
   </span>
   
@@ -444,12 +444,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../walkthrough/quick-start/" class="md-nav__link">
+      <a href="../walkthrough/prereq/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Prerequisites and Considerations
     
   </span>
   
@@ -467,12 +467,104 @@
   
   
     <li class="md-nav__item">
-      <a href="../walkthrough/config-and-troubleshooting/" class="md-nav__link">
+      <a href="../walkthrough/config/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Configuration and Troubleshooting Notes
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/trim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/sort/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/unitas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Unitas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/targetid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running TargetID
     
   </span>
   
@@ -598,52 +690,6 @@
   
   
     <li class="md-nav__item">
-      <a href="process/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="sort/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Sort
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="extractnc/" class="md-nav__link">
         
   
@@ -673,52 +719,6 @@
   
   <span class="md-ellipsis">
     Label for Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="unitas/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="targetid/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    TargetID
     
   </span>
   
@@ -804,29 +804,28 @@
 <h1 id="cli-reference">CLI Reference</h1>
 <p>References of how to use the command line interface of the program and notes on some ways particular commands work that could trip you up.</p>
 <p>General help message is as follows:</p>
-<pre><code>usage: hlsmallrna [-h] [-q] [-C PATH_TO_CONFIG]
-                {process,sort,extractnc,unitas,targetid,all} ...
+<div class="highlight"><pre><span></span><code>usage: hlsmallrna [-h] [-o OUTPUT] [-t THREADS] [-k] [-v] config_file
 
-Pipeline to process small RNAs
+Pipeline to process small RNAs - version 2
 
 positional arguments:
-  {process,sort,extractnc,unitas,targetid,all}
-    process             Preprocessing for the RNA
-    sort                Find RNAs that align to a genome and sort them by
-                        length
-    extractnc           Extract the noncoding region from a fasta with a GFF
-                        file
-    unitas              Run unitas on split files and merge results
-    targetid            Align small RNA to a number of genome features to find
-                        out what is targeted
-    all                 Run process, sort and unitas one after the other
+  config_file           Path to YAML config file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -q, --quiet           Suppress output from intermediate commands
-  -C PATH_TO_CONFIG, --path-to-config PATH_TO_CONFIG
-                        Path to the TOML format config file to use
-</code></pre>
+  -o OUTPUT, --output OUTPUT
+                        Directory to write output to (will be created if it
+                        doesn&#39;t exist, default: hlsmallrna_output)
+  -t THREADS, --threads THREADS
+                        Number of threads to run the pipeline on (default: 4)
+  -k, --keep-files      If set, keep the intermediate files, to help debug the
+                        application
+  -v, --verbose         If set, print the output for the intermediate commands
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">The Config File</p>
+<p>If you are looking for instructions on writing the config file, use <a href="../walkthrough/config/">the relevent page of the walkthrough</a> to help.</p>
+</div>
 
 
 
@@ -873,13 +872,13 @@ optional arguments:
         
         
           
-          <a href="process/" class="md-footer__link md-footer__link--next" aria-label="Next: Process">
+          <a href="extractnc/" class="md-footer__link md-footer__link--next" aria-label="Next: ExtractNC">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Process
+                ExtractNC
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -919,7 +918,7 @@ optional arguments:
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>

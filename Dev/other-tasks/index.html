@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/Dev/other-tasks/">
       
       
-        <link rel="prev" href="../walkthrough/config-and-troubleshooting/">
+        <link rel="prev" href="../walkthrough/targetid/">
       
       
         <link rel="next" href="../cli-reference/">
@@ -223,7 +223,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../walkthrough/tasks/" class="md-tabs__link">
+        <a href="../walkthrough/" class="md-tabs__link">
           
   
   
@@ -421,12 +421,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../walkthrough/tasks/" class="md-nav__link">
+      <a href="../walkthrough/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Tasks
+    Overview
     
   </span>
   
@@ -444,12 +444,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../walkthrough/quick-start/" class="md-nav__link">
+      <a href="../walkthrough/prereq/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Quick Start
+    Prerequisites and Considerations
     
   </span>
   
@@ -467,12 +467,104 @@
   
   
     <li class="md-nav__item">
-      <a href="../walkthrough/config-and-troubleshooting/" class="md-nav__link">
+      <a href="../walkthrough/config/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Configuration and Troubleshooting Notes
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/trim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/sort/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/unitas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Unitas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../walkthrough/targetid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running TargetID
     
   </span>
   
@@ -721,52 +813,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../cli-reference/process/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Process
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cli-reference/sort/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Sort
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../cli-reference/extractnc/" class="md-nav__link">
         
   
@@ -796,52 +842,6 @@
   
   <span class="md-ellipsis">
     Label for Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cli-reference/unitas/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Unitas
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cli-reference/targetid/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    TargetID
     
   </span>
   
@@ -930,27 +930,27 @@
 <h3 id="basic-plot">Basic Plot</h3>
 <p>A common task you might want to do is plotting the location of things within the genome, for example, genome features you are interested in or the positions of small RNAs you have aligned to the genome. To make this easy, a script is included in this environment called <code>build_coord_files</code>. This automatically generates tsv files for use with the R package <code>chromPlot</code>. This section explains how you can generate a plot with it.</p>
 <p>Firstly, you need at least two files: a full genome in a FASTA or FASTQ file and a set of locations you are interested in, either as an alignment output (in SAM or BAM format) or as feature annotations in GFF format. To start produce the genome coordinate file with the command: (assuming <code>genome.fasta</code> is your genome file)</p>
-<pre><code>$ build_coord_files -o genome_coord.tsv genome.fasta 
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ build_coord_files -o genome_coord.tsv genome.fasta 
+</code></pre></div>
 <p>By default, the script will figure out what type of output to produce by the file extension. But if it can’t, the user will need to provide a flag to tell it what type of input you are using (in this case <code>--fasta</code>). Next we produce the coordinates file for the item of interest, assuming it is in <code>alignment.sam</code> you can run:</p>
-<pre><code>$ build_coord_files -o alignment_coord.tsv alignment.sam
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ build_coord_files -o alignment_coord.tsv alignment.sam
+</code></pre></div>
 <p>This will produce two files, one for coordinates on the sense strand and one for coordinates on the antisense strand. Finally, we can use these files to plot the result. If it isn’t already, install chromPlot with bioconducter using the following R command:</p>
-<pre><code class="language-r">&gt; BiocManager::install(&quot;chromPlot&quot;)
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;</span><span class="w"> </span><span class="n">BiocManager</span><span class="o">::</span><span class="nf">install</span><span class="p">(</span><span class="s">&quot;chromPlot&quot;</span><span class="p">)</span>
+</code></pre></div>
 <p>Then you should be able to create a plot using the following R code (of two example chromosomes called "SRAE_chr1" and "SRAE_chr2"):</p>
-<pre><code class="language-r">chrom_coords &lt;- read.csv(&quot;/path/to/genome_coord.tsv&quot;, sep = &quot;\t&quot;)
-sense_pos &lt;- read.csv(&quot;/path/to/sense_alignment_coord.tsv&quot;, sep = &quot;\t&quot;)
-antisense_pos &lt;- read.csv(&quot;/path/to/antisense_alignment_coord.tsv&quot;, sep = &quot;\t&quot;)
+<div class="highlight"><pre><span></span><code><span class="n">chrom_coords</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/genome_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
+<span class="n">sense_pos</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/sense_alignment_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
+<span class="n">antisense_pos</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/antisense_alignment_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
 
-library(chromPlot)
+<span class="nf">library</span><span class="p">(</span><span class="n">chromPlot</span><span class="p">)</span>
 
-chromPlot(
-  gaps = chrom_coords, annot1 = sense_pos, annot2 = antisense_pos, plotRndchr = T,
-  chr = c(&quot;SRAE_chr1&quot;, &quot;SRAE_chr2&quot;), bin = 50000, 
-  chrSide = c(-1, 1, -1, -1, 1, -1, -1, 1)
-)
-</code></pre>
+<span class="nf">chromPlot</span><span class="p">(</span>
+<span class="w">  </span><span class="n">gaps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrom_coords</span><span class="p">,</span><span class="w"> </span><span class="n">annot1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sense_pos</span><span class="p">,</span><span class="w"> </span><span class="n">annot2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">antisense_pos</span><span class="p">,</span><span class="w"> </span><span class="n">plotRndchr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">,</span>
+<span class="w">  </span><span class="n">chr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SRAE_chr1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SRAE_chr2&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">50000</span><span class="p">,</span><span class="w"> </span>
+<span class="w">  </span><span class="n">chrSide</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>The script breaks down as follows:</p>
 <ul>
 <li>First three lines load in the data we just produced with <code>build_coord_files</code></li>
@@ -967,23 +967,23 @@ chromPlot(
 <p><img alt="A plot of locations of small RNA on two chromosomes labelled SRAE_chr1 and SRAE_chr2" src="../images/chromplot1.jpg" title="Chromplot location output" /></p>
 <h3 id="dealing-with-multiple-scaffolds">Dealing with Multiple Scaffolds</h3>
 <p>In more complex cases, one or more of your chromosomes may be split into multiple scaffolds. <code>build_coord_files</code> has a scaffold aware mode that can automatically try to merge these, but it will only work if your scaffold’s IDs are in the form of <code>&lt;chromosome_name&gt;_scaffold&lt;scaffold_number&gt;</code> e.g. <code>SRAE_chrX_scaffold1</code>. Once you have this, you can generate the data files with the <code>-c</code> flag set, as follows:</p>
-<pre><code>$ build_coord_files -c -o genome_coord.tsv genome.fasta 
+<div class="highlight"><pre><span></span><code>$ build_coord_files -c -o genome_coord.tsv genome.fasta 
 $ build_coord_files -c --genome-coords genome_coord.tsv -o alignment_coord.tsv alignment.sam
-</code></pre>
+</code></pre></div>
 <p>Note you need to provide the genome coords file when generating files for what you are plotting, this allows for a correction of coordinates to be made from where scaffolds are merged. In addition to the regular files, this produces <code>scaffold_info_genome_coord.tsv</code>, that can be used to add scaffold dividers to your plots. To do this, the following R script can be run:</p>
-<pre><code class="language-r">chrom_coords &lt;- read.csv(&quot;/path/to/genome_coord.tsv&quot;, sep = &quot;\t&quot;)
-sense_pos &lt;- read.csv(&quot;/path/to/sense_alignment_coord.tsv&quot;, sep = &quot;\t&quot;)
-antisense_pos &lt;- read.csv(&quot;/path/to/antisense_alignment_coord.tsv&quot;, sep = &quot;\t&quot;)
-scaffolds &lt;- read.csv(&quot;/path/to/scaffold_info_genome_coord.tsv&quot;, sep = &quot;\t&quot;)
+<div class="highlight"><pre><span></span><code><span class="n">chrom_coords</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/genome_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
+<span class="n">sense_pos</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/sense_alignment_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
+<span class="n">antisense_pos</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/antisense_alignment_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
+<span class="n">scaffolds</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;/path/to/scaffold_info_genome_coord.tsv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;\t&quot;</span><span class="p">)</span>
 
-library(chromPlot)
+<span class="nf">library</span><span class="p">(</span><span class="n">chromPlot</span><span class="p">)</span>
 
-chromPlot(
-  gaps = chrom_coords, annot1 = sense_pos, annot2 = antisense_pos, plotRndchr = T,
-  chr = c(&quot;SRAE_chr1&quot;, &quot;SRAE_chr2&quot;), bin = 50000, bands = scaffolds,
-  chrSide = c(-1, 1, -1, -1, 1, -1, -1, 1)
-)
-</code></pre>
+<span class="nf">chromPlot</span><span class="p">(</span>
+<span class="w">  </span><span class="n">gaps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrom_coords</span><span class="p">,</span><span class="w"> </span><span class="n">annot1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sense_pos</span><span class="p">,</span><span class="w"> </span><span class="n">annot2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">antisense_pos</span><span class="p">,</span><span class="w"> </span><span class="n">plotRndchr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">,</span>
+<span class="w">  </span><span class="n">chr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SRAE_chr1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SRAE_chr2&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">50000</span><span class="p">,</span><span class="w"> </span><span class="n">bands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scaffolds</span><span class="p">,</span>
+<span class="w">  </span><span class="n">chrSide</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Compared to the last script, this adds:</p>
 <ul>
 <li>The fourth line, that loads in the scaffold data</li>
@@ -1001,34 +1001,34 @@ chromPlot(
 <ol>
 <li>Map to genome with bowtie2, convert sam to bam with <code>samtools</code>, convert bamToBed with <code>bedtools</code> </li>
 </ol>
-<pre><code>$ bowtie2 -x genome.fasta -f -U sequences.fasta -S sequences_mapped.sam
+<div class="highlight"><pre><span></span><code>$ bowtie2 -x genome.fasta -f -U sequences.fasta -S sequences_mapped.sam
 $ samtools view sequences_mapped.sam -o sequences_mapped.bam
 $ bamToBed -i sequences.bam &gt; sequences.bed
-</code></pre>
+</code></pre></div>
 <ol>
 <li>Extract flanking sequences with flankBed in <code>bedtools</code> (need to use bedtools format genome file - generate with faidx and cut):</li>
 </ol>
-<pre><code>$ samtools faidx genome.fasta  
+<div class="highlight"><pre><span></span><code>$ samtools faidx genome.fasta  
 $ cut -f 1,2 genome.fa.fai &gt; chrom.sizes
 $ flankBed -i sequences.bed -g chrom.sizes -b 100 &gt; sequences_100nt_flank.bed
-</code></pre>
+</code></pre></div>
 <p>or for 60 upstream only:</p>
-<pre><code>$ flankBed -i sequences.bed -g chrom.sizes -l 60 -r 0 &gt; sequnences_60nt.bed
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ flankBed -i sequences.bed -g chrom.sizes -l 60 -r 0 &gt; sequnences_60nt.bed
+</code></pre></div>
 <ol>
 <li>Extract fasta sequences from bed fastFromBed with bedtools.</li>
 </ol>
-<pre><code>$ fastaFromBed -fi genome.fasta -bed sequences_100nt_Flank.bed -fo sequences_100nt_Flank_seqs.fasta
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ fastaFromBed -fi genome.fasta -bed sequences_100nt_Flank.bed -fo sequences_100nt_Flank_seqs.fasta
+</code></pre></div>
 <h2 id="ping-pong-signature">Ping Pong signature</h2>
 <p>To find ping-pong signature, Unitas with the option -pp can be used to find 5’ overlaps of mapped sequence reads to the genome and calculate a Z-score for the enrichment of 10 bp overlaps. <code>map.file</code> should be in SAM or ELAND3 format.</p>
-<pre><code>$ perl unitas.pl -pp -input map.file  –species x –refseq reference.fasta
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ perl unitas.pl -pp -input map.file  –species x –refseq reference.fasta
+</code></pre></div>
 <h2 id="dicer-signature-steprna">Dicer Signature (StepRNA)</h2>
 <p>To install stepRNA, see the documentation on <a href="https://github.com/Vicky-Hunt-Lab/stepRNA">the GitHub page</a>.</p>
 <p>stepRNA is able to identify a Dicer processing signature from a small RNA sequence dataset. It requires two FASTA files as input that have had their adapters already trimmed from the ends.</p>
-<pre><code>$ stepRNA --reference REFERENCE.fa --reads READS.fa
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ stepRNA --reference REFERENCE.fa --reads READS.fa
+</code></pre></div>
 <ul>
 <li>READS.fa should contain all of the small RNA sequencing reads.</li>
 <li>REFERENCE.fa is usually filtered to investigate small RNAs of interest e.g. 26G sRNAs.</li>
@@ -1044,7 +1044,7 @@ $ flankBed -i sequences.bed -g chrom.sizes -b 100 &gt; sequences_100nt_flank.bed
 <p>These can then be used to plot the distribution and/or further explore the reads that have aligned. </p>
 <p>Note: If the sRNA lengths in the read file are all the same i.e. 21 nt long, stepRNA will not be able to find overhangs due to the scoring system. In this case the <code>-m/--min_score</code> should be set to an appropriate value; we recommend sRNA length - 7nt (e.g. 21 - 6 = 15).</p>
 <p>Use <code>stepRNA --help</code> to bring up the command line help, a description of the methods can be found in the <a href="https://www.frontiersin.org/journals/bioinformatics/articles/10.3389/fbinf.2022.994871/full">stepRNA publication</a>.</p>
-<pre><code>stepRNA [-h] -r REFERENCE -q READS [-n NAME] [-d DIRECTORY]
+<div class="highlight"><pre><span></span><code>stepRNA [-h] -r REFERENCE -q READS [-n NAME] [-d DIRECTORY]
                [-m MIN_SCORE] [-e] [-u] [-j] [-V]
 
 Align a reference RNA file to read sequences. Output will be a set of CSV files containing information about the length of the reads, number of reads aligned to a reference sequence and the length of overhangs of the alignment.
@@ -1071,12 +1071,12 @@ Flags:
                         &gt;Read_1 &gt;Read_2
   -j, --write_json      Write count dictionaries to a JSON file
   -V, --version         Print version number then exit.
-</code></pre>
+</code></pre></div>
 <h2 id="same-strand-overlap">Same Strand Overlap</h2>
 <p>If you wish to detect same strand overlaps, you can use the <code>overlap_ss</code> script that is installed in the same environment as this pipeline. This uses a number of bash programs to create files that show where two sets of small RNA that appear on the same strand overlap.</p>
 <p>To use this script you need two sets of small RNA as FASTA or FASTQ files, one for the base and one for the overlap, plus the genome of the species of interest. You can then run the script in the following way:</p>
-<pre><code>$ overlap_ss genome.fasta smallRNA1.fastq smallRNA2.fastq
-</code></pre>
+<div class="highlight"><pre><span></span><code>$ overlap_ss genome.fasta smallRNA1.fastq smallRNA2.fastq
+</code></pre></div>
 <p>This script will then create output in the output directory specified in <code>config.toml</code> under the directory <code>samestrand_overlap/</code>.</p>
 <h2 id="mirna">miRNA</h2>
 <p>TODO</p>
@@ -1109,7 +1109,7 @@ Flags:
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../walkthrough/config-and-troubleshooting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration and Troubleshooting Notes">
+          <a href="../walkthrough/targetid/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Running TargetID">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1119,7 +1119,7 @@ Flags:
                 Previous
               </span>
               <div class="md-ellipsis">
-                Configuration and Troubleshooting Notes
+                Running TargetID
               </div>
             </div>
           </a>
@@ -1172,7 +1172,7 @@ Flags:
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
