@@ -1,5 +1,5 @@
 site_name: Hunt Lab Small RNA Pipeline
-site_url: https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA
+site_url: https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/
 repo_url: https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA
 repo_name: Vicky-Hunt-Lab/HuntLab-smallRNA
 copyright: Copyright &copy; 2021 - 2025 Kieran Reynolds & Vicky Hunt Lab Members
@@ -31,3 +31,6 @@ theme:
     - navigation.tabs.sticky
     - toc.follow
     - toc.integrate
+extra:
+  version:
+    provider: mike

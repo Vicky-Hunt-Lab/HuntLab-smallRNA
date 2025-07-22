@@ -1,9 +1,9 @@
-name: Build/Publish Latest Release Docs
-
+name: Build/Publish Develop Docs 
 on:
-  release:
-    types: [published]
-
+  push:
+    tags-ignore: ['**']
+    branches:
+      - dev
 permissions:
   contents: write
 jobs:
@@ -26,4 +26,4 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material mike
-      - run: mike deploy --push --update-aliases ${{ github.event.release.tag_name }} latest
+      - run: mike deploy --push develop
