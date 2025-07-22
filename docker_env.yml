@@ -1,0 +1,23 @@
+name: base
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - python
+  - pyyaml
+  - pysam
+  - biopython
+  - gffutils
+  - matplotlib
+  - cutadapt
+  - unitas
+  - perl-archive-extract
+  - bioconda/label/main::perl-lwp-simple
+  - bowtie2
+  - samtools
+  - bedtools
+  - eggnog-mapper
+  - scipy
+  - r
+  - bioconductor-topgo
+  - pip

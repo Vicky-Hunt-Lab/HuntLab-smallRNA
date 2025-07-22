@@ -39,6 +39,12 @@ KNOWN_ADAPTERS = {
     }
 }
 
+def make_path_reletive_to_config(path, config):
+    '''
+    Convert a path to be reletive to the config directory
+    '''
+    return os.path.join(os.path.dirname(config), path)
+
 def unzip_if_needed(filepath, output_dir, tmpfilename='temp.fq'):
     '''
     Check if filepath is gzipped
@@ -86,12 +92,12 @@ def convert_to_fastq_if_needed(filepath, output_dir, tmpfilename='temp.fa'):
         )
         return os.path.join(output_dir, tmpfilename)
 
-def load_and_validate_input(input_yaml, output_dir):
+def load_and_validate_input(input_yaml_path, output_dir):
     '''
     Check for errors in the small RNA pipeline input YAML
     '''
     # TODO: check file types and existance
-    with open(input_yaml) as f:
+    with open(input_yaml_path) as f:
         input_yaml = yaml.load(f.read(), Loader=yaml.Loader)
 
     smallRNA_fastq_present = 'smallRNA_fastq' in input_yaml
@@ -103,20 +109,27 @@ def load_and_validate_input(input_yaml, output_dir):
 
     if smallRNA_fastq_present:
         input_yaml['smallRNA_fastq'] = convert_to_fastq_if_needed(
-            unzip_if_needed(input_yaml['smallRNA_fastq'], output_dir, tmpfilename='smallRNA.fastq'), 
+            unzip_if_needed(
+                make_path_reletive_to_config(input_yaml['smallRNA_fastq'], input_yaml_path),
+                output_dir, tmpfilename='smallRNA.fastq'
+            ), 
             output_dir, tmpfilename='smallRNA.fasta.fastq'
         )
+    else:
+        input_yaml['size_sorted_fastqs'] = make_path_reletive_to_config(input_yaml['size_sorted_fastqs'], input_yaml_path)
 
     # cds and unspliced_transcriptome set to None if not present
     if 'cds' not in input_yaml:
         input_yaml['cds'] = None
     else:
-        input_yaml['cds'] = unzip_if_needed(input_yaml['cds'], output_dir, tmpfilename='cds.fasta')
+        input_yaml['cds'] = unzip_if_needed(make_path_reletive_to_config(input_yaml['cds'], input_yaml_path), output_dir, tmpfilename='cds.fasta')
 
     if 'unspliced_transcriptome' not in input_yaml:
         input_yaml['unspliced_transcriptome'] = None
     else:
-        input_yaml['unspliced_transcriptome'] = unzip_if_needed(input_yaml['unspliced_transcriptome'], output_dir, tmpfilename='unspliced.fasta')
+        input_yaml['unspliced_transcriptome'] = unzip_if_needed(
+            make_path_reletive_to_config(input_yaml['unspliced_transcriptome'], input_yaml_path), output_dir, tmpfilename='unspliced.fasta'
+        )
 
     # program paths are all optional, default to in path
     if 'program_paths' not in input_yaml:
@@ -181,7 +194,10 @@ def load_and_validate_input(input_yaml, output_dir):
             input_yaml['sort']['input'] = input_yaml['smallRNA_fastq']
 
         if 'genome' in input_yaml['sort']:
-            input_yaml['sort']['genome'] = unzip_if_needed(input_yaml['sort']['genome'], output_dir, tmpfilename='genome.fasta')
+            input_yaml['sort']['genome'] = unzip_if_needed(
+                make_path_reletive_to_config(input_yaml['sort']['genome'], input_yaml_path),
+                output_dir, tmpfilename='genome.fasta'
+            )
 
         input_yaml['sort']['cds'] = input_yaml['cds']
 
@@ -232,6 +248,10 @@ def load_and_validate_input(input_yaml, output_dir):
             
             if input_yaml['unspliced_transcriptome'] is not None:
                 input_yaml['unitas']['refseq'].append({'gene': input_yaml['unspliced_transcriptome']})
+
+            for i in range(len(input_yaml['unitas']['refseq'])):
+                for seqname in input_yaml['unitas']['refseq'][i]:
+                    input_yaml['unitas']['refseq'][i][seqname] = make_path_reletive_to_config(input_yaml['unitas']['refseq'][i][seqname], input_yaml_path)
         
     # targetid
     if 'targetid' in input_yaml:
@@ -261,6 +281,9 @@ def load_and_validate_input(input_yaml, output_dir):
             if input_yaml['unspliced_transcriptome'] is not None:
                 input_yaml['targetid']['target_files'].append(input_yaml['unspliced_transcriptome'])
 
+        for i in range(len(input_yaml['targetid']['target_files'])):
+            input_yaml['targetid']['target_files'][i] = make_path_reletive_to_config(input_yaml['targetid']['target_files'][i], input_yaml_path)
+
         # min_seq_length defaults to 5
         if 'min_seq_length' not in input_yaml['targetid']:
             input_yaml['targetid']['min_seq_length'] = 5
@@ -280,6 +303,9 @@ def load_and_validate_input(input_yaml, output_dir):
                     input_yaml['targetid']['enrich']['exclude'] = [input_yaml['targetid']['enrich']['exclude']]
                 elif type(input_yaml['targetid']['enrich']['exclude']) != list:
                     return False, f'In enrich, the exclude part should be a list of paths, not {type(input_yaml["targetid"]["enrich"]["exclude"])}', input_yaml
+
+                for i in range(len(input_yaml['targetid']['enrich']['exclude'])):
+                    input_yaml['targetid']['enrich']['exclude'][i] = make_path_reletive_to_config(input_yaml['targetid']['enrich']['exclude'][i], input_yaml_path)
                 
                 input_yaml['targetid']['enrich']['included_files'] = set(input_yaml['targetid']['target_files']) - set(input_yaml['targetid']['enrich']['exclude'])
             else:
