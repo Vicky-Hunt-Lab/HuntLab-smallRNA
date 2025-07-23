@@ -717,15 +717,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#same-strand-overlap" class="md-nav__link">
-    <span class="md-ellipsis">
-      Same Strand Overlap
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#mirna" class="md-nav__link">
     <span class="md-ellipsis">
       miRNA
@@ -1072,12 +1063,6 @@ Flags:
   -j, --write_json      Write count dictionaries to a JSON file
   -V, --version         Print version number then exit.
 </code></pre></div>
-<h2 id="same-strand-overlap">Same Strand Overlap</h2>
-<p>If you wish to detect same strand overlaps, you can use the <code>overlap_ss</code> script that is installed in the same environment as this pipeline. This uses a number of bash programs to create files that show where two sets of small RNA that appear on the same strand overlap.</p>
-<p>To use this script you need two sets of small RNA as FASTA or FASTQ files, one for the base and one for the overlap, plus the genome of the species of interest. You can then run the script in the following way:</p>
-<div class="highlight"><pre><span></span><code>$ overlap_ss genome.fasta smallRNA1.fastq smallRNA2.fastq
-</code></pre></div>
-<p>This script will then create output in the output directory specified in <code>config.toml</code> under the directory <code>samestrand_overlap/</code>.</p>
 <h2 id="mirna">miRNA</h2>
 <p>TODO</p>
 
