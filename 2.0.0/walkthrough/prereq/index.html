@@ -1,0 +1,1036 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/2.0.0/walkthrough/prereq/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../config/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
+    
+    
+      
+        <title>Prerequisites and Considerations - Hunt Lab Small RNA Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prerequisites-and-considerations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Hunt Lab Small RNA Pipeline" class="md-header__button md-logo" aria-label="Hunt Lab Small RNA Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hunt Lab Small RNA Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Prerequisites and Considerations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Vicky-Hunt-Lab/HuntLab-smallRNA
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Walkthrough
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../other-tasks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Other Tasks
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../cli-reference/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Hunt Lab Small RNA Pipeline" class="md-nav__button md-logo" aria-label="Hunt Lab Small RNA Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Hunt Lab Small RNA Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Vicky-Hunt-Lab/HuntLab-smallRNA
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Walkthrough
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Walkthrough
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Prerequisites and Considerations
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prerequisites and Considerations
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#trim" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trim
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sort" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sort
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unitas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unitas
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#targetid" class="md-nav__link">
+    <span class="md-ellipsis">
+      TargetID
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    The Config File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Trim
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sort/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Sort
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unitas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running Unitas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../targetid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running TargetID
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other-tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Other Tasks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            CLI Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/extractnc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ExtractNC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/label-for-unitas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Label for Unitas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/build-coord-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build Coord Files
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/overlapss/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overlap SS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="prerequisites-and-considerations">Prerequisites and Considerations</h1>
+<p>Before we get on to how to run the pipeline this page covers what files are needed to run the pipeline and things to think about to inform the parameters to set. Read each section you want to run carefully.</p>
+<h2 id="trim">Trim</h2>
+<p>The trimming in the pipeline is what we think is best practice for the small RNA data we use - remove low quality ends and trim any 5' adapters first, then trim the 3' adapter and remove any sequences that lack it - as they are likely incomplete or noise. If you want to do something different, you can do this and provide the already trimmed small RNAs to the pipeline to run the other analysis. To run this, you will need the following data:</p>
+<ul>
+<li>Small RNA-seq reads in FASTQ or FASTA format</li>
+<li>3' adapter sequence from small RNA library prep</li>
+<li>Optionally, a 5' adapter sequence and quality cutoff to use</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Small RNA Library Prep Kits</p>
+<p>For the Quiagen and NEB kits the best adapters to use are built into the pipeline. You just need to know the kit and if we have data in the forward or reverse direction. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Paired End Sequencing</p>
+<p>Most small RNA-seq provides a single sequence, but if you have paired end data, you should only provide the read that contains the sequence of the small RNA to the program (Usually the forward read), not it's reverse complement.</p>
+</div>
+<h2 id="sort">Sort</h2>
+<p>This takes trimmed reads and aligns them to the genome and optionally a set of CDS sequences to catch small RNA derived from spliced genes. Then sorts them into length and plots length and first base to give you an overview of the small RNAs you have. It also outputs a summary table on the number and percentage of small RNA reads aligned and FASTQs of small RNAs of each class (length and first base) for easier downstream analysis. For this you'll need:</p>
+<ul>
+<li>A FASTQ or FASTA of trimmed small RNA sequences (can be automatically retrieved if trim is run)</li>
+<li>A genome assembly to align the reads to</li>
+<li>Optionally, a set of CDS sequences to also align reads to </li>
+<li>Optionally, A minimum and maximum length of small RNA to consider, otherwise defaults to 18 - 30 nt</li>
+<li>Optionally, A number of mismatches to use when aligning, otherwise defaults to 0</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Mismatches</p>
+<p>By default, sort allows no mismatches or gaps, which is fine if you have a good reference genome that is of a close relative to the sample small RNA-seq was performed on and want to be conservative about what you retain. If you know your genome is likely to have lots of SNPs from the reference or are uncertain about how good you assembly is, you may want to up the amount of mismatches allowed to compensate for this.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Downstream use of BLAST</p>
+<p>While it seems like a good to run small RNAs through BLAST downstream, if you do this you need to be careful of the parameters used, particularly word size and E value. This is because BLAST will not return any hits if your sequence is shorter than the word size set (often above 20nt) and the short size of small RNA may mean even close to exact marches have a high E value. Due to this a basic search may return no hits, even if huntlab-smallrna has found an exact match in your genome.</p>
+</div>
+<h2 id="unitas">Unitas</h2>
+<p>Unitas runs unitas on a number of files representing small RNA lengths and plots a graphs of the origin or class for each small RNA length. This requires the following files:</p>
+<ul>
+<li>A directory of small RNAs of different lengths named in the form length.fastq - where X is the length of the small RNA. This can be automatically derived if sort has been run</li>
+<li>One or both of:<ul>
+<li>A species name in the form supported by unitas - see examples in <a href="https://www.smallrnagroup.uni-mainz.de/software/unitas_documentation_1.7.0.pdf">https://www.smallrnagroup.uni-mainz.de/software/unitas_documentation_1.7.0.pdf</a> </li>
+<li>One or more files containing known sequences of a particular class (e.g. miRNA, rRNA, tRNA, Transposable Elements etc.)</li>
+</ul>
+</li>
+<li>Optionally a CDS and/or unspliced transcriptome files to supplement the above</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Labelling for Unitas</p>
+<p>Unitas expects files that have the class of each sequence labelled in their ID e.g. for TEs with ids te1 and te2, the file would look like:
+<div class="highlight"><pre><span></span><code>&gt;TE|te1
+ACGT...
+&gt;TE|te2
+CGAT...
+</code></pre></div>
+Unless you have mixed files, the pipeline can label this for you, so don't worry about adding that yet. See the unitas section for information on this.</p>
+</div>
+<h2 id="targetid">TargetID</h2>
+<p>This stage aligns the reverse complement exactly to lists of potential targets, to find likely targets of a small RNA, outputting both and overall list and by class (e.g. 22Us). Then it can optionally enrich the targets GO terms, KEGG pathways and Pfams to help understand the tragets. For this you will need:</p>
+<ul>
+<li>FASTQ file of small RNAs or a directory or sorted small RNAs - can be derived from trim or sort if run</li>
+<li>One or more FASTA files containing sequences of potential targets (e.g. genes, TEs, host genes etc.)</li>
+<li>Optionally, the number of mismatches to tolerate when aligning, if not 0</li>
+<li>If you want to run the enrichment, an eggnog-mapper data directiory (see targetid section on how to create this)</li>
+<li>Optionally, a list of target files to exclude from the enrichment</li>
+</ul>
+<p>Now you know what you need you can continue to the next page of the tutorial to understand the config file you need to write.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../config/" class="md-footer__link md-footer__link--next" aria-label="Next: The Config File">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                The Config File
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021 - 2025 Kieran Reynolds & Vicky Hunt Lab Members
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.path", "navigation.footer", "navigation.tabs", "navigation.tabs.sticky", "toc.follow", "toc.integrate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
+      
+    
+  </body>
+</html>
