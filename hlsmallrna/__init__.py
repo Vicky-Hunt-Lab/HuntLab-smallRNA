@@ -12,14 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from .__main__ import main
-from .ss_overlap import main_ssoverlap
 from .label_for_unitas import label_for_unitas_cli
 
 def climain():
     main()
-
-def ssoverlap_main():
-    main_ssoverlap()
 
 def labelforunitas_main():
     label_for_unitas_cli()

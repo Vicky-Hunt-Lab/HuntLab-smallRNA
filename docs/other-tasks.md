@@ -200,18 +200,6 @@ Flags:
   -V, --version         Print version number then exit.
 ```
 
-## Same Strand Overlap
-
-If you wish to detect same strand overlaps, you can use the `overlap_ss` script that is installed in the same environment as this pipeline. This uses a number of bash programs to create files that show where two sets of small RNA that appear on the same strand overlap.
-
-To use this script you need two sets of small RNA as FASTA or FASTQ files, one for the base and one for the overlap, plus the genome of the species of interest. You can then run the script in the following way:
-
-```
-$ overlap_ss genome.fasta smallRNA1.fastq smallRNA2.fastq
-```
-
-This script will then create output in the output directory specified in `config.toml` under the directory `samestrand_overlap/`.
-
 ## miRNA
 
 TODO

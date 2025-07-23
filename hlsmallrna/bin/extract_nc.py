@@ -166,7 +166,7 @@ def extract_noncoding(genome, gff_path, output='result.fasta'):
 
     SeqIO.write(extract_fragments(genome_data, coordinates, mRNA_start, mRNA_end), output, 'fasta')
 
-if __name__ == '__main__':
+def main():
     parser = ArgumentParser('')
 
     parser.add_argument('genome', help='FASTA containing the genome to extract from')

@@ -280,7 +280,7 @@ def process_fa_out(path_to_fa_out, output, feature, scaffold_index=None):
         writer.writerow(['Chrom', 'Name', 'Start', 'End'])
         writer.writerows(antisense_targets)
 
-if __name__ == '__main__':
+def main():
     parser = ArgumentParser(description='Convert common bioinformatics file formats into coordinate file to plot')
 
     parser.add_argument('-a', '--fasta', action='store_true', help='Treat input as a FASTA file')

@@ -17,16 +17,6 @@ from argparse import ArgumentParser
 
 from Bio import SeqIO
 
-parser = ArgumentParser(description='Simple script to reverse complement a FASTA file')
-
-parser.add_argument('-i', '--input', help='FASTA file to reverse complement')
-parser.add_argument('-o', '--output', help='FASTA file to write to')
-
-args = parser.parse_args()
-
-if args.input is None or args.output is None:
-    raise Exception('Both -i and -o need to be set to run this')
-
 def reverse_complement(seq):
     revcomp = seq.reverse_complement()
     revcomp.id = seq.id
@@ -34,7 +24,18 @@ def reverse_complement(seq):
 
     return revcomp
 
-seqs = SeqIO.parse(args.input, 'fasta')
-seqs = map(reverse_complement, seqs)
+def main():
+    parser = ArgumentParser(description='Simple script to reverse complement a FASTA file')
 
-SeqIO.write(seqs, args.output, 'fasta')
+    parser.add_argument('-i', '--input', help='FASTA file to reverse complement')
+    parser.add_argument('-o', '--output', help='FASTA file to write to')
+
+    args = parser.parse_args()
+
+    if args.input is None or args.output is None:
+        raise Exception('Both -i and -o need to be set to run this')
+        
+    seqs = SeqIO.parse(args.input, 'fasta')
+    seqs = map(reverse_complement, seqs)
+
+    SeqIO.write(seqs, args.output, 'fasta')
