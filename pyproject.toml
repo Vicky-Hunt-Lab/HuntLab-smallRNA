@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "HuntLab-smallRNA"
+version = "2.0.0"
+description = "Small RNA analysis pipeline developed in Vicky Hunt's lab"
+requires-python = ">=3.8"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+  { name = "Kieran Reynolds", email = "kmhr20@bath.ac.uk" },
+]
+maintainers = [
+  { name = "Kieran Reynolds", email = "kmhr20@bath.ac.uk" },
+  { name = "Vicky Hunt", email = "v.l.hunt@bath.ac.uk" },
+]
+
+[project.urls]
+Documentation = "https://vicky-hunt-lab.github.io/HuntLab-smallRNA/latest/"
+"Source code" = "https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA"
+
+[project.scripts]
+hlsmallrna = "hlsmallrna:climain"
+label_for_unitas = "hlsmallrna:labelforunitas_main"
+build_coord_files = "hlsmallrna.bin.build_coord_files:main"
+extract_nc = "hlsmallrna.bin.extract_nc:main"
+revcomp_rna = "hlsmallrna.bin.revcomp_rna:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["hlsmallrna"]

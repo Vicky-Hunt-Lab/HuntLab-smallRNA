@@ -1,4 +1,4 @@
-# Copyright 2022 Vicky Hunt Lab Members
+# Copyright 2022 - 2025 Vicky Hunt Lab Members
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,10 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from .__main__ import main, main_ssoverlap
+from .__main__ import main
+from .label_for_unitas import label_for_unitas_cli
 
 def climain():
     main()
 
-def ssoverlap_main():
-    main_ssoverlap()
+def labelforunitas_main():
+    label_for_unitas_cli()

@@ -1,0 +1,41 @@
+site_name: Hunt Lab Small RNA Pipeline
+site_url: https://Vicky-Hunt-Lab.github.io/HuntLab-smallRNA/
+repo_url: https://github.com/Vicky-Hunt-Lab/HuntLab-smallRNA
+repo_name: Vicky-Hunt-Lab/HuntLab-smallRNA
+copyright: Copyright &copy; 2021 - 2025 Kieran Reynolds & Vicky Hunt Lab Members
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Walkthrough:
+    - Overview: walkthrough/index.md
+    - Prerequisites and Considerations: walkthrough/prereq.md
+    - The Config File: walkthrough/config.md
+    - Running Trim: walkthrough/trim.md
+    - Running Sort: walkthrough/sort.md
+    - Running Unitas: walkthrough/unitas.md
+    - Running TargetID: walkthrough/targetid.md
+  - Other Tasks: other-tasks.md
+  - CLI Reference:
+    - Overview: cli-reference/index.md
+    - ExtractNC: cli-reference/extractnc.md
+    - Label for Unitas: cli-reference/label-for-unitas.md
+    - Build Coord Files: cli-reference/build-coord-files.md
+    - Overlap SS: cli-reference/overlapss.md
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.path
+    - navigation.footer
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - toc.follow
+    - toc.integrate
+    - content.code.copy
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+extra:
+  version:
+    provider: mike

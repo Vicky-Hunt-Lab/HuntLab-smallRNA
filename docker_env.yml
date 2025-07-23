@@ -1,4 +1,4 @@
-name: huntlab-smallrna
+name: base
 channels:
   - bioconda
   - conda-forge
@@ -21,5 +21,3 @@ dependencies:
   - r
   - bioconductor-topgo
   - pip
-  - pip:
-    - .

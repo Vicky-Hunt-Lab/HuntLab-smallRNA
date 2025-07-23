@@ -1,4 +1,4 @@
-# Copyright 2022 Vicky Hunt Lab Members
+# Copyright 2022 - 2025 Vicky Hunt Lab Members
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,19 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from collections import defaultdict
+from shutil import copy2
+
 import os
 import os.path
 import csv
+import shutil
 
 from subprocess import run
+from collections import defaultdict
 
 import numpy as np
 
 from Bio import SeqIO, SeqRecord, Seq
 from matplotlib import pyplot as plt
-
-from .config import get_config_key, mkdir_if_not_exists, do_log
 
 def into_seqrecord(seqs):
     '''
@@ -35,130 +36,58 @@ def into_seqrecord(seqs):
 
         yield record
 
-def make_fastqs_unique(fastq1, fastq2, output):
+def merge_genome_cds_hits(results_seq, cds_seq):
     '''
-    Take 2 FastQ files, combine and remove duplicates from the second
+    Merge FASTQ hits from the genome and CDS
     '''
-    unique_sequences = []
-    cds_sequences = defaultdict(lambda: 0)
+    for seq in SeqIO.parse(results_seq, 'fastq'):
+        yield seq.seq
 
-    for sequence in SeqIO.parse(fastq1, 'fastq'):
-        unique_sequences.append(str(sequence.seq))
+    if os.path.exists(cds_seq):
+        for seq in SeqIO.parse(cds_seq, 'fastq'):
+            yield seq.seq
 
-    try:
-        for sequence in SeqIO.parse(fastq2, 'fastq'):
-            cds_sequences[str(sequence.seq)] += 1
-    except FileNotFoundError:
-        pass
-
-    for key in cds_sequences.keys():
-        if key not in unique_sequences:
-            for i in range(cds_sequences[key]):
-                unique_sequences.append(key)
-
-    SeqIO.write(into_seqrecord(unique_sequences), output, 'fastq')
-
-def make_fastq_overlap_only(fastq1, fastq2, output):
-    '''
-    Create a fastq with only sequences that appear in both fastq files
-    '''
-    fastq1_seqs = []
-
-    for sequence in SeqIO.parse(fastq1, 'fastq'):
-        fastq1_seqs.append(str(sequence.seq))
-
-    try:
-        fastq2_seqs = defaultdict(lambda: 0)
-
-        for sequence in SeqIO.parse(fastq2, 'fastq'):
-            fastq2_seqs[str(sequence.seq)] += 1
-
-        for seq in fastq2_seqs.keys():
-            if seq not in fastq1_seqs:
-                for i in range(fastq2_seqs[seq]):
-                    fastq1_seqs.append(seq)
-                    
-        result_seqs = fastq1_seqs
-    except FileNotFoundError as e:
-        result_seqs = fastq1_seqs
-
-    SeqIO.write(into_seqrecord(result_seqs), output, 'fastq')
-
-def remove_symbols_from_header(fasta):
-    '''
-    Remove @s from the FASTA header before doing the alignment
-    '''
-    for seq in SeqIO.parse(fasta, 'fasta'):
-        seq.id = seq.id.replace('@', '_')
-
-        yield seq
-
-def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filetype='fastq', mismatches=None):
+def align_to_genome(genome, small_rnas, cds, program_paths, output, verbose=False, keep_intermediate=False, threads=4, mismatches=0):
     '''
     Align the small RNAs to the genome and filter out any that are unsuccessful
     '''
 
-    INTERMEDIATE_SAM = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.sam')
-    INTERMEDIATE_BAM = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.bam')
-    UNMAPPED_BAM = os.path.join(get_config_key('general', 'output_directory'), 'unmapped_sequences.bam')
-    RESULT_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'genome_mapped_sequences.fastq')
-    RESULT_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'genome_unmapped_sequences.fastq')
-    INDEX_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'bbmap_index')
+    INTERMEDIATE_SAM = os.path.join(output, 'mapped_sequences.sam')
+    INTERMEDIATE_BAM = os.path.join(output, 'mapped_sequences.bam')
+    UNMAPPED_BAM = os.path.join(output, 'unmapped_sequences.bam')
+    RESULT_FASTQ = os.path.join(output, 'genome_mapped_sequences.fastq')
+    RESULT_UNMAPPED_FASTQ = os.path.join(output, 'genome_unmapped_sequences.fastq')
+    INDEX_DIRECTORY = os.path.join(output, 'bowtie2_index')
 
-    CDS_INTERMEDIATE_SAM = os.path.join(get_config_key('general', 'output_directory'), 'cds_sequences.sam')
-    CDS_INTERMEDIATE_BAM = os.path.join(get_config_key('general', 'output_directory'), 'cds_sequences.bam')
-    CDS_UNMAPPED_BAM = os.path.join(get_config_key('general', 'output_directory'), 'cds_unmapped_sequences.bam')
-    CDS_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'cds_unmapped_sequences.fastq')
-    CDS_RESULT_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'cds_sequences.fastq')
+    CDS_INTERMEDIATE_SAM = os.path.join(output, 'cds_sequences.sam')
+    CDS_INTERMEDIATE_BAM = os.path.join(output, 'cds_sequences.bam')
+    CDS_UNMAPPED_BAM = os.path.join(output, 'cds_unmapped_sequences.bam')
+    CDS_UNMAPPED_FASTQ = os.path.join(output, 'cds_unmapped_sequences.fastq')
+    CDS_RESULT_FASTQ = os.path.join(output, 'cds_sequences.fastq')
 
-    FINAL_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'mapped_sequences.fastq')
-    FINAL_UNMAPPED_FASTQ = os.path.join(get_config_key('general', 'output_directory'), 'unmapped_sequences.fastq')
+    FINAL_FASTQ = os.path.join(output, 'mapped_sequences.fastq')
+    FINAL_UNMAPPED_FASTQ = os.path.join(output, 'unmapped_sequences.fastq')
 
-    mkdir_if_not_exists(INDEX_DIRECTORY)
+    if not os.path.exists(INDEX_DIRECTORY):
+        os.makedirs(INDEX_DIRECTORY)
 
-    if small_rna_filetype == 'fasta':
-        NEW_SMALL_RNAS = os.path.join(get_config_key('general', 'output_directory'), 'corrected_headers.fasta')
-        SeqIO.write(remove_symbols_from_header(small_rnas), NEW_SMALL_RNAS, 'fasta')
-
-        small_rnas = NEW_SMALL_RNAS
-
-    bbmap_build_index = [
-        get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
+    bowtie2_build_index = [
+        program_paths['bowtie2-build'],
         '--threads', str(threads),
         genome,
         os.path.join(INDEX_DIRECTORY, 'genome_index')
     ]
 
-    bbmap_build_index = bbmap_build_index + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
-
     cds_build_index = [
-        get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2_build'),
+        program_paths['bowtie2-build'],
         '--threads', str(threads),
         cds,
         os.path.join(INDEX_DIRECTORY, 'cds_index')
     ]
 
-    cds_build_index = cds_build_index + get_config_key('cli-tools', 'bowtie2', 'bowtie2_build_params')
-
-    if mismatches is not None:
-        bbmap_align_reads = [
-            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-            '--threads', str(threads),
-            '-L', '18',
-            '--no-1mm-upfront',
-            '--score-min', 'L,' + str(-mismatches) + ',0',
-            '--end-to-end',
-            '--mp', '1,1',
-            '--ignore-quals',
-            '--rdg', '9,1',
-            '--rfg', '9,1',
-            '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
-            '-U', small_rnas,
-            '-S', INTERMEDIATE_SAM
-        ]
-    elif mismatches == 0:
-        bbmap_align_reads = [
-                get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+    if mismatches == 0:
+        bowtie2_align_reads = [
+                program_paths['bowtie2'],
                 '--threads', str(threads),
                 '-L', '18',
                 '--no-1mm-upfront',
@@ -170,39 +99,24 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
                 '-S', INTERMEDIATE_SAM
             ]
     else:
-        bbmap_align_reads = [
-                    get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
-                    '--threads', str(threads),
-                    '-L', '18',
-                    '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
-                    '-U', small_rnas,
-                    '-S', INTERMEDIATE_SAM
-        ]
-
-    if small_rna_filetype == 'fasta':
-        bbmap_align_reads.append('-f')
-
-    bbmap_align_reads = bbmap_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
-
-    if mismatches is not None:
-        cds_align_reads = [
-            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+        bowtie2_align_reads = [
+            program_paths['bowtie2'],
             '--threads', str(threads),
             '-L', '18',
-            '--no-1mm-upfront',
             '--score-min', 'L,' + str(-mismatches) + ',0',
             '--end-to-end',
             '--mp', '1,1',
             '--ignore-quals',
-            '--rdg', '9,1',
-            '--rfg', '9,1',
-            '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
+            '--rdg', '100,100',
+            '--rfg', '100,100',
+            '-x', os.path.join(INDEX_DIRECTORY, 'genome_index'),
             '-U', small_rnas,
-            '-S', CDS_INTERMEDIATE_SAM
+            '-S', INTERMEDIATE_SAM
         ]
-    elif mismatches == 0:
+
+    if mismatches == 0:
         cds_align_reads = [
-                get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+                program_paths['bowtie2'],
                 '--threads', str(threads),
                 '-L', '18',
                 '--no-1mm-upfront',
@@ -210,38 +124,38 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
                 '--end-to-end',
                 '-M', '0',
                 '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-                '-U', small_rnas,
+                '-U', RESULT_UNMAPPED_FASTQ,
                 '-S', CDS_INTERMEDIATE_SAM
             ]
     else:
         cds_align_reads = [
-            get_config_key('cli-tools', 'bowtie2', 'path_to_bowtie2'),
+            program_paths['bowtie2'],
             '--threads', str(threads),
             '-L', '18',
+            '--score-min', 'L,' + str(-mismatches) + ',0',
+            '--end-to-end',
+            '--mp', '1,1',
+            '--ignore-quals',
+            '--rdg', '100,100',
+            '--rfg', '100,100',
             '-x', os.path.join(INDEX_DIRECTORY, 'cds_index'),
-            '-U', small_rnas,
+            '-U', RESULT_UNMAPPED_FASTQ,
             '-S', CDS_INTERMEDIATE_SAM
         ]
 
-    if small_rna_filetype == 'fasta':
-        cds_align_reads.append('-f')
-
-    cds_align_reads = cds_align_reads + get_config_key('cli-tools', 'bowtie2', 'bowtie2_params')
-
     samtools_view = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'view',
         '-h',
         '-b',
         '-F', '4',
+        '-F', '256',
         '-o', INTERMEDIATE_BAM,
-        INTERMEDIATE_SAM
+        INTERMEDIATE_SAM,
     ]
 
-    samtools_view = samtools_view + get_config_key('cli-tools', 'samtools', 'samtools_view_params')
-
     bedtools_bamtofastq_command = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'fastq',
         INTERMEDIATE_BAM,
         '-o', RESULT_FASTQ,
@@ -249,19 +163,18 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     ]
 
     cds_samtools_view = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'view',
         '-h',
         '-b',
         '-F', '4',
+        '-F', '256',
         '-o', CDS_INTERMEDIATE_BAM,
         CDS_INTERMEDIATE_SAM
     ]
 
-    cds_samtools_view = cds_samtools_view + get_config_key('cli-tools', 'samtools', 'samtools_view_params')
-
     cds_bedtools_bamtofastq_command = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'fastq',
         CDS_INTERMEDIATE_BAM,
         '-o', CDS_RESULT_FASTQ,
@@ -269,7 +182,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     ]
     
     unmapped_samtools_view = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'view',
         '-h',
         '-b',
@@ -279,7 +192,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     ]
 
     unmapped_bedtools_bamtofastq_command = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'fastq',
         UNMAPPED_BAM,
         '-o', RESULT_UNMAPPED_FASTQ,
@@ -287,7 +200,7 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     ]
 
     cds_unmapped_samtools_view = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'view',
         '-h',
         '-b',
@@ -297,48 +210,67 @@ def align_to_genome(genome, small_rnas, cds, quiet=0, threads=4, small_rna_filet
     ]
 
     cds_unmapped_bedtools_bamtofastq_command = [
-        get_config_key('cli-tools', 'samtools', 'path_to_samtools'),
+        program_paths['samtools'],
         'fastq',
         CDS_UNMAPPED_BAM,
         '-o', CDS_UNMAPPED_FASTQ,
         '-0', CDS_UNMAPPED_FASTQ
     ]
 
-    do_log(quiet, '====> Building BBMap Index')
-    run(bbmap_build_index, capture_output=(quiet != 0))
+    print('====> Building bowtie2 Index...')
+    run(bowtie2_build_index, capture_output=not verbose)
     if cds is not None:
-        run(cds_build_index, capture_output=(quiet != 0))
+        run(cds_build_index, capture_output=not verbose)
 
-    do_log(quiet, '====> Aligning reads to the genome')
-    run(bbmap_align_reads, capture_output=(quiet != 0))
+    print('====> Aligning reads to the genome...')
+    run(bowtie2_align_reads, capture_output=not verbose)
+
+    run(samtools_view, capture_output=not verbose) 
+    run(bedtools_bamtofastq_command, capture_output=not verbose)
+    run(unmapped_samtools_view, capture_output=not verbose)
+    run(unmapped_bedtools_bamtofastq_command, capture_output=not verbose)
     if cds is not None:
-        run(cds_align_reads, capture_output=(quiet != 0))
+        run(cds_align_reads, capture_output=not verbose)
 
-    do_log(quiet, '====> Converting to FASTQ')
-    run(samtools_view, capture_output=(quiet != 0)) 
-    run(bedtools_bamtofastq_command, capture_output=(quiet != 0))
-    run(unmapped_samtools_view, capture_output=(quiet != 0))
-    run(unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
+    print('====> Converting to FASTQ...')
     if cds is not None:
-        run(cds_samtools_view, capture_output=(quiet != 0))
-        run(cds_bedtools_bamtofastq_command, capture_output=(quiet != 0))
-        run(cds_unmapped_samtools_view, capture_output=(quiet != 0))
-        run(cds_unmapped_bedtools_bamtofastq_command, capture_output=(quiet != 0))
+        run(cds_samtools_view, capture_output=not verbose)
+        run(cds_bedtools_bamtofastq_command, capture_output=not verbose)
+        run(cds_unmapped_samtools_view, capture_output=not verbose)
+        run(cds_unmapped_bedtools_bamtofastq_command, capture_output=not verbose)
 
-    make_fastqs_unique(RESULT_FASTQ, CDS_RESULT_FASTQ, FINAL_FASTQ)
-    make_fastq_overlap_only(RESULT_UNMAPPED_FASTQ, CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
+        copy2(CDS_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
+    else:
+        copy2(RESULT_UNMAPPED_FASTQ, FINAL_UNMAPPED_FASTQ)
 
-    create_stats_table(small_rnas, get_config_key('general', 'output_directory'), small_rna_filetype=small_rna_filetype)
+    SeqIO.write(into_seqrecord(merge_genome_cds_hits(RESULT_FASTQ, CDS_RESULT_FASTQ)), FINAL_FASTQ, 'fastq')
+    create_stats_table(small_rnas, output)
+
+    if not keep_intermediate:
+        shutil.rmtree(INDEX_DIRECTORY)
+
+        os.remove(INTERMEDIATE_SAM)
+        os.remove(INTERMEDIATE_BAM)
+        os.remove(UNMAPPED_BAM)
+        os.remove(RESULT_FASTQ)
+        os.remove(RESULT_UNMAPPED_FASTQ)
+
+        if cds is not None:
+            os.remove(CDS_INTERMEDIATE_SAM)
+            os.remove(CDS_INTERMEDIATE_BAM)
+            os.remove(CDS_UNMAPPED_BAM)
+            os.remove(CDS_UNMAPPED_FASTQ)
+            os.remove(CDS_RESULT_FASTQ)
 
     return FINAL_FASTQ
 
-def create_stats_table(smallrna, output_dir, small_rna_filetype='fastq'):
+def create_stats_table(smallrna, output_dir):
     '''
     Count sequences to create the statistics file
     '''
 
     input_reads = 0
-    for read in SeqIO.parse(smallrna, small_rna_filetype):
+    for read in SeqIO.parse(smallrna, 'fastq'):
         input_reads += 1
 
     overall_mapped = 0
@@ -361,7 +293,7 @@ def create_stats_table(smallrna, output_dir, small_rna_filetype='fastq'):
     cds_unmapped = input_reads - cds_mapped
     genome_unmapped = input_reads - genome_mapped
 
-    with open(os.path.join(output_dir, 'report.tsv'), 'w') as f:
+    with open(os.path.join(output_dir, 'alignment_report.tsv'), 'w') as f:
         writer = csv.writer(f, delimiter='\t')
 
         writer.writerow(['Total Reads', input_reads])
@@ -374,68 +306,81 @@ def create_stats_table(smallrna, output_dir, small_rna_filetype='fastq'):
         writer.writerow(['Unmapped to Genome', genome_unmapped])
         writer.writerow(['Percentage Unmapped to Genome', genome_unmapped / input_reads * 100])
         writer.writerow(['Mapped to CDS', cds_mapped])
-        writer.writerow(['Percentage Mapped to CDS', cds_mapped / input_reads * 100])
-        writer.writerow(['Unmapped to CDS', cds_unmapped])
-        writer.writerow(['Percentage Unmapped to CDS', cds_unmapped / input_reads * 100])
+        writer.writerow(['Percentage Mapped to CDS (but not to genome)', cds_mapped / input_reads * 100])
+        writer.writerow(['Unmapped to CDS or genome', cds_unmapped])
+        writer.writerow(['Percentage Unmapped to CDS or genome', cds_unmapped / input_reads * 100])
 
-def bin_rna_size(rna_file, min_length, max_length, quiet=0):
+def bin_rna_size(rna_file, min_length, max_length, output, verbose=False):
     '''
-    Bin the RNAs in the RNA file into new files by length
+    Bin the RNAs in the RNA file into new files by length and first base
     '''
+    BIN_LENGTH_DIRECTORY = os.path.join(output, 'binned_length_rna')
+    if not os.path.exists(BIN_LENGTH_DIRECTORY):
+        os.makedirs(BIN_LENGTH_DIRECTORY)
 
-    BINS_DIRECTORY = os.path.join(get_config_key('general', 'output_directory'), 'binned_rna')
-    mkdir_if_not_exists(BINS_DIRECTORY)
+    BIN_BASE_DIRECTORY = os.path.join(output, 'binned_group_rna')
+    if not os.path.exists(BIN_BASE_DIRECTORY):
+        os.makedirs(BIN_BASE_DIRECTORY)
 
-    do_log(quiet, '====> Sorting RNA into arrays by length')
-    rnas = sorted(SeqIO.parse(rna_file, 'fastq'), key=lambda x: len(x))
+    print('====> Sorting RNA into arrays by length and first base...')
 
-    table_path = os.path.join(get_config_key('general', 'output_directory'), 'rna_length_report.csv')
+    length_firstbase = defaultdict(lambda: defaultdict(lambda: []))
+    sequence_counts = defaultdict(lambda: 0)
 
-    last_length = 0
-    current_rnas = []
-    start_base_count = {'A': 0, 'C': 0, 'G': 0, 'T': 0}
+    if os.path.exists(os.path.join(output, 'unmapped_sequences.fastq')):
+        unmapped = 0
+        for seq in SeqIO.parse(os.path.join(output, 'unmapped_sequences.fastq'), 'fastq'):
+            unmapped += 1
+
+        sequence_counts['__not_aligned'] = unmapped
+    else:
+        sequence_counts['__not_aligned'] = 0
+
+    for seq in SeqIO.parse(rna_file, 'fastq'):
+        first_base = seq.seq[0].replace('T', 'U')
+        if len(seq) >= min_length and len(seq) <= max_length:
+            sequence_counts[str(seq.seq)] += 1
+            length_firstbase[len(seq)][first_base].append(seq)
+
+    for length in length_firstbase:
+        length_rnas = [x for xs in length_firstbase[length].values() for x in xs]
+        SeqIO.write(length_rnas, os.path.join(BIN_LENGTH_DIRECTORY, f'length{length}.fastq'), 'fastq')
+
+        for first_base in length_firstbase[length]:
+            SeqIO.write(length_firstbase[length][first_base], os.path.join(BIN_BASE_DIRECTORY, f'{length}{first_base}.fastq'), 'fastq')
+
+    table_path = os.path.join(output, 'rna_length_report.csv')
+    counts_path = os.path.join(output, 'counts.tab')
+    with open(counts_path, 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+        for sequence in sequence_counts:
+            writer.writerow([sequence, sequence_counts[sequence]])
+
     with open(table_path, 'w') as table_file:
         writer = csv.writer(table_file)
-        writer.writerow(['RNA Length', 'A', 'C', 'G', 'U', 'All Frequency'])
+        writer.writerow(['RNA Length', 'A', 'C', 'G', 'U', 'N', 'All Frequency'])
 
-        for rna_seq in rnas:
-            if len(rna_seq) != last_length:
-                if len(current_rnas) > 0 and last_length >= min_length and last_length <= max_length:
-                    filename = os.path.join(BINS_DIRECTORY, 'length' + str(last_length) + '.fastq')
-                    with open(filename, 'a') as f:
-                        SeqIO.write(current_rnas, f, 'fastq')
+        for length in range(min_length, max_length + 1):
+            length_counts = [
+                len(length_firstbase[length]['A']), len(length_firstbase[length]['C']),
+                len(length_firstbase[length]['G']), len(length_firstbase[length]['U']),
+                len(length_firstbase[length]['N'])
+            ]
 
-                    writer.writerow([
-                        last_length, 
-                        start_base_count['A'], start_base_count['C'],
-                        start_base_count['G'], start_base_count['T'],
-                        len(current_rnas)
-                    ])
-
-                current_rnas = []
-                start_base_count = {'A': 0, 'C': 0, 'G': 0, 'T': 0}
-
-                last_length = len(rna_seq)
-
-            current_rnas.append(rna_seq)
-            try:
-                start_base_count[rna_seq[0]] += 1
-            except KeyError:
-                do_log(quiet, f'Warning : An RNA started with ambiguous nt {rna_seq[0]}')
+            writer.writerow([length] + length_counts + [sum(length_counts)])
 
     return table_path
 
-def graph_length(path_to_table):
+def graph_length(path_to_table, output):
     '''
     Create the graph showing the length and starting base of all the RNA
     '''
-    
     with open(path_to_table) as f:
         reader = csv.reader(f)
         next(reader)
 
         labels = []
-        bases = {'A': [], 'C': [], 'G': [], 'T': []}
+        bases = {'A': [], 'C': [], 'G': [], 'T': [], 'N': []}
         
         for line in reader:
             labels.append(str(line[0]))
@@ -444,12 +389,13 @@ def graph_length(path_to_table):
             bases['C'].append(int(line[2]))
             bases['G'].append(int(line[3]))
             bases['T'].append(int(line[4]))
+            bases['N'].append(int(line[5]))
 
-        total_rna = sum(bases['A']) + sum(bases['C']) + sum(bases['G']) + sum(bases['T'])
+        total_rna = sum(bases['A']) + sum(bases['C']) + sum(bases['G']) + sum(bases['T']) + sum(bases['N'])
         for key in bases.keys():
             bases[key] = np.array(bases[key]) / total_rna * 100
 
-        with open(os.path.join(get_config_key('general', 'output_directory'), 'baseplot_data.csv'), 'w') as f:
+        with open(os.path.join(output, 'baseplot_data.csv'), 'w') as f:
             writer = csv.writer(f)
 
             writer.writerow(['RNA Length'] + labels)
@@ -457,6 +403,7 @@ def graph_length(path_to_table):
             writer.writerow(['T'] + list(bases['T']))
             writer.writerow(['C'] + list(bases['C']))
             writer.writerow(['G'] + list(bases['G']))
+            writer.writerow(['N'] + list(bases['N']))
 
         fig, ax = plt.subplots(figsize=(11.69, 8.27))
 
@@ -464,11 +411,13 @@ def graph_length(path_to_table):
         ax.bar(labels, bases['C'], bottom=bases['A'], label='C', align='edge', width=0.8)
         ax.bar(labels, bases['G'], bottom=bases['A'] + bases['C'], label='G', align='edge', width=0.8)
         ax.bar(labels, bases['T'], bottom=bases['A'] + bases['C'] + bases['G'], label='U', align='edge', width=0.8)
+        ax.bar(labels, bases['N'], bottom=bases['A'] + bases['C'] + bases['G'] + bases['T'], label='N', align='edge', width=0.8)
 
+        ax.set_xticks(list(range(0, len(labels))))
         ax.set_xticklabels(labels, fontsize=7)
         ax.set_xlabel('Length of small RNA')
         ax.set_ylabel('Percentage of small RNA')
 
         plt.legend(title='First Nucliotide')
 
-        plt.savefig(os.path.join(get_config_key('general', 'output_directory'), 'baseplot.png'))
+        plt.savefig(os.path.join(output, 'baseplot.png'))
